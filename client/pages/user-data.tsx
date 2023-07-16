@@ -1,5 +1,5 @@
 import axios from 'axios';
-import css from "../styles/user-data.module.css"
+import css from '../styles/user-data.module.css';
 type UserDataType = {
   _id: string | null;
   email: string | null;
@@ -11,7 +11,6 @@ type UserDataProps = {
 };
 
 const UserData = ({ userData }: UserDataProps) => {
-
   return (
     <div>
       {userData.map(user => (
@@ -19,6 +18,7 @@ const UserData = ({ userData }: UserDataProps) => {
           <h1 className={css.title}>{user._id}</h1>
           <p>{user.email}</p>
           <p>{user.subscription}</p>
+          <p>hi</p>
         </div>
       ))}
     </div>
