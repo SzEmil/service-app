@@ -5,6 +5,10 @@ const { Schema } = mongoose;
 
 const users = new Schema(
   {
+    username: {
+      type: String,
+      required : [true, "Username is required"]
+    },
     password: {
       type: String,
       required: [true, 'Password is required'],
@@ -14,11 +18,11 @@ const users = new Schema(
       required: [true, 'Email is required'],
       unique: true,
     },
-    subscription: {
-      type: String,
-      enum: ['starter', 'pro', 'business'],
-      default: 'starter',
-    },
+    // subscription: {
+    //   type: String,
+    //   enum: ['starter', 'pro', 'business'],
+    //   default: 'starter',
+    // },
     token: {
       type: String,
       default: null,

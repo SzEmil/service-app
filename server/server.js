@@ -42,8 +42,8 @@ app.use((err, _, res, __) => {
 
 const PORT = process.env.PORT || 3001;
 
-const uriDb = process.env.DB_HOST;
-
+// const uriDb = process.env.DB_HOST;
+ const uriDb = process.env.serviceDb;
 const connection = mongoose.connect(uriDb, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

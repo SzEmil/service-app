@@ -17,6 +17,12 @@ dotenv.config();
 const secret = process.env.SECRET;
 
 const userSchema = joi.object({
+  username: joi.string().required(),
+  email: joi.string().email().required(),
+  password: joi.string().required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+});
+
+const userSchemaLogin = joi.object({
   email: joi.string().email().required(),
   password: joi.string().required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });
@@ -83,7 +89,7 @@ const register = async (req, res, next) => {
     });
   try {
     const value = await userSchema.validateAsync(req.body);
-    const { email, password } = value;
+    const { username, email, password } = value;
 
     const user = await userService.getUserByEmail(email);
 
@@ -97,7 +103,7 @@ const register = async (req, res, next) => {
       });
     }
     try {
-      const newUser = new User({ email });
+      const newUser = new User({ username,email });
       newUser.setPassword(password);
       const avatarURL = gravatar.url(newUser.email, {
         protocol: 'https',
@@ -110,6 +116,7 @@ const register = async (req, res, next) => {
         code: 201,
         ResponseBody: {
           user: {
+            username: newUser.username,
             email: newUser.email,
             subscription: newUser.subscription,
           },
@@ -141,7 +148,7 @@ const login = async (req, res, next) => {
       code: 400,
     });
   try {
-    const value = await userSchema.validateAsync(req.body);
+    const value = await userSchemaLogin.validateAsync(req.body);
     const { email, password } = value;
     const user = await userService.getUserByEmail(email);
 
@@ -170,6 +177,7 @@ const login = async (req, res, next) => {
         token,
         user: {
           _id: user._id,
+          username: user.username,
           email: user.email,
           subscription: user.subscription,
         },
@@ -230,6 +238,7 @@ const currentUser = async (req, res, next) => {
       status: 'OK',
       code: 200,
       ResponseBody: {
+        username: user.username,
         email: user.email,
         subscription: user.subscription,
       },
@@ -265,46 +274,6 @@ const currentContacts = async (req, res, next) => {
   }
 };
 
-const subscriptionStatus = async (req, res, next) => {
-  const { _id } = req.user;
-  try {
-    const user = await userService.getUserById(_id);
-    if (!user) {
-      return res.status(401).json({
-        status: 'error',
-        code: 401,
-        ResponseBody: {
-          message: 'Unauthorized',
-        },
-      });
-    }
-    try {
-      const { subscription } = req.body;
-      if (!req.body) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'missing fields',
-          code: 400,
-        });
-      }
-      user.subscription = subscription;
-      await user.save();
-
-      return res.status(200).json({
-        status: 'OK',
-        code: 200,
-        ResponseBody: {
-          email: user.email,
-          subscription: user.subscription,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 
 const uploadAvatar = async (req, res, next) => {
   try {
@@ -363,7 +332,6 @@ const userController = {
   logout,
   currentUser,
   currentContacts,
-  subscriptionStatus,
   uploadAvatar,
 };
 export default userController;
