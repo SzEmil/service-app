@@ -1,14 +1,17 @@
 {
   "name": "client",
   "private": true,
+  "homepage": "https://SzEmil.github.io/service-app/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "next build && next export && touch out/.nojekyll && gh-pages -d out"
   },
   "dependencies": {
     "axios": "^1.4.0",
+    "gh-pages": "^5.0.0",
     "next": "13.4.10",
     "next-redux-wrapper": "^8.1.0",
     "react": "18.2.0",
