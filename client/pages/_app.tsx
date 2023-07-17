@@ -1,11 +1,19 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import UserData from './user-data';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from '../redux/store';
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <UserData userData={[]} />
-      <Component {...pageProps} />
+      <Provider store={store}>
+         <PersistGate loading={null} persistor={persistor}> 
+          <UserData userData={[]} />
+          <Component {...pageProps} />
+         </PersistGate> 
+      </Provider>
     </>
   );
 }

@@ -55,6 +55,11 @@ const getDishById = async (dishId, restaurantId, userId) => {
   });
 };
 
+
+const getRestaurantInfo = async (restaurantId, userId)=>{
+
+}
+
 const serviceRestaurant = {
   getRestaurantById,
   getRestaurantsByOwner,

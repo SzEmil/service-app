@@ -103,14 +103,22 @@ const register = async (req, res, next) => {
       });
     }
     try {
-      const newUser = new User({ username,email });
+      const newUser = new User({ username, email });
       newUser.setPassword(password);
       const avatarURL = gravatar.url(newUser.email, {
         protocol: 'https',
         s: '100',
       });
       newUser.avatarURL = avatarURL;
+
+      const payload = {
+        id: newUser._id,
+      };
+
+      const token = jwt.sign(payload, secret, { expiresIn: '12h' });
+      newUser.token = token;
       await newUser.save();
+
       return res.status(201).json({
         status: 'Created',
         code: 201,
@@ -118,7 +126,7 @@ const register = async (req, res, next) => {
           user: {
             username: newUser.username,
             email: newUser.email,
-            subscription: newUser.subscription,
+            token: newUser.token,
           },
         },
       });
@@ -166,7 +174,7 @@ const login = async (req, res, next) => {
       id: user._id,
     };
 
-    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    const token = jwt.sign(payload, secret, { expiresIn: '12h' });
     user.token = token;
     await user.save();
 
@@ -273,7 +281,6 @@ const currentContacts = async (req, res, next) => {
     next(error);
   }
 };
-
 
 const uploadAvatar = async (req, res, next) => {
   try {

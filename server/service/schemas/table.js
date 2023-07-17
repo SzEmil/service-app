@@ -15,10 +15,15 @@ const tableSchema = new Schema(
       type: String,
       default: null,
     },
+    // orders: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Order',
+    //   },
+    // ],
     orders: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Order',
+        type: Object,
       },
     ],
     restaurant: {

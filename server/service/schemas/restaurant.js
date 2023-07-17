@@ -16,16 +16,26 @@ const restaurantSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    // menu: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Dish',
+    //   },
+    // ],
     menu: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Dish',
+        type: Object,
       },
     ],
+    // tables: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Table',
+    //   },
+    // ],
     tables: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Table',
+        type: Object,
       },
     ],
   },

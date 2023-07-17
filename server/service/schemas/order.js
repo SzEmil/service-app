@@ -5,10 +5,15 @@ const orderSchema = new Schema({
   name: {
     type: String,
   },
+  // dishes: [
+  //   {
+  //     type: Schema.Types.ObjectId,
+  //     ref: 'Dish',
+  //   },
+  // ],
   dishes: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Dish',
+      type: Object,
     },
   ],
   fullKcal: {

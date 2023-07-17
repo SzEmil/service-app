@@ -106,18 +106,19 @@ const create = async (req, res, next) => {
     });
 
     for (const dishData of menu) {
-      const { name, description, price } = dishData;
+      const { name, description, price, kcal } = dishData;
 
       const newDish = new Dish({
         name,
         description,
         price,
+        kcal,
         restaurant: newRestaurant._id,
         owner: req.user._id,
       });
 
       const savedDish = await newDish.save();
-      newRestaurant.menu.push(savedDish._id);
+      newRestaurant.menu.push(savedDish);
     }
 
     const savedRestaurant = await newRestaurant.save();
@@ -175,13 +176,23 @@ const createRestaurantTable = async (req, res, next) => {
             owner: req.user._id,
             table: newTable._id,
           });
+          const kcalValues = newOrder.dishes.map(dish => dish.kcal);
+          const fullKcal = kcalValues.reduce((total, kcal) => total + kcal, 0);
+
+          const priceValues = newOrder.dishes.map(dish => dish.price);
+          const fullPrice = priceValues.reduce(
+            (total, price) => total + price,
+            0
+          );
+
+          (newOrder.fullKcal = fullKcal), (newOrder.fullPrice = fullPrice);
           const savedOrder = await newOrder.save();
-          newTable.orders.push(savedOrder._id);
+          newTable.orders.push(savedOrder);
         }
 
         await newTable.save();
 
-        restaurantById.tables.push(newTable._id);
+        restaurantById.tables.push(newTable);
         await restaurantById.save();
 
         res.status(201).json({
@@ -196,7 +207,6 @@ const createRestaurantTable = async (req, res, next) => {
           status: 'error',
           code: 404,
           ResponseBody: {
-            // message: `Not found restaurant with id ${restaurantId}`,
             message: error.message,
           },
         });
@@ -209,6 +219,38 @@ const createRestaurantTable = async (req, res, next) => {
         },
         code: 400,
       });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getRestaurantInfo = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    if (!_id) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+
+    try {
+      const { restaurantId } = req.params;
+      const restaurantById = await serviceRestaurant.getRestaurantById(
+        restaurantId,
+        req.user._id
+      );
+
+      const results = await serviceRestaurant.getRestaurantInfo(
+        restaurantId,
+        req.user._id
+      );
+    } catch (error) {
+      next(error);
     }
   } catch (error) {
     next(error);

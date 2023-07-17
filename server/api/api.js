@@ -29,6 +29,7 @@ router.patch(
 );
 
 // Restaurants
+//jako body przekazuje name, icon, menu=[{name,description,price}]
 router.post('/restaurants', authUser, controllerRestaurant.create);
 
 router.get('/restaurants', authUser, controllerRestaurant.getUserRestaurants);
@@ -38,7 +39,7 @@ router.get(
   authUser,
   controllerRestaurant.getUserRestaurantById
 );
-
+//req params id restauracji restaurantId ,jako body przekazuje name,icon,description, orders=[{name, dishes:[stringi ID dań]}]
 router.post(
   '/restaurants/:restaurantId/tables',
   authUser,
@@ -50,4 +51,5 @@ router.get(
   authUser,
   controllerRestaurant.getRestaurantTables
 );
+//By dodać zamówienie trzeba bedzie nowy obiekt zamówienia dodać push do tablicy orders danego stolika czyli ten stolik albo lepiej order trzeba wyszukać apotem table.orders.push(object)
 export default router;

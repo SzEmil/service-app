@@ -15,14 +15,18 @@ const dishSchema = new Schema(
       type: Number,
       required: [true, 'Price is required'],
     },
+    kcal: {
+      type: Number,
+      default: 0,
+    },
     restaurant: {
-        type: Schema.Types.ObjectId,
-        ref: 'Restaurant',
-      },
-      owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-      },
+      type: Schema.Types.ObjectId,
+      ref: 'Restaurant',
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { versionKey: false, timestamps: true }
 );
