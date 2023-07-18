@@ -187,7 +187,6 @@ const login = async (req, res, next) => {
           _id: user._id,
           username: user.username,
           email: user.email,
-          subscription: user.subscription,
         },
       },
     });
@@ -248,7 +247,6 @@ const currentUser = async (req, res, next) => {
       ResponseBody: {
         username: user.username,
         email: user.email,
-        subscription: user.subscription,
       },
     });
   } catch (error) {
@@ -256,31 +254,6 @@ const currentUser = async (req, res, next) => {
   }
 };
 
-const currentContacts = async (req, res, next) => {
-  const { _id } = req.user;
-  try {
-    const user = await userService.getUserById(_id);
-    if (!user) {
-      return res.status(401).json({
-        status: 'error',
-        code: 401,
-        ResponseBody: {
-          message: 'Unauthorized',
-        },
-      });
-    }
-    const results = await contactService.getUserContacts(user._id);
-    return res.status(200).json({
-      status: 'success',
-      code: 200,
-      ResponseBody: {
-        contacts: results,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 const uploadAvatar = async (req, res, next) => {
   try {
@@ -338,7 +311,6 @@ const userController = {
   login,
   logout,
   currentUser,
-  currentContacts,
   uploadAvatar,
 };
 export default userController;

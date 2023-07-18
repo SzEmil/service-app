@@ -1,17 +1,16 @@
-import styles from './RegisterForm.module.css';
+import styles from './LoginForm.module.css';
 import { FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { register } from '../../redux/auth/authOperations';
+import { logIn } from '../../redux/auth/authOperations';
 import { useSelector } from 'react-redux';
 import { selectAuthUser } from '../../redux/auth/authSelectors';
 
-type credentialsRegisterType = {
-  username: string;
+type credentialsLoginType = {
   email: string;
   password: string;
 };
-const RegisterForm = () => {
+const LoginForm = () => {
   const dispatch: AppDispatch = useDispatch();
   const authUser = useSelector(selectAuthUser);
 
@@ -19,32 +18,19 @@ const RegisterForm = () => {
     event.preventDefault();
     const form = event.currentTarget;
 
-    const credentials: credentialsRegisterType = {
-      username: (form.elements.namedItem('username') as HTMLInputElement).value,
+    const credentials: credentialsLoginType = {
       email: (form.elements.namedItem('email') as HTMLInputElement).value,
       password: (form.elements.namedItem('password') as HTMLInputElement).value,
     };
 
-    dispatch(register(credentials));
+    dispatch(logIn(credentials));
     form.reset();
   };
 
   return (
-    <form className={styles.registerForm} onSubmit={handleSubmit}>
-      <h2 className={styles.title}>Register now!</h2>
+    <form className={styles.loginForm} onSubmit={handleSubmit}>
+      <h2 className={styles.title}>LogIn now!</h2>
       <p>{authUser.error}</p>
-      <div className={styles.formGroup}>
-        <label htmlFor="username" className={styles.label}>
-          Username
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          className={styles.input}
-          required
-        />
-      </div>
       <div className={styles.formGroup}>
         <label htmlFor="email" className={styles.label}>
           Email
@@ -70,10 +56,10 @@ const RegisterForm = () => {
         />
       </div>
       <button type="submit" className={styles.button}>
-        Register
+        LogIn
       </button>
     </form>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

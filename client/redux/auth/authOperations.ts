@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { authInitialStateType } from './authSlice';
+import { setCookie } from 'nookies';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
@@ -10,6 +11,15 @@ const setAuthHeader = (token: string) => {
 
 const removeAuthHeader = () => {
   axios.defaults.headers.common.Authorization = '';
+};
+
+const setCookieHeader = (token: string) => {
+  setCookie(null, 'token', token, {
+    maxAge: 3600,
+    path: '/',
+    sameSite: 'none',
+    secure: true,
+  });
 };
 
 type credentialsRegisterType = {
@@ -24,6 +34,7 @@ export const register = createAsyncThunk(
       const response = await axios.post('/users/signup', credentials);
       console.log(response.data);
       setAuthHeader(response.data.ResponseBody.user.token);
+      setCookieHeader(response.data.ResponseBody.user.token);
       return response.data.ResponseBody.user;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
@@ -31,13 +42,18 @@ export const register = createAsyncThunk(
   }
 );
 
+type credentialsLoginType = {
+  email: string;
+  password: string;
+};
 export const logIn = createAsyncThunk(
   'auth/login',
-  async (credentials, thunkAPI) => {
+  async (credentials: credentialsLoginType, thunkAPI) => {
     try {
       const response = await axios.post('/users/login', credentials);
       setAuthHeader(response.data.ResponseBody.token);
-      return response.data;
+      setCookieHeader(response.data.ResponseBody.token);
+      return response.data.ResponseBody;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -70,9 +86,10 @@ export const refreshUser = createAsyncThunk<
   if (!token) return thunkAPI.rejectWithValue('Valid token is not provided');
 
   setAuthHeader(token);
+  setCookieHeader(token);
   try {
     const res = await axios.get('/users/current');
-    return res.data;
+    return res.data.ResponseBody;
   } catch (e: any) {
     return thunkAPI.rejectWithValue(e.message);
   }
