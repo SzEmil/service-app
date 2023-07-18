@@ -24,7 +24,7 @@ const Restaurants = ({ restaurantData }: any) => {
     if (restaurants.length === 0) {
       dispatch(setRestaurantData(restaurantData));
     }
-  }, [dispatch]);
+  }, [dispatch, restaurants.length, restaurantData]);
 
   const handleOnClickLogOut = () => {
     dispatch(logOut());
@@ -34,16 +34,20 @@ const Restaurants = ({ restaurantData }: any) => {
     if (!isLoggedIn) {
       router.push('/');
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, router]);
   return (
     <div>
       <button onClick={() => console.log(state)}>STATE</button>
       <button onClick={handleOnClickLogOut}>LogOut</button>
       <p>RESTAURACJE TAKIE FAJNE HOHOOHOHO</p>
-      {restaurants.length !== 0 &&
-        restaurants.map(restaurant => (
-          <RestaurantBlock restaurant={restaurant} />
-        ))}
+      <ul>
+        {restaurants.length !== 0 &&
+          restaurants.map(restaurant => (
+            <li key={restaurant._id}>
+              <RestaurantBlock restaurant={restaurant} />
+            </li>
+          ))}
+      </ul>
     </div>
   );
 };
