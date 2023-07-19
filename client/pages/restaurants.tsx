@@ -11,6 +11,9 @@ import { setRestaurantData } from '../redux/restaurants/restaurantsSlice';
 import { selectRestaurantsData } from '../redux/restaurants/restaurantsSelectors';
 import { selectState } from '../redux/restaurants/restaurantsSelectors';
 import { RestaurantBlock } from '../Components/RestaurantBlock/RestaurantBlock';
+import css from '../styles/restaurant.module.css';
+import { nanoid } from 'nanoid';
+import { Header } from '../Components/Header/Header';
 
 const Restaurants = ({ restaurantData }: any) => {
   const dispatch: AppDispatch = useDispatch();
@@ -18,7 +21,7 @@ const Restaurants = ({ restaurantData }: any) => {
   const { isLoggedIn, isRefreshing } = useAuth();
 
   const restaurants = useSelector(selectRestaurantsData);
-
+  const user = useSelector(selectAuthUser);
   const state = useSelector(selectState);
   useEffect(() => {
     if (restaurants.length === 0) {
@@ -26,9 +29,6 @@ const Restaurants = ({ restaurantData }: any) => {
     }
   }, [dispatch, restaurants.length, restaurantData]);
 
-  const handleOnClickLogOut = () => {
-    dispatch(logOut());
-  };
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -36,11 +36,16 @@ const Restaurants = ({ restaurantData }: any) => {
     }
   }, [isLoggedIn, router]);
   return (
-    <div>
+    <div className={css.container}>
+      <Header user={user} />
       <button onClick={() => console.log(state)}>STATE</button>
-      <button onClick={handleOnClickLogOut}>LogOut</button>
-      <p>RESTAURACJE TAKIE FAJNE HOHOOHOHO</p>
-      <ul>
+      <p>Restaurants</p>
+      <ul className={css.restaurantsList}>
+        <li key={nanoid()}>
+          <div className={css.newRestaurantBlock}>
+            <button className={css.newRestaurantBtn}>Add new restaurant</button>
+          </div>
+        </li>
         {restaurants.length !== 0 &&
           restaurants.map(restaurant => (
             <li key={restaurant._id}>
@@ -57,9 +62,9 @@ export async function getServerSideProps({ req }: any) {
     console.log('cookie', req.headers.cookie);
     const token = req.headers.cookie?.replace('token=', '');
     axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
+    // const headers = {
+    //   Authorization: `Bearer ${token}`,
+    // };
     const response = await axios.get('http://localhost:3001/api/restaurants');
     const data = response.data;
     const restaurantData = data.ResponseBody.restaurants;

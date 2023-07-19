@@ -45,7 +45,11 @@
   line-height: 18px;
   font-weight: 200;
 }
-
+.titleImg {
+  width: 500px;
+  height: auto;
+  margin-bottom: 50px;
+}
 /* .btnBox {
   display: flex;
   justify-content: space-between;
@@ -61,6 +65,27 @@
 
   border-radius: 5px;
 } */
+.formBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.formText {
+  font-family: 'Roboto';
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 300;
+  padding-top: 10px;
+}
+.formBtn {
+  font-family: 'Roboto';
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 500;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
 .footer {
   display: flex;
   flex: 1;
