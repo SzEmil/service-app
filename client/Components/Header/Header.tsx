@@ -13,11 +13,9 @@ type User = {
     avatarURL: string | null;
   };
 };
-type HeaderProps = {
-  user: User;
-};
 
-export const Header = ({ user }: HeaderProps) => {
+
+export const Header = ({ user }: User) => {
   const [userMenuOpen, setUserMenu] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();

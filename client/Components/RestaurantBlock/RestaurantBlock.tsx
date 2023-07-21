@@ -3,6 +3,7 @@ import { restaurantType } from '../../types/restaurant';
 import css from './RestaurantBlock.module.css';
 import { MdTableRestaurant } from 'react-icons/md';
 import { FaBowlFood } from 'react-icons/fa6';
+import { useRouter } from 'next/router';
 type restaurantPropType = {
   restaurant: restaurantType;
 };
@@ -13,9 +14,15 @@ const cutDate = (date: string | null | undefined) => {
 
   return `${year}  ${time}`;
 };
+
 export const RestaurantBlock = ({ restaurant }: restaurantPropType) => {
+  const router = useRouter();
+
+  // const handleOnClickRestaurantBlock = () => {
+  //   router.push(`/restaurants/${restaurant._id}`);
+  // };
   return (
-    <div className={css.container}>
+    <div className={css.container} >
       <div className={css.descriptionBlock}>
         <p className={css.descriptionDate}>{cutDate(restaurant.createdAt)}</p>
         <h2 className={css.descriptionTitle}>"{restaurant.name}"</h2>

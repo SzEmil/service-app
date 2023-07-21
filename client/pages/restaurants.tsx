@@ -1,28 +1,22 @@
 import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useAuth } from '../hooks/useAuth';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
 import { useSelector } from 'react-redux';
-import { logOut } from '../redux/auth/authOperations';
-import { selectAuthUser } from '../redux/auth/authSelectors';
 import { setRestaurantData } from '../redux/restaurants/restaurantsSlice';
 import { selectRestaurantsData } from '../redux/restaurants/restaurantsSelectors';
 import { selectState } from '../redux/restaurants/restaurantsSelectors';
 import { RestaurantBlock } from '../Components/RestaurantBlock/RestaurantBlock';
 import css from '../styles/restaurant.module.css';
 import { nanoid } from 'nanoid';
-import { Header } from '../Components/Header/Header';
+import Link from 'next/link';
 
 const Restaurants = ({ restaurantData }: any) => {
   const dispatch: AppDispatch = useDispatch();
-  const router = useRouter();
-  const { isLoggedIn, isRefreshing } = useAuth();
+
 
   const restaurants = useSelector(selectRestaurantsData);
-  const user = useSelector(selectAuthUser);
-  const state = useSelector(selectState);
+  // const state = useSelector(selectState);
   useEffect(() => {
     if (restaurants.length === 0) {
       dispatch(setRestaurantData(restaurantData));
@@ -30,15 +24,9 @@ const Restaurants = ({ restaurantData }: any) => {
   }, [dispatch, restaurants.length, restaurantData]);
 
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.push('/');
-    }
-  }, [isLoggedIn, router]);
   return (
     <div className={css.container}>
-      <Header user={user} />
-      <button onClick={() => console.log(state)}>STATE</button>
+      <button onClick={() => console.log("")}>STATE</button>
       <p>Restaurants</p>
       <ul className={css.restaurantsList}>
         <li key={nanoid()}>
@@ -49,7 +37,9 @@ const Restaurants = ({ restaurantData }: any) => {
         {restaurants.length !== 0 &&
           restaurants.map(restaurant => (
             <li key={restaurant._id}>
-              <RestaurantBlock restaurant={restaurant} />
+              <Link href={`/restaurantId/${restaurant._id}`}>
+                <RestaurantBlock restaurant={restaurant} />
+              </Link>
             </li>
           ))}
       </ul>
