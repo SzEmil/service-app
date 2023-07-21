@@ -12,6 +12,8 @@ import { AppDispatch } from '../redux/store';
 import { useRouter } from 'next/router';
 import { useAuth } from '../hooks/useAuth';
 
+import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
+
 const Home: NextPage = () => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
@@ -38,7 +40,11 @@ const Home: NextPage = () => {
         <div className={styles.descriptionBox}>
           {/* <h1 className={styles.title}>Service</h1>
           <p className={styles.motto}>Manage your own service now!</p> */}
-            <img className={styles.titleImg} src={'./logo-low.png'} alt="logo pic" />
+          <img
+            className={styles.titleImg}
+            src={'./logo-low.png'}
+            alt="logo pic"
+          />
           <p className={styles.question}>What is Service?</p>
           <p className={styles.about}>
             Effortlessly manage orders, split bills, and provide exceptional
@@ -81,7 +87,7 @@ const Home: NextPage = () => {
           )}
         </div>
       </main>
-
+      <NewRestaurantForm />
       <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"

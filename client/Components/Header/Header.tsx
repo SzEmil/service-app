@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { logOut } from '../../redux/auth/authOperations';
+import { nanoid } from 'nanoid';
 
 type User = {
   user: {
@@ -13,7 +14,6 @@ type User = {
     avatarURL: string | null;
   };
 };
-
 
 export const Header = ({ user }: User) => {
   const [userMenuOpen, setUserMenu] = useState(false);
@@ -33,13 +33,17 @@ export const Header = ({ user }: User) => {
           className={css.userIcon}
           onClick={() => setUserMenu(prevVal => !prevVal)}
         >
-          <BiSolidUserCircle size={'36px'} />
+          <div className={css.user}>
+            <p className={css.userName}>{user.username}</p>
+
+            <BiSolidUserCircle size={'36px'} />
+          </div>
         </div>
         {userMenuOpen && (
           <div className={css.userMenu}>
             <ul>
-              <li>
-                <button onClick={() => handleOnClickLogOut()}>LogOut</button>
+              <li key={nanoid()}>
+                <button className={css.menuBtn} onClick={() => handleOnClickLogOut()}>LogOut</button>
               </li>
             </ul>
           </div>

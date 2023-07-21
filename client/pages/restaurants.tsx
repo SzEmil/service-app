@@ -5,35 +5,41 @@ import { AppDispatch } from '../redux/store';
 import { useSelector } from 'react-redux';
 import { setRestaurantData } from '../redux/restaurants/restaurantsSlice';
 import { selectRestaurantsData } from '../redux/restaurants/restaurantsSelectors';
-import { selectState } from '../redux/restaurants/restaurantsSelectors';
 import { RestaurantBlock } from '../Components/RestaurantBlock/RestaurantBlock';
 import css from '../styles/restaurant.module.css';
 import { nanoid } from 'nanoid';
+import { useState } from 'react';
 import Link from 'next/link';
+import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
 
 const Restaurants = ({ restaurantData }: any) => {
   const dispatch: AppDispatch = useDispatch();
-
+  const [isNewRestaurantFormVisible, setIsNewRestaurantFormVisible] =
+    useState(false);
 
   const restaurants = useSelector(selectRestaurantsData);
-  // const state = useSelector(selectState);
+
   useEffect(() => {
     if (restaurants.length === 0) {
       dispatch(setRestaurantData(restaurantData));
     }
   }, [dispatch, restaurants.length, restaurantData]);
 
-
   return (
     <div className={css.container}>
-      <button onClick={() => console.log("")}>STATE</button>
-      <p>Restaurants</p>
+      <h2 className={css.restaurantTitle}>Restaurants</h2>
       <ul className={css.restaurantsList}>
         <li key={nanoid()}>
           <div className={css.newRestaurantBlock}>
-            <button className={css.newRestaurantBtn}>Add new restaurant</button>
+            <button
+              onClick={() => setIsNewRestaurantFormVisible(true)}
+              className={css.newRestaurantBtn}
+            >
+              Add new restaurant
+            </button>
           </div>
         </li>
+
         {restaurants.length !== 0 &&
           restaurants.map(restaurant => (
             <li key={restaurant._id}>
@@ -43,6 +49,15 @@ const Restaurants = ({ restaurantData }: any) => {
             </li>
           ))}
       </ul>
+      {isNewRestaurantFormVisible && (
+        <div className={css.newRestaurantFormWrapper}>
+          <div className={css.newFormBlock}>
+            <NewRestaurantForm
+              setIsNewRestaurantFormVisible={setIsNewRestaurantFormVisible}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

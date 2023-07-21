@@ -126,7 +126,9 @@ const create = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Restaurant created successfully',
-      data: savedRestaurant,
+      ResponseBody: {
+        restaurant: savedRestaurant,
+      },
     });
   } catch (error) {
     next(error);

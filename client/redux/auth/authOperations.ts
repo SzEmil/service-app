@@ -67,7 +67,6 @@ export const logIn = createAsyncThunk(
 export const logOut = createAsyncThunk('auth/signOut', async (_, thunkAPI) => {
   try {
     const state = thunkAPI.getState() as AuthStateType;
-    console.log(state);
     const token = state?.auth?.token || '';
 
     if (!token) return thunkAPI.rejectWithValue('Valid token is not provided');
@@ -88,7 +87,7 @@ export const logOut = createAsyncThunk('auth/signOut', async (_, thunkAPI) => {
   }
 });
 
-type AuthStateType = {
+export type AuthStateType = {
   auth: authInitialStateType;
 };
 

@@ -25,7 +25,7 @@ export const RestaurantBlock = ({ restaurant }: restaurantPropType) => {
     <div className={css.container} >
       <div className={css.descriptionBlock}>
         <p className={css.descriptionDate}>{cutDate(restaurant.createdAt)}</p>
-        <h2 className={css.descriptionTitle}>"{restaurant.name}"</h2>
+        <h2 className={css.descriptionTitle}>{restaurant.name}</h2>
         <div className={css.infoBox}>
           <div className={css.infoItem}>
             <p className={css.infoLabel}>Active tables</p>

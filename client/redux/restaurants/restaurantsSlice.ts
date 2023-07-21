@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { restaurantType } from '../../types/restaurant';
+import { addRestaurant } from './restaurantsOperations';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
@@ -15,6 +16,11 @@ const restaurantSlice = createSlice({
     setRestaurantData(state, action) {
       state.restaurants = action.payload;
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(addRestaurant.fulfilled, (state, action) => {
+      state.restaurants = [action.payload, ...state.restaurants];
+    });
   },
 });
 
