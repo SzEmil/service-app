@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+
+  position: relative;
+}
+.title {
+  width: 240px;
+  height: auto;
+}
+.userIcon {
+  cursor: pointer;
+
+  transition: color 200ms ease;
+}
+.userIcon:hover,
+.userIcon:focus {
+  color: rgb(33, 165, 253);
+}
+.user {
+  display: flex;
+  align-items: center;
+}
+.userName {
+  font-family: 'Roboto';
+  font-size: 18px;
+  line-height: 20px;
+  font-weight: 300;
+  padding-right: 10px;
+}
+
+.userMenu {
+  right: 0;
+  position: absolute;
+  background-color: black;
+}
+.menuBtn {
+  color: white;
+  font-family: 'Roboto';
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+
+  cursor: pointer;
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+}

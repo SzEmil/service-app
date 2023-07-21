@@ -32,7 +32,7 @@ const RegisterForm = () => {
   return (
     <form className={styles.registerForm} onSubmit={handleSubmit}>
       <h2 className={styles.title}>Register now!</h2>
-      <p>{authUser.error}</p>
+      <p className={styles.error}>{authUser.error}</p>
       <div className={styles.formGroup}>
         <label htmlFor="username" className={styles.label}>
           Username

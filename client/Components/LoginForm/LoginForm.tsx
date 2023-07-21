@@ -30,7 +30,7 @@ const LoginForm = () => {
   return (
     <form className={styles.loginForm} onSubmit={handleSubmit}>
       <h2 className={styles.title}>LogIn now!</h2>
-      <p>{authUser.error}</p>
+      <p className={styles.error}>{authUser.error}</p>
       <div className={styles.formGroup}>
         <label htmlFor="email" className={styles.label}>
           Email

@@ -3,6 +3,9 @@ import { authInitialStateType } from './authSlice';
 export const selectAuthUser = (state: { auth: authInitialStateType }) =>
   state.auth;
 
+  export const selectAuthUserData = (state: { auth: authInitialStateType }) =>
+  state.auth.user;
+
   export const selectAuthUserIsLoggedIn = (state: { auth: authInitialStateType }) =>
   state.auth.isLoggedIn;
 

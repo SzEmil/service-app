@@ -28,6 +28,14 @@ const authSlice = createSlice({
   initialState: authInitialState,
   reducers: {
     importInfoData: state => state,
+    logoutSuccess: state => {
+      (state.token = null),
+        (state.error = null),
+        (state.isLoggedIn = false),
+        (state.user.avatarURL = null),
+        (state.user.email = null),
+        (state.user.username = null);
+    },
   },
   extraReducers: builder => {
     builder.addCase(register.pending, (state: authInitialStateType) => {
@@ -148,5 +156,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { importInfoData } = authSlice.actions;
+export const { importInfoData, logoutSuccess } = authSlice.actions;
 export const authReducer = authSlice.reducer;

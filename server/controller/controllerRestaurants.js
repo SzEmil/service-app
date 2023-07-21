@@ -17,7 +17,7 @@ const getUserRestaurants = async (req, res, next) => {
       });
     }
     const results = await serviceRestaurant.getRestaurantsByOwner(_id);
-
+    //tutaj bede sprawdzać czy dany user jest colaboraterem jesli tak to ten reslut bedzie zwracanyy dodatkowowo w responsie
     return res.status(200).json({
       status: 'OK',
       code: 200,
@@ -126,7 +126,9 @@ const create = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Restaurant created successfully',
-      data: savedRestaurant,
+      ResponseBody: {
+        restaurant: savedRestaurant,
+      },
     });
   } catch (error) {
     next(error);

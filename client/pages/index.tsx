@@ -12,6 +12,8 @@ import { AppDispatch } from '../redux/store';
 import { useRouter } from 'next/router';
 import { useAuth } from '../hooks/useAuth';
 
+import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
+
 const Home: NextPage = () => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
@@ -36,8 +38,13 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <div className={styles.descriptionBox}>
-          <h1 className={styles.title}>Service</h1>
-          <p className={styles.motto}>Manage your own service now!</p>
+          {/* <h1 className={styles.title}>Service</h1>
+          <p className={styles.motto}>Manage your own service now!</p> */}
+          <img
+            className={styles.titleImg}
+            src={'./logo-low.png'}
+            alt="logo pic"
+          />
           <p className={styles.question}>What is Service?</p>
           <p className={styles.about}>
             Effortlessly manage orders, split bills, and provide exceptional
@@ -48,28 +55,39 @@ const Home: NextPage = () => {
             revolutionize your restaurant operations!
           </p>
         </div>
-        <div>
+        <div className={styles.formBox}>
           {form === 'register' && (
             <>
               <RegisterForm />
-              <p>
+              <p className={styles.formText}>
                 Already have an account?{' '}
-                <button onClick={() => setForm('login')}>logIn</button>
+                <button
+                  className={styles.formBtn}
+                  onClick={() => setForm('login')}
+                >
+                  logIn
+                </button>
               </p>
             </>
           )}
           {form === 'login' && (
             <>
               <LoginForm />
-              <p>
-                No account? register now!
-                <button onClick={() => setForm('register')}>Register</button>
+              <p className={styles.formText}>
+                No account?{' '}
+                <button
+                  className={styles.formBtn}
+                  onClick={() => setForm('register')}
+                >
+                  Register
+                </button>{' '}
+                now!
               </p>
             </>
           )}
         </div>
       </main>
-
+      <NewRestaurantForm />
       <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
