@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
-import RegisterForm from '../Components/Register/RegisterForm';
+import RegisterForm from '../Components/RegisterForm/RegisterForm';
 import { useState } from 'react';
 import LoginForm from '../Components/LoginForm/LoginForm';
 import { useEffect } from 'react';

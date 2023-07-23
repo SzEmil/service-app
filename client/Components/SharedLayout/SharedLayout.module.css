@@ -4,7 +4,14 @@
 }
 .cookieBox {
   width: 100%;
-  position: sticky;
+  max-width: 1200px;
+  position: fixed;
   bottom: 0;
-  left: 0;
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+.headerWrapper {
+  position: fixed;
+  width: 1200px;
 }

@@ -5,16 +5,17 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { useSelector } from 'react-redux';
 import css from '../../styles/restaurantId.module.css';
-import { nanoid } from 'nanoid';
 import { selectCurrentRestaurant } from '../../redux/restaurants/restaurantsSelectors';
 import { setCurrentRestaurant } from '../../redux/restaurants/restaurantsSlice';
 import { MenuRestaurant } from '../../Components/MenuRestaurant/MenuRestaurant';
 import { TablesRestaurant } from '../../Components/TablesRestaurant/TablesRestaurant';
-
+import { InviteForm } from '../../Components/InviteForm/InviteForm';
 
 const RestaurantPage = ({ restaurant }: any) => {
   const [isTablesOpen, setIsTablesOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [isInviteFormOpen, setIsInviteFormOpen] = useState(false);
 
   const handleOpenTables = () => {
     setIsTablesOpen(true);
@@ -42,6 +43,12 @@ const RestaurantPage = ({ restaurant }: any) => {
     <>
       <div>
         <h1>{restaurant.name}</h1>
+        <button
+          className={css.button}
+          onClick={() => setIsInviteFormOpen(true)}
+        >
+          Invite friend
+        </button>
         <ul className={css.navBtn}>
           <li>
             <button onClick={() => handleOpenTables()} className={css.button}>
@@ -71,6 +78,14 @@ const RestaurantPage = ({ restaurant }: any) => {
         ) : (
           <p>Loading data...</p>
         )}
+        {isInviteFormOpen && (
+          <div className={css.inviteFormBackdrop}>
+            <div className={css.inviteFormWrapper}>
+              <InviteForm setIsInviteFormOpen={setIsInviteFormOpen}/>
+            </div>
+          </div>
+        )}
+
       </div>
     </>
   );

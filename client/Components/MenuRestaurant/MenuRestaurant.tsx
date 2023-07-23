@@ -5,12 +5,15 @@ import { FilterMenu } from '../FilterMenu/FilterMenu';
 import { useSelector } from 'react-redux';
 import { selectFilterInput } from '../../redux/filter/filterSelectors';
 import { MenuForm } from '../MenuForm/MenuForm';
+import { useState } from 'react';
 
 type menuProps = {
   menu: dishType[] | [] | null | undefined;
 };
 
 export const MenuRestaurant = ({ menu }: menuProps) => {
+  const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
+
   const filteredInput = useSelector(selectFilterInput);
   const filteredMenu = menu!.filter(dish =>
     dish.name.toLowerCase().includes(filteredInput.toLocaleLowerCase())
@@ -20,7 +23,12 @@ export const MenuRestaurant = ({ menu }: menuProps) => {
       <div className={css.menuSearchForm}>
         <div className={css.menuBox}>
           <h2 className={css.menuTitle}>Menu</h2>
-          <button className={css.button}>Edit menu</button>
+          <button
+            onClick={() => setIsEditMenuOpen(true)}
+            className={css.button}
+          >
+            Edit menu
+          </button>
         </div>
         <FilterMenu />
       </div>
@@ -44,7 +52,14 @@ export const MenuRestaurant = ({ menu }: menuProps) => {
           </li>
         ))}
       </ul>
-      <MenuForm />
+      {isEditMenuOpen && (
+        <div className={css.editMenuFormBackdrop}>
+          <div className={css.editMenuFormWrapper}>
+            <MenuForm setIsEditMenuOpen={setIsEditMenuOpen} />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

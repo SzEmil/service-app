@@ -19,7 +19,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
-    // Wysłanie danych na serwer itd. - możesz dodać tę logikę tutaj.
+
     const credentials = {
       name: (form.elements.namedItem('restaurantName') as HTMLInputElement)
         .value,
@@ -109,7 +109,6 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
         />
       </div>
 
-      {/* Renderowanie pól dla każdego dania w stanie menuItems */}
       {menuItems.map((item, index) => (
         <div className={styles.dish} key={index}>
           <div className={styles.formGroup}>

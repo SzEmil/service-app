@@ -11,8 +11,9 @@ export const CookieBaner = () => {
             X
           </button>
           <p className={css.text}>
-            Ta strona korzysta z plików cookies. Ich wykorzsytanie pozwala na
-            poprawne działanie funkcjonalności na stronie
+            We use a minimal amount of cookies to ensure the best experience on
+            our website. If you continue to use this site we will assume that
+            you are happy with it.
           </p>
         </div>
       )}

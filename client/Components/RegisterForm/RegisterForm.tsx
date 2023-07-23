@@ -5,6 +5,7 @@ import { AppDispatch } from '../../redux/store';
 import { register } from '../../redux/auth/authOperations';
 import { useSelector } from 'react-redux';
 import { selectAuthUser } from '../../redux/auth/authSelectors';
+import { getInvitationsData } from '../../redux/auth/authOperations';
 
 type credentialsRegisterType = {
   username: string;
@@ -15,7 +16,7 @@ const RegisterForm = () => {
   const dispatch: AppDispatch = useDispatch();
   const authUser = useSelector(selectAuthUser);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
 
@@ -25,7 +26,8 @@ const RegisterForm = () => {
       password: (form.elements.namedItem('password') as HTMLInputElement).value,
     };
 
-    dispatch(register(credentials));
+    await dispatch(register(credentials));
+    dispatch(getInvitationsData());
     form.reset();
   };
 

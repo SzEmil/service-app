@@ -75,7 +75,6 @@ export const logOut = createAsyncThunk('auth/signOut', async (_, thunkAPI) => {
     removeCookieHeader();
     removeAuthHeader();
   } catch (error: any) {
-
     if (error?.response?.status === 401) {
       removeCookieHeader();
       removeAuthHeader();
@@ -97,10 +96,10 @@ export const refreshUser = createAsyncThunk<
   { state: AuthStateType }
 >('auth/refresh', async (_, thunkAPI) => {
   const state = thunkAPI.getState() as AuthStateType;
-  console.log(state);
   const token = state?.auth?.token || '';
 
-  if (!token) return thunkAPI.rejectWithValue('Login or register to get access');
+  if (!token)
+    return thunkAPI.rejectWithValue('Login or register to get access');
 
   setAuthHeader(token);
   setCookieHeader(token);
@@ -111,3 +110,23 @@ export const refreshUser = createAsyncThunk<
     return thunkAPI.rejectWithValue(e.message);
   }
 });
+
+export const getInvitationsData = createAsyncThunk(
+  'user/getInvitationsData',
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      const res = await axios.get('/users/invitations');
+      return res.data.ResponseBody.invitations;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);

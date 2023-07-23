@@ -5,7 +5,7 @@ import styles from './MenuForm.module.css';
 import { useSelector } from 'react-redux';
 import { selectCurrentRestaurantMenu } from '../../redux/restaurants/restaurantsSelectors';
 
-export const MenuForm = () => {
+export const MenuForm = ({ setIsEditMenuOpen }: any) => {
   const dispatch: AppDispatch = useDispatch();
   const currentMenu = useSelector(selectCurrentRestaurantMenu);
 
@@ -16,7 +16,6 @@ export const MenuForm = () => {
     const form = event.currentTarget;
 
     const credentials = {
-
       menu: menuItems,
       icon: 'icon.img',
     };
@@ -47,7 +46,7 @@ export const MenuForm = () => {
       parsedValue = parseFloat(value);
     }
 
-    setMenuItems(prevMenuItems => {
+    setMenuItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];
       updatedMenuItems[index] = {
         ...updatedMenuItems[index],
@@ -58,7 +57,7 @@ export const MenuForm = () => {
   };
 
   const handleAddNewDish = () => {
-    setMenuItems(prevMenuItems => [
+    setMenuItems((prevMenuItems: any) => [
       ...prevMenuItems,
       {
         name: '',
@@ -70,7 +69,7 @@ export const MenuForm = () => {
   };
 
   const handleRemoveDish = (index: number) => {
-    setMenuItems(prevMenuItems => {
+    setMenuItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];
       updatedMenuItems.splice(index, 1);
       return updatedMenuItems;
@@ -84,7 +83,7 @@ export const MenuForm = () => {
     >
       <button
         className={`${styles.button} ${styles.buttonCancel}`}
-        onClick={() => console.log('zamykam')}
+        onClick={() => setIsEditMenuOpen(false)}
       >
         Cancel menu modifications
       </button>
