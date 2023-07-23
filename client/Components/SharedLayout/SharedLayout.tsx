@@ -7,6 +7,7 @@ import { CookieBaner } from '../CookieBaner/CookieBaner';
 import { useEffect } from 'react';
 import {useRouter} from "next/router"
 import { useAuth } from '../../hooks/useAuth';
+
 type LayoutProps = {
   children: ReactNode;
 };
@@ -17,11 +18,11 @@ export const SharedLayout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const { isLoggedIn, isRefreshing } = useAuth();
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.push('/');
-    }
-  }, [isLoggedIn, router]);
+  // useEffect(() => {
+  //   if (!isLoggedIn) {
+  //     router.push('/');
+  //   }
+  // }, [isLoggedIn, router]);
 
   return (
     <div className={css.container}>

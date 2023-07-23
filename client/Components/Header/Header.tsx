@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { logOut } from '../../redux/auth/authOperations';
 import { nanoid } from 'nanoid';
+import Link from 'next/link';
 
 type User = {
   user: {
@@ -27,7 +28,9 @@ export const Header = ({ user }: User) => {
   return (
     <header className={css.header}>
       {/* <p className={css.title}>SERVISE</p> */}
-      <img className={css.title} src={'./logo-low.png'} alt="logo pic" />
+      <Link href={'/restaurants'}>
+        <img className={css.title} src={'./logo-low.png'} alt="logo pic" />
+      </Link>
       <nav>
         <div
           className={css.userIcon}
@@ -43,7 +46,12 @@ export const Header = ({ user }: User) => {
           <div className={css.userMenu}>
             <ul>
               <li key={nanoid()}>
-                <button className={css.menuBtn} onClick={() => handleOnClickLogOut()}>LogOut</button>
+                <button
+                  className={css.menuBtn}
+                  onClick={() => handleOnClickLogOut()}
+                >
+                  LogOut
+                </button>
               </li>
             </ul>
           </div>

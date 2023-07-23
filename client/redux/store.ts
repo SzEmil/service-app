@@ -1,6 +1,6 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
-
+import { filterReducer } from './filter/filterSlice';
 import storage from 'redux-persist/lib/storage';
 import { authReducer } from './auth/authSlice';
 import { restaurantsReducer } from './restaurants/restaurantsSlice';
@@ -24,7 +24,7 @@ const authPersistConfig = {
 const restaurantsPersistConfig = {
   key: 'restaurants',
   storage,
-  whitelist: ['restaurants'],
+  whitelist: ['restaurants, "currentRestaurant'],
 };
 
 const ignoredActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER];
@@ -32,7 +32,8 @@ export const store = configureStore({
   reducer: {
     auth: persistReducer(authPersistConfig, authReducer),
     // auth: authReducer,
-    restaurants: persistReducer(restaurantsPersistConfig, restaurantsReducer)
+    restaurants: persistReducer(restaurantsPersistConfig, restaurantsReducer),
+    filter: filterReducer,
   },
 
   middleware: getDefaultMiddleware({
