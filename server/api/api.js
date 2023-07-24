@@ -30,6 +30,10 @@ router.patch(
 
 router.get('/users/invitations', authUser, userController.getUserInvitations);
 
+router.post('/users/invitations/reject', authUser, userController.rejectUserInvitation);
+
+
+router.post('/users/invitations/accept', authUser, userController.acceptUserInvitation);
 // Restaurants
 //jako body przekazuje name, icon, menu=[{name,description,price}]
 router.post('/restaurants', authUser, controllerRestaurant.create);

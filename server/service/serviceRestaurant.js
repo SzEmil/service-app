@@ -9,16 +9,31 @@ const getRestaurantsByOwner = async userId => {
   });
 };
 
-const getRestaurantById = async (restaurantId, userId) => {
-  return Restaurant.findOne({
-    $and: [
+const getAllUserRestaurants = async (userId) => {
+  return Restaurant.find({
+    $or: [
       { owner: userId },
-      { _id: restaurantId },
-      { owner: { $exists: true } },
+      { colabolators: { $in: [userId] } },
     ],
   });
 };
 
+const getRestaurantById = async (restaurantId, userId) => {
+  return Restaurant.findOne({
+    $or: [
+      { owner: userId },
+      { colabolators: { $in: [userId] } },
+    ],
+    _id: restaurantId,
+    owner: { $exists: true },
+  });
+};
+
+const getRestaurantOnlyById = async restaurantId => {
+  return Restaurant.findOne({
+    _id: restaurantId,
+  });
+};
 const getRestaurantByName = async (name, userId) => {
   return Restaurant.findOne({
     $and: [{ owner: userId }, { name: name }, { owner: { $exists: true } }],
@@ -66,6 +81,12 @@ const getInvitationByEmailAndRestaurantName = async (email, restaurantName) => {
   });
 };
 
+const getUserFromRestaurantColabolators = async (restaurantId, userId) => {
+  return Restaurant.findOne({
+    $and: [{ _id: restaurantId }, { colabolators: { $in: [userId] } }],
+  });
+};
+
 const serviceRestaurant = {
   getRestaurantById,
   getRestaurantsByOwner,
@@ -74,5 +95,7 @@ const serviceRestaurant = {
   getRestaurantTableById,
   getDishById,
   getInvitationByEmailAndRestaurantName,
+  getRestaurantOnlyById,
+  getAllUserRestaurants
 };
 export default serviceRestaurant;

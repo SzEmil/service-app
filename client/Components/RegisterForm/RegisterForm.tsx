@@ -2,10 +2,10 @@ import styles from './RegisterForm.module.css';
 import { FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { register } from '../../redux/auth/authOperations';
+import { register } from '../../redux/user/userOperations';
 import { useSelector } from 'react-redux';
-import { selectAuthUser } from '../../redux/auth/authSelectors';
-import { getInvitationsData } from '../../redux/auth/authOperations';
+import { selectAuthUser } from '../../redux/user/userSelectors';
+import { getInvitationsData } from '../../redux/user/userOperations';
 
 type credentialsRegisterType = {
   username: string;

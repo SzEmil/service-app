@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { authInitialStateType } from './authSlice';
+import { authInitialStateType } from './userSlice';
 import { setCookie, destroyCookie } from 'nookies';
-import { logoutSuccess } from './authSlice';
+import { logoutSuccess } from './userSlice';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
@@ -125,6 +125,52 @@ export const getInvitationsData = createAsyncThunk(
     try {
       const res = await axios.get('/users/invitations');
       return res.data.ResponseBody.invitations;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+type idToDeleteType = {
+  invitationId: string | null | undefined
+}
+export const rejectInvitation = createAsyncThunk(
+  'user/rejectInvitation',
+  async (idToDelete: idToDeleteType, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      await axios.post('/users/invitations/reject', idToDelete);
+      return idToDelete.invitationId;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+type idToAcceptType = {
+  invitationId: string | null | undefined
+}
+export const acceptInvitation = createAsyncThunk(
+  'user/acceptInvitation',
+  async (idToAccept: idToAcceptType, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      await axios.post('/users/invitations/accept', idToAccept);
+      return idToAccept.invitationId;
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
     }

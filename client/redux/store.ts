@@ -2,7 +2,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import { filterReducer } from './filter/filterSlice';
 import storage from 'redux-persist/lib/storage';
-import { authReducer } from './auth/authSlice';
+import { authReducer } from './user/userSlice';
 import { restaurantsReducer } from './restaurants/restaurantsSlice';
 import {
   FLUSH,
