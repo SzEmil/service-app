@@ -4,9 +4,11 @@ import { addRestaurant } from './restaurantsOperations';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
+  currentRestaurant: restaurantType | null;
 };
 const restaurantInitialState: restaurantsStateType = {
   restaurants: [],
+  currentRestaurant: null,
 };
 
 const restaurantSlice = createSlice({
@@ -16,6 +18,9 @@ const restaurantSlice = createSlice({
     setRestaurantData(state, action) {
       state.restaurants = action.payload;
     },
+    setCurrentRestaurant(state, action) {
+      state.currentRestaurant = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(addRestaurant.fulfilled, (state, action) => {
@@ -24,5 +29,6 @@ const restaurantSlice = createSlice({
   },
 });
 
-export const { setRestaurantData } = restaurantSlice.actions;
+export const { setRestaurantData, setCurrentRestaurant } =
+  restaurantSlice.actions;
 export const restaurantsReducer = restaurantSlice.reducer;

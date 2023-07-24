@@ -11,3 +11,6 @@ export const selectAuthUser = (state: { auth: authInitialStateType }) =>
 
   export const selectAuthUserIsRefreshing = (state: { auth: authInitialStateType }) =>
   state.auth.isRefreshing;
+
+  export const selectAuthUserInvitations= (state: { auth: authInitialStateType }) =>
+  state.auth.invitations.invitations;

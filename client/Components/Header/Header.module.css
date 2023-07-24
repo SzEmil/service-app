@@ -36,6 +36,7 @@
   right: 0;
   position: absolute;
   background-color: black;
+  z-index: 1001;
 }
 .menuBtn {
   color: white;
@@ -48,4 +49,100 @@
   padding: 10px;
   background-color: transparent;
   border: none;
+}
+
+.invitationWrapper {
+  border: 0.2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+.invitationWrapper:hover,
+.invitationWrapper:focus {
+  background-color: rgb(44, 44, 44);
+}
+.invitationButtonRefresh {
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform 2s linear;
+}
+
+.invitationButtonRefresh:hover,
+.invitationButtonRefresh:focus {
+  color: rgb(33, 165, 253);
+}
+.invitationText {
+  color: white;
+  font-family: 'Roboto';
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+  padding: 10px;
+}
+
+.inviteFormBackdrop {
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.inviteFormWrapper {
+  z-index: 2001;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  background-color: white;
+  border-radius: 5px;
+}
+.invitationBlock {
+  padding: 15px;
+}
+.button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.invitationCloseBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.invitationCloseBtn:hover,
+.invitationCloseBtn:focus {
+  background-color: #474747;
+}
+
+.invitationAcceptBtn {
+}
+.invitationAcceptBtn:hover,
+.invitationAcceptBtn:focus {
+  background-color: #474747;
+}
+
+.invitationRejectBtn {
+}
+.invitationRejectBtn:hover,
+.invitationRejectBtn:focus {
+  background-color: #474747;
+}
+
+.invitationCreatedAt {
+}
+.invitationText {
 }

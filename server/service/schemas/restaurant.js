@@ -38,6 +38,11 @@ const restaurantSchema = new Schema(
         type: Object,
       },
     ],
+    colabolators: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
   },
   { versionKey: false, timestamps: true }
 );

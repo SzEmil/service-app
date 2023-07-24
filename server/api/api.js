@@ -28,6 +28,8 @@ router.patch(
   userController.uploadAvatar
 );
 
+router.get('/users/invitations', authUser, userController.getUserInvitations);
+
 // Restaurants
 //jako body przekazuje name, icon, menu=[{name,description,price}]
 router.post('/restaurants', authUser, controllerRestaurant.create);
@@ -50,6 +52,12 @@ router.get(
   '/restaurants/:restaurantId/tables',
   authUser,
   controllerRestaurant.getRestaurantTables
+);
+
+router.post(
+  '/restaurants/:restaurantId/invitations',
+  authUser,
+  controllerRestaurant.createInviteRestaurantColabolator
 );
 //By dodać zamówienie trzeba bedzie nowy obiekt zamówienia dodać push do tablicy orders danego stolika czyli ten stolik albo lepiej order trzeba wyszukać apotem table.orders.push(object)
 export default router;

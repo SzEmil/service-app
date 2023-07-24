@@ -1,43 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import styles from './NewRestaurantForm.module.css';
-import { FormEvent } from 'react';
-import { addRestaurant } from '../../redux/restaurants/restaurantsOperations';
-export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
-  const dispatch: AppDispatch = useDispatch();
+import styles from './MenuForm.module.css';
+import { useSelector } from 'react-redux';
+import { selectCurrentRestaurantMenu } from '../../redux/restaurants/restaurantsSelectors';
 
-  const [menuItems, setMenuItems] = useState([
-    {
-      name: '',
-      description: '',
-      kcal: 0,
-      price: 0,
-    },
-  ]);
+export const MenuForm = ({ setIsEditMenuOpen }: any) => {
+  const dispatch: AppDispatch = useDispatch();
+  const currentMenu = useSelector(selectCurrentRestaurantMenu);
+
+  const [menuItems, setMenuItems] = useState(currentMenu);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
 
     const credentials = {
-      name: (form.elements.namedItem('restaurantName') as HTMLInputElement)
-        .value,
       menu: menuItems,
       icon: 'icon.img',
     };
     console.log(credentials);
-    setMenuItems([
-      {
-        name: '',
-        description: '',
-        kcal: 0,
-        price: 0,
-      },
-    ]);
-    dispatch(addRestaurant(credentials));
+    //   setMenuItems([
+    //     {
+    //       name: '',
+    //       description: '',
+    //       kcal: 0,
+    //       price: 0,
+    //     },
+    //   ]);
+    //   dispatch(addRestaurant(credentials));
     form.reset();
-    setIsNewRestaurantFormVisible(false);
   };
 
   const handleInputChange = (
@@ -54,7 +46,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
       parsedValue = parseFloat(value);
     }
 
-    setMenuItems(prevMenuItems => {
+    setMenuItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];
       updatedMenuItems[index] = {
         ...updatedMenuItems[index],
@@ -65,7 +57,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
   };
 
   const handleAddNewDish = () => {
-    setMenuItems(prevMenuItems => [
+    setMenuItems((prevMenuItems: any) => [
       ...prevMenuItems,
       {
         name: '',
@@ -77,7 +69,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
   };
 
   const handleRemoveDish = (index: number) => {
-    setMenuItems(prevMenuItems => {
+    setMenuItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];
       updatedMenuItems.splice(index, 1);
       return updatedMenuItems;
@@ -91,25 +83,13 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
     >
       <button
         className={`${styles.button} ${styles.buttonCancel}`}
-        onClick={() => setIsNewRestaurantFormVisible(false)}
+        onClick={() => setIsEditMenuOpen(false)}
       >
-        Cancel restaurant
+        Cancel menu modifications
       </button>
-      <h2 className={styles.title}>Add new Restaurant</h2>
-      <div className={styles.formGroup}>
-        <label htmlFor="restaurantName" className={styles.label}>
-          Restaurant name
-        </label>
-        <input
-          type="text"
-          id="restaurantName"
-          name="restaurantName"
-          className={styles.input}
-          required
-        />
-      </div>
+      <h2 className={styles.title}>Edit menu</h2>
 
-      {menuItems.map((item, index) => (
+      {menuItems!.map((item, index) => (
         <div className={styles.dish} key={index}>
           <div className={styles.formGroup}>
             <label htmlFor={`dishName${index}`} className={styles.label}>
@@ -186,7 +166,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
       </button>
 
       <button type="submit" className={styles.button}>
-        Create restaurant
+        Save changes
       </button>
     </form>
   );
