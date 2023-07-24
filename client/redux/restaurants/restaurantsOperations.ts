@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { restaurantsStateType } from './restaurantsSlice';
 import axios from 'axios';
-import { AuthStateType } from '../auth/authOperations';
+import { AuthStateType } from '../user/userOperations';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 

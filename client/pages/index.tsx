@@ -6,7 +6,7 @@ import RegisterForm from '../Components/RegisterForm/RegisterForm';
 import { useState } from 'react';
 import LoginForm from '../Components/LoginForm/LoginForm';
 import { useEffect } from 'react';
-import { refreshUser } from '../redux/auth/authOperations';
+import { refreshUser } from '../redux/user/userOperations';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
 import { useRouter } from 'next/router';

@@ -5,7 +5,9 @@ import {
   logOut,
   refreshUser,
   getInvitationsData,
-} from './authOperations';
+  rejectInvitation,
+  acceptInvitation
+} from './userOperations';
 
 export type invitationType = {
   _id: string | null | undefined;
@@ -190,7 +192,43 @@ const authSlice = createSlice({
     builder.addCase(getInvitationsData.fulfilled, (state, action) => {
       state.invitations.isLoading = false;
       state.invitations.error = null;
-      state.invitations.invitations = [...action.payload]
+      state.invitations.invitations = [...action.payload];
+    });
+
+    builder.addCase(rejectInvitation.pending, state => {
+      state.invitations.isLoading = true;
+      state.invitations.error = null;
+    });
+    builder.addCase(rejectInvitation.rejected, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = action.payload;
+    });
+    builder.addCase(rejectInvitation.fulfilled, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = null;
+
+      const indexToRemove = state.invitations.invitations.findIndex(
+        invitation => invitation._id!.toString() === action.payload
+      );
+      state.invitations.invitations.splice(indexToRemove, 1);
+    });
+
+    builder.addCase(acceptInvitation.pending, state => {
+      state.invitations.isLoading = true;
+      state.invitations.error = null;
+    });
+    builder.addCase(acceptInvitation.rejected, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = action.payload;
+    });
+    builder.addCase(acceptInvitation.fulfilled, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = null;
+
+      const indexToRemove = state.invitations.invitations.findIndex(
+        invitation => invitation._id!.toString() === action.payload
+      );
+      state.invitations.invitations.splice(indexToRemove, 1);
     });
   },
 });

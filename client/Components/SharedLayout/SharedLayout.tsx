@@ -1,13 +1,13 @@
 import React, { ReactNode } from 'react';
 import css from './SharedLayout.module.css';
 import { useSelector } from 'react-redux';
-import { selectAuthUserData } from '../../redux/auth/authSelectors';
+import { selectAuthUserData } from '../../redux/user/userSelectors';
 import { Header } from '../Header/Header';
 import { CookieBaner } from '../CookieBaner/CookieBaner';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../hooks/useAuth';
-import { getInvitationsData } from '../../redux/auth/authOperations';
+import { getInvitationsData } from '../../redux/user/userOperations';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 
@@ -33,9 +33,7 @@ export const SharedLayout: React.FC<LayoutProps> = ({ children }) => {
     <div className={css.container}>
       <Header user={user} />
 
-      <main className={css.main}>{children}
-      
-      </main>
+      <main className={css.main}>{children}</main>
       <div className={css.cookieBox}>
         <CookieBaner />
       </div>

@@ -18,7 +18,7 @@ const getUserRestaurants = async (req, res, next) => {
         },
       });
     }
-    const results = await serviceRestaurant.getRestaurantsByOwner(_id);
+    const results = await serviceRestaurant.getAllUserRestaurants(_id);
     //tutaj bede sprawdzać czy dany user jest colaboraterem jesli tak to ten reslut bedzie zwracanyy dodatkowowo w responsie
     return res.status(200).json({
       status: 'OK',
@@ -328,10 +328,12 @@ const createInviteRestaurantColabolator = async (req, res, next) => {
           });
         }
 
+
         const newInvitation = new Invitation({
           sender: invitationOwner.email,
           receiver: foundColabolator.email,
           restaurantName: restaurant.name,
+          restaurantId: restaurant._id,
         });
         await newInvitation.save();
         return res.status(200).json({

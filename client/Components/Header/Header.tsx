@@ -4,13 +4,15 @@ import css from './Header.module.css';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { logOut } from '../../redux/auth/authOperations';
+import { logOut } from '../../redux/user/userOperations';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
-import { selectAuthUserInvitations } from '../../redux/auth/authSelectors';
-import { invitationType } from '../../redux/auth/authSlice';
-import { getInvitationsData } from '../../redux/auth/authOperations';
+import { selectAuthUserInvitations } from '../../redux/user/userSelectors';
+import { invitationType } from '../../redux/user/userSlice';
+import { getInvitationsData } from '../../redux/user/userOperations';
 import { FiRefreshCcw } from 'react-icons/fi';
+import { rejectInvitation } from '../../redux/user/userOperations';
+import { acceptInvitation } from '../../redux/user/userOperations';
 
 type User = {
   user: {
@@ -45,9 +47,27 @@ export const Header = ({ user }: User) => {
 
     return `${year}  ${time}`;
   };
+
   const handleOnClickRefreshInvitations = async () => {
     dispatch(getInvitationsData());
   };
+
+  const handleOnClickRejectInvitation = (id: string | null | undefined) => {
+
+    const idToDelete = {
+      invitationId: id,
+    };
+    setIsInvitationOpen(false);
+    dispatch(rejectInvitation(idToDelete));
+  };
+  const handleOnClickAcceptInvitation = (id: string | null | undefined) => {
+    const idToAccept = {
+      invitationId: id,
+    };
+    setIsInvitationOpen(false);
+    dispatch(acceptInvitation(idToAccept));
+  };
+
   return (
     <header className={css.header}>
       {/* <p className={css.title}>SERVISE</p> */}
@@ -67,7 +87,7 @@ export const Header = ({ user }: User) => {
         </div>
         {userMenuOpen && (
           <div className={css.userMenu}>
-            <ul>
+            <ul className={css.userNav}>
               <li key={nanoid()}>
                 <button
                   className={css.menuBtn}
@@ -76,14 +96,21 @@ export const Header = ({ user }: User) => {
                   LogOut
                 </button>
               </li>
+            </ul>
+
+            <ul className={css.invitationsBlock}>
               <li key={nanoid()}>
-                <button
-                  className={css.invitationButtonRefresh}
-                  onClick={() => handleOnClickRefreshInvitations()}
-                >
-                  <FiRefreshCcw size={'24px'} />
-                </button>
+                <div className={css.userInvitationsBtnWrapper}>
+                  <p className={css.invitationsTitle}>User invitations</p>
+                  <button
+                    className={css.invitationButtonRefresh}
+                    onClick={() => handleOnClickRefreshInvitations()}
+                  >
+                    <FiRefreshCcw size={'24px'} />
+                  </button>
+                </div>
               </li>
+
               {userInvitations.map(invitation => (
                 <li key={invitation._id}>
                   <div
@@ -105,25 +132,39 @@ export const Header = ({ user }: User) => {
           <div className={css.inviteFormWrapper}>
             {invitationData !== null && (
               <div className={css.invitationBlock}>
-                <button
-                  className={` ${css.invitationCloseBtn}`}
-                  onClick={() => setIsInvitationOpen(false)}
-                >
-                  X
-                </button>
-                <p className={css.invitationCreatedAt}>
-                  {invitationData.createdAt}
-                </p>
+                <div className={css.invitationFormHeader}>
+                  <p className={css.invitationCreatedAt}>
+                    {cutDate(invitationData.createdAt)}
+                  </p>
+                  <button
+                    className={` ${css.invitationCloseBtn}`}
+                    onClick={() => setIsInvitationOpen(false)}
+                  >
+                    X
+                  </button>
+                </div>
                 <p className={css.invitationFormText}>
                   A user with an email {invitationData.sender} wants you to join
-                  his restaurant {invitationData.restaurantName}
+                  his restaurant {invitationData.restaurantName}.
                 </p>
-                <button className={`${css.button} ${css.invitationAcceptBtn}`}>
-                  Accept
-                </button>
-                <button className={`${css.button} ${css.invitationRejectBtn}`}>
-                  Reject
-                </button>
+                <div className={css.invitationFormButtonsWrapper}>
+                  <button
+                    onClick={() =>
+                      handleOnClickAcceptInvitation(invitationData._id)
+                    }
+                    className={`${css.button} ${css.invitationAcceptBtn}`}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleOnClickRejectInvitation(invitationData._id)
+                    }
+                    className={`${css.button} ${css.invitationRejectBtn}`}
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
             )}
           </div>

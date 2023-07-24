@@ -21,6 +21,13 @@ const getInvitationByEmail = async email => {
   });
 };
 
+const deleteInvitationById = async id => {
+  return Invitation.findOneAndRemove({ _id: id });
+};
+
+const getInvitationById = async id => {
+  return Invitation.findOne({ _id: id });
+};
 
 
 const userService = {
@@ -28,6 +35,8 @@ const userService = {
   getUserByEmail,
   createUser,
   getUserById,
-  getInvitationByEmail
+  getInvitationByEmail,
+  deleteInvitationById,
+  getInvitationById
 };
 export default userService;

@@ -11,6 +11,7 @@ import { nanoid } from 'nanoid';
 import { useState } from 'react';
 import Link from 'next/link';
 import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
+import { FiRefreshCcw } from 'react-icons/fi';
 
 const Restaurants = ({ restaurantData }: any) => {
   const dispatch: AppDispatch = useDispatch();
@@ -28,6 +29,7 @@ const Restaurants = ({ restaurantData }: any) => {
   return (
     <div className={css.container}>
       <h2 className={css.restaurantTitle}>Restaurants</h2>
+      <button><FiRefreshCcw size={"24px"}/></button>
       <ul className={css.restaurantsList}>
         <li key={nanoid()}>
           <div className={css.newRestaurantBlock}>
