@@ -3,6 +3,8 @@ import Dish from '../service/schemas/dish.js';
 import serviceRestaurant from '../service/serviceRestaurant.js';
 import Table from '../service/schemas/table.js';
 import Order from '../service/schemas/order.js';
+import userService from '../service/serviceUsers.js';
+import Invitation from '../service/schemas/invitation.js';
 
 const getUserRestaurants = async (req, res, next) => {
   try {
@@ -17,7 +19,7 @@ const getUserRestaurants = async (req, res, next) => {
       });
     }
     const results = await serviceRestaurant.getRestaurantsByOwner(_id);
-
+    //tutaj bede sprawdzać czy dany user jest colaboraterem jesli tak to ten reslut bedzie zwracanyy dodatkowowo w responsie
     return res.status(200).json({
       status: 'OK',
       code: 200,
@@ -103,6 +105,7 @@ const create = async (req, res, next) => {
       owner: _id,
       menu: [],
       tables: [],
+      colabolators: [],
     });
 
     for (const dishData of menu) {
@@ -126,7 +129,9 @@ const create = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Restaurant created successfully',
-      data: savedRestaurant,
+      ResponseBody: {
+        restaurant: savedRestaurant,
+      },
     });
   } catch (error) {
     next(error);
@@ -274,7 +279,7 @@ const getRestaurantTables = async (req, res, next) => {
   }
 };
 
-const createRestaurantTableOrder = async (req, res, next) => {
+const createInviteRestaurantColabolator = async (req, res, next) => {
   try {
     const { _id } = req.user;
     if (!_id) {
@@ -286,55 +291,56 @@ const createRestaurantTableOrder = async (req, res, next) => {
         },
       });
     }
+    const { restaurantId } = req.params;
     try {
-      const { name, dishes } = req.body;
+      const { email } = req.body;
 
-      const { restaurantId } = req.params;
+      const foundColabolator = await userService.getUserByEmail(email);
+      const invitationOwner = await userService.getUserById(_id);
+
+      if (!foundColabolator) {
+        return res.status(401).json({
+          status: 'error',
+          code: 401,
+          ResponseBody: {
+            message: `Colaborator ${email} not found`,
+          },
+        });
+      }
       try {
-        const restaurantById = await serviceRestaurant.getRestaurantById(
+        const restaurant = await serviceRestaurant.getRestaurantById(
           restaurantId,
           _id
         );
-        const { tableId } = req.params;
-        try {
-          const tableById = await serviceRestaurant.getRestaurantTableById(
-            restaurantId,
-            _id,
-            tableId
+        const isInvitation =
+          await serviceRestaurant.getInvitationByEmailAndRestaurantName(
+            email,
+            restaurant.name
           );
-          // Tworzenie nowego stolika
-          for (const dishData of orders) {
-            const { name, description, price } = dishData;
-            const newOrder = new Order({
-              name,
-              dishes,
-              restaurant: restaurantById._id,
-              owner: req.user._id,
-              table: tableById._id,
-            });
 
-            tableById.orders.push(newOrder);
-            const savedTable = await newTable.save();
-          }
-
-          await restaurantById.save();
-
-          res.status(201).json({
-            success: true,
-            message: 'Table created successfully',
-            ResponseBody: {
-              Table: savedTable,
-            },
-          });
-        } catch {
-          return res.status(404).json({
+        if (isInvitation) {
+          return res.status(401).json({
             status: 'error',
-            code: 404,
+            code: 401,
             ResponseBody: {
-              message: `Not found Table with id ${tableId}`,
+              message: `Colaborator ${foundColabolator.email} already have invitation for your restaurant`,
             },
           });
         }
+
+        const newInvitation = new Invitation({
+          sender: invitationOwner.email,
+          receiver: foundColabolator.email,
+          restaurantName: restaurant.name,
+        });
+        await newInvitation.save();
+        return res.status(200).json({
+          status: 'OK',
+          code: 200,
+          ResponseBody: {
+            invitation: newInvitation,
+          },
+        });
       } catch (error) {
         return res.status(404).json({
           status: 'error',
@@ -345,13 +351,7 @@ const createRestaurantTableOrder = async (req, res, next) => {
         });
       }
     } catch (error) {
-      return res.status(400).json({
-        status: 'error',
-        ResponseBody: {
-          message: 'Missing fields',
-        },
-        code: 400,
-      });
+      next(error);
     }
   } catch (error) {
     next(error);
@@ -364,6 +364,7 @@ const controllerRestaurant = {
   getUserRestaurantById,
   getRestaurantTables,
   createRestaurantTable,
+  createInviteRestaurantColabolator,
 };
 
 export default controllerRestaurant;

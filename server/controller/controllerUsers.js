@@ -254,7 +254,6 @@ const currentUser = async (req, res, next) => {
   }
 };
 
-
 const uploadAvatar = async (req, res, next) => {
   try {
     const { _id } = req.user;
@@ -294,12 +293,44 @@ const uploadAvatar = async (req, res, next) => {
     user.avatarURL = `/avatars/${newAvatarName}`;
     await user.save();
     return res.status(200).json({
-      success: true,
+      status: 'success',
       message: 'Avatar uploaded successfully',
       ResponseBody: {
         avatarURL: user.avatarURL,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserInvitations = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    try {
+      const results = await userService.getInvitationByEmail(user.email);
+
+      user.invitations = [...results];
+      await user.save();
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          invitations: user.invitations,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   } catch (error) {
     next(error);
   }
@@ -312,5 +343,6 @@ const userController = {
   logout,
   currentUser,
   uploadAvatar,
+  getUserInvitations,
 };
 export default userController;

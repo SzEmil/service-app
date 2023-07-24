@@ -4,3 +4,11 @@ export const selectRestaurantsData = (state: {
 }) => state.restaurants.restaurants;
 
 export const selectState = (state: restaurantsStateType) => state;
+
+export const selectCurrentRestaurant = (state: {
+  restaurants: restaurantsStateType;
+}) => state.restaurants.currentRestaurant;
+ 
+export const selectCurrentRestaurantMenu = (state: {
+  restaurants: restaurantsStateType;
+}) => state.restaurants.currentRestaurant?.menu;

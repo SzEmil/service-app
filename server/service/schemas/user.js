@@ -7,7 +7,7 @@ const users = new Schema(
   {
     username: {
       type: String,
-      required : [true, "Username is required"]
+      required: [true, 'Username is required'],
     },
     password: {
       type: String,
@@ -30,6 +30,11 @@ const users = new Schema(
     avatarURL: {
       type: String,
     },
+    invitations: [
+      {
+        type: Object,
+      },
+    ],
   },
   { versionKey: false, timestamps: true }
 );

@@ -5,6 +5,7 @@ import { AppDispatch } from '../../redux/store';
 import { logIn } from '../../redux/auth/authOperations';
 import { useSelector } from 'react-redux';
 import { selectAuthUser } from '../../redux/auth/authSelectors';
+import { getInvitationsData } from '../../redux/auth/authOperations';
 
 type credentialsLoginType = {
   email: string;
@@ -14,7 +15,7 @@ const LoginForm = () => {
   const dispatch: AppDispatch = useDispatch();
   const authUser = useSelector(selectAuthUser);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
 
@@ -23,14 +24,15 @@ const LoginForm = () => {
       password: (form.elements.namedItem('password') as HTMLInputElement).value,
     };
 
-    dispatch(logIn(credentials));
+    await dispatch(logIn(credentials));
+    dispatch(getInvitationsData());
     form.reset();
   };
 
   return (
     <form className={styles.loginForm} onSubmit={handleSubmit}>
       <h2 className={styles.title}>LogIn now!</h2>
-      <p>{authUser.error}</p>
+      <p className={styles.error}>{authUser.error}</p>
       <div className={styles.formGroup}>
         <label htmlFor="email" className={styles.label}>
           Email

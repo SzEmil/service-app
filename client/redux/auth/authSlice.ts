@@ -1,6 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { register, logIn, logOut, refreshUser } from './authOperations';
+import {
+  register,
+  logIn,
+  logOut,
+  refreshUser,
+  getInvitationsData,
+} from './authOperations';
 
+export type invitationType = {
+  _id: string | null | undefined;
+  sender: string | null | undefined;
+  receiver: string | null | undefined;
+  restaurantName: string | null | undefined;
+  createdAt: string | null | undefined;
+};
 export type authInitialStateType = {
   user: {
     username: string | null;
@@ -12,6 +25,12 @@ export type authInitialStateType = {
   isLoggedIn: boolean;
   error: any;
   isLoading: boolean;
+
+  invitations: {
+    invitations: invitationType[];
+    isLoading: boolean;
+    error: any;
+  };
 };
 
 const authInitialState: authInitialStateType = {
@@ -21,6 +40,12 @@ const authInitialState: authInitialStateType = {
   isRefreshing: false,
   isLoading: false,
   error: null,
+
+  invitations: {
+    invitations: [],
+    isLoading: false,
+    error: null,
+  },
 };
 
 const authSlice = createSlice({
@@ -28,6 +53,14 @@ const authSlice = createSlice({
   initialState: authInitialState,
   reducers: {
     importInfoData: state => state,
+    logoutSuccess: state => {
+      (state.token = null),
+        (state.error = null),
+        (state.isLoggedIn = false),
+        (state.user.avatarURL = null),
+        (state.user.email = null),
+        (state.user.username = null);
+    },
   },
   extraReducers: builder => {
     builder.addCase(register.pending, (state: authInitialStateType) => {
@@ -145,8 +178,22 @@ const authSlice = createSlice({
         (state.user.email = null),
         (state.user.username = null);
     });
+
+    builder.addCase(getInvitationsData.pending, state => {
+      state.invitations.isLoading = true;
+      state.invitations.error = null;
+    });
+    builder.addCase(getInvitationsData.rejected, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = action.payload;
+    });
+    builder.addCase(getInvitationsData.fulfilled, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = null;
+      state.invitations.invitations = [...action.payload]
+    });
   },
 });
 
-export const { importInfoData } = authSlice.actions;
+export const { importInfoData, logoutSuccess } = authSlice.actions;
 export const authReducer = authSlice.reducer;

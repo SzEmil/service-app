@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { authInitialStateType } from './authSlice';
-import { setCookie } from 'nookies';
+import { setCookie, destroyCookie } from 'nookies';
+import { logoutSuccess } from './authSlice';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
@@ -20,6 +21,9 @@ const setCookieHeader = (token: string) => {
     sameSite: 'none',
     secure: true,
   });
+};
+const removeCookieHeader = () => {
+  destroyCookie(null, 'token');
 };
 
 type credentialsRegisterType = {
@@ -62,15 +66,27 @@ export const logIn = createAsyncThunk(
 
 export const logOut = createAsyncThunk('auth/signOut', async (_, thunkAPI) => {
   try {
-    await axios.post('/users/logout');
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
 
+    if (!token) return thunkAPI.rejectWithValue('Valid token is not provided');
+    setAuthHeader(token);
+    await axios.post('/users/logout');
+    removeCookieHeader();
     removeAuthHeader();
   } catch (error: any) {
+    if (error?.response?.status === 401) {
+      removeCookieHeader();
+      removeAuthHeader();
+      thunkAPI.dispatch(logoutSuccess());
+      return thunkAPI.rejectWithValue('Unauthorized');
+    }
+
     return thunkAPI.rejectWithValue(error.message);
   }
 });
 
-type AuthStateType = {
+export type AuthStateType = {
   auth: authInitialStateType;
 };
 
@@ -80,10 +96,10 @@ export const refreshUser = createAsyncThunk<
   { state: AuthStateType }
 >('auth/refresh', async (_, thunkAPI) => {
   const state = thunkAPI.getState() as AuthStateType;
-  console.log(state);
   const token = state?.auth?.token || '';
 
-  if (!token) return thunkAPI.rejectWithValue('Valid token is not provided');
+  if (!token)
+    return thunkAPI.rejectWithValue('Login or register to get access');
 
   setAuthHeader(token);
   setCookieHeader(token);
@@ -94,3 +110,23 @@ export const refreshUser = createAsyncThunk<
     return thunkAPI.rejectWithValue(e.message);
   }
 });
+
+export const getInvitationsData = createAsyncThunk(
+  'user/getInvitationsData',
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      const res = await axios.get('/users/invitations');
+      return res.data.ResponseBody.invitations;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);

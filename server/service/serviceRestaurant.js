@@ -1,6 +1,7 @@
 import Restaurant from './schemas/restaurant.js';
 import Table from './schemas/table.js';
 import Dish from './schemas/dish.js';
+import Invitation from './schemas/invitation.js';
 
 const getRestaurantsByOwner = async userId => {
   return await Restaurant.find({
@@ -55,10 +56,15 @@ const getDishById = async (dishId, restaurantId, userId) => {
   });
 };
 
-
-const getRestaurantInfo = async (restaurantId, userId)=>{
-
-}
+const getInvitationByEmailAndRestaurantName = async (email, restaurantName) => {
+  return Invitation.findOne({
+    $and: [
+      { receiver: email },
+      { receiver: { $exists: true } },
+      { restaurantName: restaurantName },
+    ],
+  });
+};
 
 const serviceRestaurant = {
   getRestaurantById,
@@ -66,6 +72,7 @@ const serviceRestaurant = {
   getRestaurantByName,
   getRestaurantTables,
   getRestaurantTableById,
-  getDishById
+  getDishById,
+  getInvitationByEmailAndRestaurantName,
 };
 export default serviceRestaurant;

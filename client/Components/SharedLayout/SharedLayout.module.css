@@ -1,0 +1,17 @@
+.container {
+  width: 1200px;
+  position: relative;
+}
+.cookieBox {
+  width: 100%;
+  max-width: 1200px;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+.headerWrapper {
+  position: fixed;
+  width: 1200px;
+}
