@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { restaurantType } from '../../types/restaurant';
-import { addRestaurant } from './restaurantsOperations';
+import { addRestaurant, refreshRestaurantsData, removeRestaurantColabolator } from './restaurantsOperations';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
@@ -26,6 +26,17 @@ const restaurantSlice = createSlice({
     builder.addCase(addRestaurant.fulfilled, (state, action) => {
       state.restaurants = [action.payload, ...state.restaurants];
     });
+
+    builder.addCase(refreshRestaurantsData.fulfilled, (state, action) => {
+      state.restaurants = [...action.payload]
+    })
+
+    builder.addCase(removeRestaurantColabolator.fulfilled, (state, action) => { 
+      const indexToRemove = state.restaurants.findIndex(
+        restaurant => restaurant._id!.toString() === action.payload
+      );
+      state.restaurants.splice(indexToRemove, 1);
+    })
   },
 });
 

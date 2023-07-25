@@ -355,9 +355,9 @@ const rejectUserInvitation = async (req, res, next) => {
 
       const results = await userService.deleteInvitationById(invitationId);
       if (!results) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: 'error',
-          code: 401,
+          code: 404,
           ResponseBody: {
             message: `Not found invitation with id ${invitationId}`,
           },
@@ -368,9 +368,9 @@ const rejectUserInvitation = async (req, res, next) => {
       );
 
       if (indexToRemove === -1) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: 'error',
-          code: 401,
+          code: 404,
           ResponseBody: {
             message: `Not found user with invitation with id ${invitationId}`,
           },
@@ -412,9 +412,9 @@ const acceptUserInvitation = async (req, res, next) => {
 
       const invitation = await userService.getInvitationById(invitationId);
       if (!invitation) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: 'error',
-          code: 401,
+          code: 404,
           ResponseBody: {
             message: `Not found invitation with id ${invitationId}`,
           },
@@ -428,9 +428,9 @@ const acceptUserInvitation = async (req, res, next) => {
       );
 
       if (indexToRemove === -1) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: 'error',
-          code: 401,
+          code: 404,
           ResponseBody: {
             message: `Not found user with invitation with id ${invitationId}`,
           },
@@ -443,9 +443,9 @@ const acceptUserInvitation = async (req, res, next) => {
       );
 
       if (!restaurant) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: 'error',
-          code: 401,
+          code: 404,
           ResponseBody: {
             message: `Not found restaurant with id ${invitation.restaurantId}`,
           },

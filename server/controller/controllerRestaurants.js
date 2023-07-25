@@ -19,7 +19,7 @@ const getUserRestaurants = async (req, res, next) => {
       });
     }
     const results = await serviceRestaurant.getAllUserRestaurants(_id);
-    //tutaj bede sprawdzać czy dany user jest colaboraterem jesli tak to ten reslut bedzie zwracanyy dodatkowowo w responsie
+
     return res.status(200).json({
       status: 'OK',
       code: 200,
@@ -230,38 +230,6 @@ const createRestaurantTable = async (req, res, next) => {
   }
 };
 
-const getRestaurantInfo = async (req, res, next) => {
-  try {
-    const { _id } = req.user;
-    if (!_id) {
-      return res.status(401).json({
-        status: 'error',
-        code: 401,
-        ResponseBody: {
-          message: 'Unauthorized',
-        },
-      });
-    }
-
-    try {
-      const { restaurantId } = req.params;
-      const restaurantById = await serviceRestaurant.getRestaurantById(
-        restaurantId,
-        req.user._id
-      );
-
-      const results = await serviceRestaurant.getRestaurantInfo(
-        restaurantId,
-        req.user._id
-      );
-    } catch (error) {
-      next(error);
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
 const getRestaurantTables = async (req, res, next) => {
   try {
     const { _id } = req.user;
@@ -299,51 +267,125 @@ const createInviteRestaurantColabolator = async (req, res, next) => {
       const invitationOwner = await userService.getUserById(_id);
 
       if (!foundColabolator) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: 'error',
-          code: 401,
+          code: 404,
           ResponseBody: {
             message: `Colaborator ${email} not found`,
           },
         });
       }
-      try {
-        const restaurant = await serviceRestaurant.getRestaurantById(
-          restaurantId,
-          _id
-        );
-        const isInvitation =
-          await serviceRestaurant.getInvitationByEmailAndRestaurantName(
-            email,
-            restaurant.name
-          );
+      console.log('restaurantId: ', restaurantId);
+      const restaurant = await serviceRestaurant.getUserRestaurantById(
+        restaurantId,
+        _id
+      );
 
-        if (isInvitation) {
-          return res.status(401).json({
-            status: 'error',
-            code: 401,
-            ResponseBody: {
-              message: `Colaborator ${foundColabolator.email} already have invitation for your restaurant`,
-            },
-          });
-        }
-
-
-        const newInvitation = new Invitation({
-          sender: invitationOwner.email,
-          receiver: foundColabolator.email,
-          restaurantName: restaurant.name,
-          restaurantId: restaurant._id,
-        });
-        await newInvitation.save();
-        return res.status(200).json({
-          status: 'OK',
-          code: 200,
+      if (!restaurant) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
           ResponseBody: {
-            invitation: newInvitation,
+            message: `Restaurant ${restaurantId} not found`,
           },
         });
-      } catch (error) {
+      }
+      const isInvitation =
+        await serviceRestaurant.getInvitationByEmailAndRestaurantName(
+          email,
+          restaurant.name
+        );
+
+      if (isInvitation) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Colaborator ${foundColabolator.email} already have invitation for your restaurant`,
+          },
+        });
+      }
+      const isRestaurantOwner = await serviceRestaurant.getRestaurantsByOwner(
+        foundColabolator._id,
+        restaurant._id
+      );
+
+      if (isRestaurantOwner) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `User ${foundColabolator.email} is owner of this restaurant`,
+          },
+        });
+      }
+
+      const isRestaurantColabolator =
+        await serviceRestaurant.getRestaurantByColabolator(
+          foundColabolator._id
+        );
+      if (isRestaurantColabolator) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `User ${foundColabolator.email} is already a member of this restaurant`,
+          },
+        });
+      }
+
+      if (invitationOwner._id === foundColabolator._id) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `You cant invite yourself to restaurant`,
+          },
+        });
+      }
+
+      const newInvitation = new Invitation({
+        sender: invitationOwner.email,
+        receiver: foundColabolator.email,
+        restaurantName: restaurant.name,
+        restaurantId: restaurant._id,
+      });
+      await newInvitation.save();
+      return res.status(200).json({
+        status: 'OK',
+        code: 200,
+        ResponseBody: {
+          message: `User ${foundColabolator.email} was invited successfully`,
+          invitation: newInvitation,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const removeColabolatorRestaurant = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    try {
+      const { restaurantId } = req.params;
+      const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+        restaurantId
+      );
+      if (!restaurant) {
         return res.status(404).json({
           status: 'error',
           code: 404,
@@ -352,6 +394,27 @@ const createInviteRestaurantColabolator = async (req, res, next) => {
           },
         });
       }
+      const indexToRemove = restaurant.colabolators.findIndex(
+        colabolator => colabolator.equals(user._id)
+      );
+
+      if (indexToRemove === -1) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found colabolator in restaurant ${restaurant.name} with id ${user._id}`,
+          },
+        });
+      }
+      restaurant.colabolators.splice(indexToRemove, 1);
+      restaurant.save();
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          message: 'Colabolator was successfully removed',
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -367,6 +430,7 @@ const controllerRestaurant = {
   getRestaurantTables,
   createRestaurantTable,
   createInviteRestaurantColabolator,
+  removeColabolatorRestaurant,
 };
 
 export default controllerRestaurant;

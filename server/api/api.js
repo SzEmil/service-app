@@ -63,5 +63,11 @@ router.post(
   authUser,
   controllerRestaurant.createInviteRestaurantColabolator
 );
+
+router.post(
+  '/restaurants/:restaurantId/removeColabolator',
+  authUser,
+  controllerRestaurant.removeColabolatorRestaurant
+);
 //By dodać zamówienie trzeba bedzie nowy obiekt zamówienia dodać push do tablicy orders danego stolika czyli ten stolik albo lepiej order trzeba wyszukać apotem table.orders.push(object)
 export default router;
