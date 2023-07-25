@@ -3,6 +3,7 @@ import axios from 'axios';
 import { authInitialStateType } from './userSlice';
 import { setCookie, destroyCookie } from 'nookies';
 import { logoutSuccess } from './userSlice';
+import Notiflix from 'notiflix';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
@@ -132,8 +133,8 @@ export const getInvitationsData = createAsyncThunk(
 );
 
 type idToDeleteType = {
-  invitationId: string | null | undefined
-}
+  invitationId: string | null | undefined;
+};
 export const rejectInvitation = createAsyncThunk(
   'user/rejectInvitation',
   async (idToDelete: idToDeleteType, thunkAPI) => {
@@ -155,8 +156,8 @@ export const rejectInvitation = createAsyncThunk(
 );
 
 type idToAcceptType = {
-  invitationId: string | null | undefined
-}
+  invitationId: string | null | undefined;
+};
 export const acceptInvitation = createAsyncThunk(
   'user/acceptInvitation',
   async (idToAccept: idToAcceptType, thunkAPI) => {
@@ -173,6 +174,39 @@ export const acceptInvitation = createAsyncThunk(
       return idToAccept.invitationId;
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+type createInvitationsCredentialsType = {
+  email: string;
+};
+
+type invitationData = {
+  credentials: createInvitationsCredentialsType;
+  restaurantId: string | string[] | undefined;
+};
+export const createInvitation = createAsyncThunk(
+  'user/createInvitation',
+  async (invitationData: invitationData, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      const res = await axios.post(
+        `/restaurants/${invitationData.restaurantId}/invitations`,
+        invitationData.credentials
+      );
+      const message = res.data.ResponseBody.message;
+      Notiflix.Notify.success(message);
+      return;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message.ResponseBody.message);
     }
   }
 );

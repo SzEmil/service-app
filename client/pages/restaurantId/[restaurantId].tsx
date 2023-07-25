@@ -10,7 +10,10 @@ import { setCurrentRestaurant } from '../../redux/restaurants/restaurantsSlice';
 import { MenuRestaurant } from '../../Components/MenuRestaurant/MenuRestaurant';
 import { TablesRestaurant } from '../../Components/TablesRestaurant/TablesRestaurant';
 import { InviteForm } from '../../Components/InviteForm/InviteForm';
-
+import { removeRestaurantColabolator } from '../../redux/restaurants/restaurantsOperations';
+type leaveRestaurantData = {
+  restaurantId: string | string[] | undefined;
+};
 const RestaurantPage = ({ restaurant }: any) => {
   const [isTablesOpen, setIsTablesOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,6 +38,17 @@ const RestaurantPage = ({ restaurant }: any) => {
     dispatch(setCurrentRestaurant(restaurant));
   }, [dispatch]);
 
+  const handleOnClickLeaveRestaurant = () => {
+    const { restaurantId } = router.query;
+
+    const leaveRestaurantData: leaveRestaurantData = {
+      restaurantId: restaurantId,
+    };
+
+    dispatch(removeRestaurantColabolator(leaveRestaurantData))
+    router.push("/restaurants")
+  };
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
@@ -48,6 +62,12 @@ const RestaurantPage = ({ restaurant }: any) => {
           onClick={() => setIsInviteFormOpen(true)}
         >
           Invite friend
+        </button>
+        <button
+          className={css.button}
+          onClick={() => handleOnClickLeaveRestaurant()}
+        >
+          Leave restaurant
         </button>
         <ul className={css.navBtn}>
           <li>
@@ -81,11 +101,10 @@ const RestaurantPage = ({ restaurant }: any) => {
         {isInviteFormOpen && (
           <div className={css.inviteFormBackdrop}>
             <div className={css.inviteFormWrapper}>
-              <InviteForm setIsInviteFormOpen={setIsInviteFormOpen}/>
+              <InviteForm setIsInviteFormOpen={setIsInviteFormOpen} />
             </div>
           </div>
         )}
-
       </div>
     </>
   );
