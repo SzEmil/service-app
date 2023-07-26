@@ -153,7 +153,7 @@ const createRestaurantTable = async (req, res, next) => {
     try {
       const { name, icon, description, orders } = req.body;
       const { restaurantId } = req.params;
-
+      
       try {
         const restaurantById = await serviceRestaurant.getRestaurantById(
           restaurantId,
@@ -202,9 +202,9 @@ const createRestaurantTable = async (req, res, next) => {
 
         res.status(201).json({
           success: true,
-          message: 'Table created successfully',
           ResponseBody: {
-            Table: newTable,
+            message: 'Table created successfully',
+            table: newTable,
           },
         });
       } catch (error) {
@@ -394,8 +394,8 @@ const removeColabolatorRestaurant = async (req, res, next) => {
           },
         });
       }
-      const indexToRemove = restaurant.colabolators.findIndex(
-        colabolator => colabolator.equals(user._id)
+      const indexToRemove = restaurant.colabolators.findIndex(colabolator =>
+        colabolator.equals(user._id)
       );
 
       if (indexToRemove === -1) {

@@ -11,15 +11,15 @@ export type dishType = {
 };
 
 export type orderType = {
-  __v: number;
-  _id: string;
+  __v?: number;
+  _id?: string;
   dishes: dishType[];
-  fullKcal: number;
-  fullPrice: number;
+  fullKcal?: number;
+  fullPrice?: number;
   name: string;
-  owner: string;
-  restaurant: string;
-  table: string;
+  owner?: string;
+  restaurant?: string;
+  table?: string;
 };
 
 export type tableType = {
