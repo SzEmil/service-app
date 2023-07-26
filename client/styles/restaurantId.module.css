@@ -1,3 +1,10 @@
+.restaurantName {
+  font-family: 'Roboto';
+  font-size: 34px;
+  line-height: 36px;
+  font-weight: 400;
+  padding-bottom: 15px;
+}
 
 .navBtn {
   display: flex;
@@ -18,7 +25,7 @@
 .button:focus {
   background-color: #474747;
 }
-.button:nth-child(n + 1) {
+.buttonMarginLeft {
   margin-left: 20px;
 }
 
@@ -38,4 +45,8 @@
   left: 50%;
 
   transform: translateX(-50%);
+}
+.restaurantBtnOptions {
+  display: flex;
+  align-items: center;
 }

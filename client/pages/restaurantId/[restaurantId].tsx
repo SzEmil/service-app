@@ -11,6 +11,8 @@ import { MenuRestaurant } from '../../Components/MenuRestaurant/MenuRestaurant';
 import { TablesRestaurant } from '../../Components/TablesRestaurant/TablesRestaurant';
 import { InviteForm } from '../../Components/InviteForm/InviteForm';
 import { removeRestaurantColabolator } from '../../redux/restaurants/restaurantsOperations';
+import { selectAuthUser } from '../../redux/user/userSelectors';
+
 type leaveRestaurantData = {
   restaurantId: string | string[] | undefined;
 };
@@ -32,8 +34,9 @@ const RestaurantPage = ({ restaurant }: any) => {
 
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
-
+  const user = useSelector(selectAuthUser);
   const currentRestaurant = useSelector(selectCurrentRestaurant);
+
   useEffect(() => {
     dispatch(setCurrentRestaurant(restaurant));
   }, [dispatch]);
@@ -45,8 +48,8 @@ const RestaurantPage = ({ restaurant }: any) => {
       restaurantId: restaurantId,
     };
 
-    dispatch(removeRestaurantColabolator(leaveRestaurantData))
-    router.push("/restaurants")
+    dispatch(removeRestaurantColabolator(leaveRestaurantData));
+    router.push('/restaurants');
   };
 
   if (router.isFallback) {
@@ -55,57 +58,71 @@ const RestaurantPage = ({ restaurant }: any) => {
 
   return (
     <>
-      <div>
-        <h1>{restaurant.name}</h1>
-        <button
-          className={css.button}
-          onClick={() => setIsInviteFormOpen(true)}
-        >
-          Invite friend
-        </button>
-        <button
-          className={css.button}
-          onClick={() => handleOnClickLeaveRestaurant()}
-        >
-          Leave restaurant
-        </button>
-        <ul className={css.navBtn}>
-          <li>
-            <button onClick={() => handleOpenTables()} className={css.button}>
-              Tables
+      {restaurant && (
+        <div>
+          <h1 className={css.restaurantName}>{restaurant.name}</h1>
+          <div className={css.restaurantBtnOptions}>
+            <button
+              className={css.button}
+              onClick={() => setIsInviteFormOpen(true)}
+            >
+              Invite friend
             </button>
-          </li>
-          <li>
-            <button onClick={() => handleOpenMenu()} className={css.button}>
-              Menu
-            </button>
-          </li>
-        </ul>
-        {currentRestaurant !== null ? (
-          <div>
-            {isMenuOpen && isTablesOpen === false && (
+            {restaurant.colabolators && (
               <div>
-                <MenuRestaurant menu={currentRestaurant!.menu} />
+                {restaurant.colabolators.includes(user.user.id) && (
+                  <button
+                    className={`${css.button} ${css.buttonMarginLeft}`}
+                    onClick={() => handleOnClickLeaveRestaurant()}
+                  >
+                    Leave restaurant
+                  </button>
+                )}
               </div>
             )}
+          </div>
 
-            {isTablesOpen && isMenuOpen === false && (
-              <div>
-                <TablesRestaurant tables={currentRestaurant.tables} />
-              </div>
-            )}
-          </div>
-        ) : (
-          <p>Loading data...</p>
-        )}
-        {isInviteFormOpen && (
-          <div className={css.inviteFormBackdrop}>
-            <div className={css.inviteFormWrapper}>
-              <InviteForm setIsInviteFormOpen={setIsInviteFormOpen} />
+          <ul className={css.navBtn}>
+            <li>
+              <button onClick={() => handleOpenTables()} className={css.button}>
+                Tables
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleOpenMenu()}
+                className={`${css.button} ${css.buttonMarginLeft}`}
+              >
+                Menu
+              </button>
+            </li>
+          </ul>
+          {currentRestaurant !== null ? (
+            <div>
+              {isMenuOpen && isTablesOpen === false && (
+                <div>
+                  <MenuRestaurant menu={currentRestaurant!.menu} />
+                </div>
+              )}
+
+              {isTablesOpen && isMenuOpen === false && (
+                <div>
+                  <TablesRestaurant tables={currentRestaurant.tables} />
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          ) : (
+            <p>Loading data...</p>
+          )}
+          {isInviteFormOpen && (
+            <div className={css.inviteFormBackdrop}>
+              <div className={css.inviteFormWrapper}>
+                <InviteForm setIsInviteFormOpen={setIsInviteFormOpen} />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };

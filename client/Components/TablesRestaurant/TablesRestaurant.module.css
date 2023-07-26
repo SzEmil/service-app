@@ -1,0 +1,50 @@
+.tablesList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 15px 0;
+}
+.tableBlock {
+  background-color: #222;
+  color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+.tableBlock:hover {
+  transform: translateY(-5px);
+}
+.tableName {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.createdAt {
+  color: #888;
+  margin-bottom: 5px;
+}
+.tableInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ordersWrapper {
+  display: flex;
+  align-items: center;
+}
+.ordersCount {
+  font-weight: bold;
+  color: #42b983;
+  margin: 0;
+}
+.orderIcon {
+  padding: 0 5px;
+}
+.description {
+  color: #ccc;
+  margin: 0;
+}
