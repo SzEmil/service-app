@@ -208,10 +208,12 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
                         setShouldKeepMenuOpen(true);
                       }}
                     >
-                      <h2>{dish.name}</h2>
-                      <p>kcal: {dish.kcal}</p>
-                      <p>price: {dish.price}</p>
-                      <p>{dish.description}</p>
+                      <h2 className={styles.menuItemTitle}>{dish.name}</h2>
+                      <p className={styles.menuItemInfo}>kcal: {dish.kcal}</p>
+                      <p className={styles.menuItemInfo}>price: {dish.price}</p>
+                      <p className={styles.menuItemDescription}>
+                        {dish.description}
+                      </p>
                     </li>
                   ))}
                 </ul>
@@ -220,13 +222,16 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
           </div>
 
           {item.dishes.length !== 0 && (
-            <div>
-              <h2>Picked dishes</h2>
-              <ul>
+            <div className={styles.pickedDishesBlock}>
+              <h2 className={styles.pickedDishesTitle}>Picked dishes</h2>
+              <ul className={styles.pickedDishesList}>
                 {item.dishes.map(dish => (
                   <li key={nanoid()}>
                     {' '}
-                    <p>{dish.name}</p>
+                    <p className={styles.pickedDishesName}>
+                      - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
+                      (kcal: {dish.kcal}, price: {dish.price})
+                    </p>
                   </li>
                 ))}
               </ul>

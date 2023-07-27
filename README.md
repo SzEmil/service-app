@@ -34,5 +34,9 @@ Information about invitation will be visible in users profile
 
 ![edit menu in restaurant dashboard](./client/public/editMenu.jpg)
 
+## Menage restaurant tables
+
+![menage tables](./client/public/menageTables.jpg)
+
 Enjoy Service!
 

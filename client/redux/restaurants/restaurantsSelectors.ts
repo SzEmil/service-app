@@ -12,3 +12,7 @@ export const selectCurrentRestaurant = (state: {
 export const selectCurrentRestaurantMenu = (state: {
   restaurants: restaurantsStateType;
 }) => state.restaurants.currentRestaurant?.menu;
+
+export const selectCurrentRestaurantOrder = (state: {
+  restaurants: restaurantsStateType;
+}) => state.restaurants.currentRestaurant?.menu;

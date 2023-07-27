@@ -124,3 +124,30 @@ export const addRestaurantTable = createAsyncThunk(
     }
   }
 );
+
+type completeOrderData = {
+  restaurantId: string | string[] | undefined;
+  orderData: { orderId: string | undefined; tableId: string };
+};
+export const completeOrder = createAsyncThunk(
+  'restaurants/completeOrder',
+  async (completeOrderData: completeOrderData, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.post(
+        `/restaurants/${completeOrderData.restaurantId}/order/complete`,
+        completeOrderData.orderData
+      );
+      Notiflix.Notify.success(response.data.ResponseBody.message);
+      return completeOrderData.orderData;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);

@@ -25,14 +25,29 @@
   border-radius: 8px;
   padding: 20px;
   width: 100%;
-  cursor: pointer;
-  z-index: 100;
+  z-index: 1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease-in-out;
 }
 .tableBlock:hover {
-  transform: translateY(-5px);
+  box-shadow: 2px 1px 6px 2px rgb(46, 109, 33);
 }
+.btnShowMore {
+  padding: 7px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: #e0e0e05d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+.btnShowMore:hover {
+  background-color: #bbbaba5d;
+}
+
 .tableName {
   font-size: 1.5rem;
   font-weight: bold;
@@ -131,6 +146,8 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
+
+  z-index: 1500;
 }
 
 .tableBlock.open .ordersList {
@@ -146,7 +163,24 @@
   opacity: 1;
   transform: translateY(0);
 }
-
+.orderHeaderBtnWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.buttonOrder {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #338661;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.buttonOrder:hover,
+.buttonOrder:focus {
+  background-color: #296b4e;
+}
 .newFormTablesBlock {
   z-index: 1000;
   position: absolute;

@@ -117,8 +117,52 @@
 .menuItem {
   padding: 5px;
   cursor: pointer;
+  max-width: 400px;
 }
 .menuItem:hover,
 .menuItem:focus {
   background-color: rgb(235, 235, 235);
+}
+.menuItemTitle {
+  font-family: 'Roboto';
+  font-size: 22px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.menuItemInfo {
+  font-family: 'Roboto';
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 300;
+}
+.menuItemDescription {
+  font-family: 'Roboto';
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+.pickedDishesBlock {
+  border: 0.2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+.pickedDishesTitle {
+  font-family: 'Roboto';
+  font-size: 22px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.pickedDishesName {
+  font-family: 'Roboto';
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 300;
+}
+.pickedDishesList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px;
 }

@@ -5,6 +5,7 @@ import {
   refreshRestaurantsData,
   removeRestaurantColabolator,
   addRestaurantTable,
+  completeOrder,
 } from './restaurantsOperations';
 
 export type restaurantsStateType = {
@@ -56,6 +57,20 @@ const restaurantSlice = createSlice({
           ...(state.currentRestaurant.tables || []),
         ];
       }
+    });
+
+    builder.addCase(completeOrder.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+    builder.addCase(completeOrder.fulfilled, (state, action) => {
+      state.error = null;
+      const table = state.currentRestaurant?.tables?.find(
+        table => table._id === action.payload.tableId
+      );
+      const indexToRemove = table!.orders.findIndex(
+        order => order._id!.toString() === action.payload.orderId
+      );
+      table?.orders.splice(indexToRemove, 1);
     });
   },
 });

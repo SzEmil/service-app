@@ -153,7 +153,7 @@ const createRestaurantTable = async (req, res, next) => {
     try {
       const { name, icon, description, orders } = req.body;
       const { restaurantId } = req.params;
-      
+
       try {
         const restaurantById = await serviceRestaurant.getRestaurantById(
           restaurantId,
@@ -223,23 +223,6 @@ const createRestaurantTable = async (req, res, next) => {
           message: 'Missing fields',
         },
         code: 400,
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getRestaurantTables = async (req, res, next) => {
-  try {
-    const { _id } = req.user;
-    if (!_id) {
-      return res.status(401).json({
-        status: 'error',
-        code: 401,
-        ResponseBody: {
-          message: 'Unauthorized',
-        },
       });
     }
   } catch (error) {
@@ -423,14 +406,135 @@ const removeColabolatorRestaurant = async (req, res, next) => {
   }
 };
 
+const completeOrder = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+    const { orderId, tableId } = req.body;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+    const table = await serviceRestaurant.getRestaurantTableById(
+      restaurantId,
+      tableId
+    );
+    if (!table) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found table with id ${tableId}`,
+        },
+      });
+    }
+
+    const order = await serviceRestaurant.getRestaurantTableOrderById(
+      restaurantId,
+      tableId,
+      orderId
+    );
+    if (!order) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found order with id ${orderId}`,
+        },
+      });
+    }
+
+    const orderIndexToRemove = table.orders.findIndex(
+      order => order._id === orderId
+    );
+    table.orders.splice(orderIndexToRemove, 1);
+    await table.save();
+    await serviceRestaurant.removeRestaurantTableOrderById(
+      restaurantId,
+      table._id,
+      order._id
+    );
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      ResponseBody: {
+        message: 'Order completed successfully',
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getRestaurantTables = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+
+    
+  
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      ResponseBody: {
+        message: 'Order completed successfully',
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const controllerRestaurant = {
   create,
   getUserRestaurants,
   getUserRestaurantById,
-  getRestaurantTables,
   createRestaurantTable,
   createInviteRestaurantColabolator,
   removeColabolatorRestaurant,
+  completeOrder,
 };
 
 export default controllerRestaurant;
