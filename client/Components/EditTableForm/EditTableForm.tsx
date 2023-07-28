@@ -9,17 +9,21 @@ import styles from './EditTableForm.module.css';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { FormEvent } from 'react';
+import { updateRestaurantTable } from '../../redux/restaurants/restaurantsOperations';
 
 type setOrderType = {
+  _id?: string | undefined;
   name: string;
   dishes: dishType[] | [];
 };
 
-type addRestaurantTable = {
+export type editRestaurantTableType = {
   table: {
+    tableId: string;
     name: string;
     description: string;
     orders: orderType[];
+    ordersToDelete: string[];
   };
   restaurantId: string | string[] | undefined;
 };
@@ -33,6 +37,7 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
   const [shouldKeepMenuOpen, setShouldKeepMenuOpen] = useState(false);
   const [activeOrderIndex, setActiveOrderIndex] = useState<number | null>(null);
 
+  const [ordersToDelete, setOrdersToDelete] = useState<string[] | []>([]);
   const [ordersItems, setOrdersItems] = useState<setOrderType[]>(
     currentTable.orders
   );
@@ -43,29 +48,25 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
     const { restaurantId } = router.query;
 
     const credentials = {
+      tableId: currentTable._id,
       name: (form.elements.namedItem('tableName') as HTMLInputElement).value,
       description: (
         form.elements.namedItem('tableDescription') as HTMLInputElement
       ).value,
       orders: ordersItems,
       icon: 'icon.img',
+      ordersToDelete: ordersToDelete,
     };
 
-    const restaurantTableData: addRestaurantTable = {
+    const restaurantTableData: editRestaurantTableType = {
       table: credentials,
       restaurantId: restaurantId,
     };
 
     console.log(restaurantTableData);
-    //   await dispatch(addRestaurantTable(restaurantTableData));
-    setIsEditTableOpen(false);
-    setOrdersItems([
-      {
-        name: '',
-        dishes: [],
-      },
-    ]);
-    form.reset();
+    await dispatch(updateRestaurantTable(restaurantTableData));
+     setIsEditTableOpen(false);
+     form.reset();
   };
 
   const handleInputChange = (
@@ -97,7 +98,6 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
       ...prevMenuItems,
       {
         name: '',
-        description: '',
         dishes: [],
       },
     ]);
@@ -117,10 +117,15 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
     setIsOrderMenuOpen(false);
   };
 
-  const handleRemoveOrder = (index: number) => {
+  const handleRemoveOrder = (index: number, orderId: string | undefined) => {
     setOrdersItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];
       updatedMenuItems.splice(index, 1);
+
+      if (orderId) {
+        setOrdersToDelete(prevOrders => [...prevOrders, orderId]);
+      }
+
       return updatedMenuItems;
     });
   };
@@ -135,9 +140,9 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
         className={`${styles.button} ${styles.buttonCancel}`}
         onClick={() => setIsEditTableOpen(false)}
       >
-        Cancel new table
+        Cancel table modifications
       </button>
-      <h2 className={styles.title}>Add table</h2>
+      <h2 className={styles.title}>Edit table</h2>
 
       <div className={styles.formGroup}>
         <label htmlFor="tableName" className={styles.label}>
@@ -241,11 +246,10 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
               </ul>
             </div>
           )}
-
           <button
             className={`${styles.button} ${styles.buttonCancel}`}
             type="button"
-            onClick={() => handleRemoveOrder(index)}
+            onClick={() => handleRemoveOrder(index, item._id)}
           >
             Remove Order {`${index + 1}`}
           </button>
@@ -261,7 +265,7 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
       </button>
 
       <button type="submit" className={styles.button}>
-        Add new table
+        Submit changes
       </button>
     </form>
   );

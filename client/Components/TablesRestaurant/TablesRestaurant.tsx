@@ -13,10 +13,19 @@ import { orderType } from '../../types/restaurant';
 import { EditOrderForm } from '../EditOrderForm/EditOrderForm';
 import { EditTableForm } from '../EditTableForm/EditTableForm';
 import { nanoid } from 'nanoid';
+import Notiflix from 'notiflix';
+import { removeRestaurantTable } from '../../redux/restaurants/restaurantsOperations';
 
 type tableProps = {
   tables: tableType[] | [] | null | undefined;
 };
+export type tableRemoveDataType = {
+  table: {
+    tableId: string;
+  };
+  restaurantId: string | string[] | undefined;
+};
+
 export const TablesRestaurant = ({ tables }: tableProps) => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
@@ -77,6 +86,24 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
     setIsEditTableOpen(true);
   };
 
+  const handleOnClickRemoveTable = async (tableData: tableType) => {
+    setCurrentTable(tableData);
+    if (tableData.orders.length > 0)
+      return Notiflix.Notify.failure(
+        'You cant finish the table before all orders are completed.'
+      );
+    const { restaurantId } = router.query;
+
+    const tableRemoveData: tableRemoveDataType = {
+      table: {
+        tableId: tableData._id,
+      },
+      restaurantId,
+    };
+
+    dispatch(removeRestaurantTable(tableRemoveData));
+  };
+
   return (
     <div>
       <button onClick={() => setIsNewTableOpen(true)} className={css.button}>
@@ -96,7 +123,9 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                 <button onClick={() => handleOnClickEditTable(table)}>
                   Edit table
                 </button>
-                <button>Finish table</button>
+                <button onClick={() => handleOnClickRemoveTable(table)}>
+                  Finish table
+                </button>
               </div>
               <p className={css.createdAt}>{cutDate(table.createdAt)}</p>
             </div>
@@ -158,18 +187,20 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                 </li>
               ))}
             </ul>
-            <button
-              className={css.btnShowMore}
-              onClick={() => handleOnClickOpenOrders(table._id)}
-            >
-              {orderOpen && selectedTable === table._id ? (
-                <span>Hide details</span>
-              ) : !orderOpen && selectedTable !== table._id ? (
-                <span>Show details</span>
-              ) : (
-                <span>Show details</span>
-              )}
-            </button>
+            {table.orders.length > 0 && (
+              <button
+                className={css.btnShowMore}
+                onClick={() => handleOnClickOpenOrders(table._id)}
+              >
+                {orderOpen && selectedTable === table._id ? (
+                  <span>Hide details</span>
+                ) : !orderOpen && selectedTable !== table._id ? (
+                  <span>Show details</span>
+                ) : (
+                  <span>Show details</span>
+                )}
+              </button>
+            )}
           </li>
         ))}
       </ul>

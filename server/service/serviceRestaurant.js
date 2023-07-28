@@ -3,6 +3,7 @@ import Table from './schemas/table.js';
 import Dish from './schemas/dish.js';
 import Invitation from './schemas/invitation.js';
 import Order from './schemas/order.js';
+
 const getRestaurantsByOwner = async (userId, restaurantId) => {
   return await Restaurant.findOne({
     $and: [
@@ -48,7 +49,7 @@ const getRestaurantByName = async (name, userId) => {
   });
 };
 
-const getRestaurantTables = async (restaurantId) => {
+const getRestaurantTables = async restaurantId => {
   return Table.find({
     $and: [{ restaurant: restaurantId }],
   });
@@ -76,6 +77,12 @@ const removeRestaurantTableOrderById = async (
   });
 };
 
+const removeRestaurantTable = (restaurantId, tableId) => {
+  return Table.findOneAndRemove({
+    $and: [{ restaurant: restaurantId }, { _id: tableId }],
+  });
+};
+
 const getDishById = async (dishId, restaurantId, userId) => {
   return Dish.findOne({
     $and: [
@@ -98,6 +105,11 @@ const getInvitationByEmailAndRestaurantName = async (email, restaurantName) => {
   });
 };
 
+const findTableAndUpdate = async (restaurantId, tableId) => {
+  return Table.findTableAndUpdate({
+    $and: [{ restaurantId }, { _id: tableId }],
+  });
+};
 const serviceRestaurant = {
   getRestaurantById,
   getRestaurantsByOwner,
@@ -112,5 +124,6 @@ const serviceRestaurant = {
   getUserRestaurantById,
   getRestaurantTableOrderById,
   removeRestaurantTableOrderById,
+  removeRestaurantTable
 };
 export default serviceRestaurant;

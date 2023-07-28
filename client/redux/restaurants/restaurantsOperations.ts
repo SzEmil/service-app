@@ -5,6 +5,9 @@ import { AuthStateType } from '../user/userOperations';
 import { setCookie, destroyCookie } from 'nookies';
 import { orderType } from '../../types/restaurant';
 import Notiflix from 'notiflix';
+import { editRestaurantTableType } from '../../Components/EditTableForm/EditTableForm';
+import { tableRemoveDataType } from '../../Components/TablesRestaurant/TablesRestaurant';
+
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
 const setAuthHeader = (token: string) => {
@@ -146,6 +149,52 @@ export const completeOrder = createAsyncThunk(
       );
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return completeOrderData.orderData;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateRestaurantTable = createAsyncThunk(
+  'restaurants/updateRestaurantTable',
+  async (editTableData: editRestaurantTableType, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.patch(
+        `/restaurants/${editTableData.restaurantId}/tables`,
+        editTableData.table
+      );
+      Notiflix.Notify.success(response.data.ResponseBody.message);
+      return response.data.ResponseBody;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const removeRestaurantTable = createAsyncThunk(
+  'restaurants/removeRestaurantTable',
+  async (tableRemoveData: tableRemoveDataType, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.post(
+        `/restaurants/${tableRemoveData.restaurantId}/tables/remove`,
+        tableRemoveData.table
+      );
+      Notiflix.Notify.success(response.data.ResponseBody.message);
+      return tableRemoveData.table.tableId;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }

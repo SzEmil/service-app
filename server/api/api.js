@@ -59,6 +59,17 @@ router.post(
   controllerRestaurant.createRestaurantTable
 );
 
+router.post(
+  '/restaurants/:restaurantId/tables/remove',
+  authUser,
+  controllerRestaurant.removeRestaurantTable
+);
+
+router.patch(
+  '/restaurants/:restaurantId/tables',
+  authUser,
+  controllerRestaurant.updateRestaurantTable
+);
 // router.get(
 //   '/restaurants/:restaurantId/tables',
 //   authUser,

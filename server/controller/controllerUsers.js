@@ -128,7 +128,7 @@ const register = async (req, res, next) => {
             username: newUser.username,
             email: newUser.email,
             token: newUser.token,
-            _id: newUser._id
+            _id: newUser._id,
           },
         },
       });
@@ -249,7 +249,7 @@ const currentUser = async (req, res, next) => {
       ResponseBody: {
         username: user.username,
         email: user.email,
-        _id: user._id
+        _id: user._id,
       },
     });
   } catch (error) {
@@ -471,6 +471,10 @@ const acceptUserInvitation = async (req, res, next) => {
   }
 };
 
+const getRestaurantColabolators = colabolators => {
+  return User.findOne({ _id: { $in: colabolators } });
+};
+
 const userController = {
   get,
   register,
@@ -481,5 +485,6 @@ const userController = {
   getUserInvitations,
   rejectUserInvitation,
   acceptUserInvitation,
+  getRestaurantColabolators
 };
 export default userController;
