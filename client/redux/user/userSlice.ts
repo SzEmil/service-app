@@ -6,7 +6,7 @@ import {
   refreshUser,
   getInvitationsData,
   rejectInvitation,
-  acceptInvitation
+  acceptInvitation,
 } from './userOperations';
 
 export type invitationType = {
@@ -18,6 +18,7 @@ export type invitationType = {
 };
 export type authInitialStateType = {
   user: {
+    id: string | null | undefined;
     username: string | null;
     email: string | null;
     avatarURL: string | null;
@@ -36,7 +37,7 @@ export type authInitialStateType = {
 };
 
 const authInitialState: authInitialStateType = {
-  user: { username: null, email: null, avatarURL: null },
+  user: { username: null, email: null, avatarURL: null, id: null },
   token: null,
   isLoggedIn: false,
   isRefreshing: false,
@@ -88,11 +89,13 @@ const authSlice = createSlice({
             username: string | null;
             email: string | null;
             token: string | null;
+            _id: string | null;
           };
         }
       ) => {
         state.user.username = action.payload.username;
         state.user.email = action.payload.email;
+        state.user.id = action.payload._id;
         state.token = action.payload.token;
         state.isLoggedIn = true;
         state.error = null;
@@ -125,6 +128,7 @@ const authSlice = createSlice({
               username: string | null;
               email: string | null;
               token: string | null;
+              _id: string | null;
             };
           };
         }
@@ -132,6 +136,7 @@ const authSlice = createSlice({
         state.user.username = action.payload.user.username;
         state.user.email = action.payload.user.email;
         state.token = action.payload.token;
+        state.user.id = action.payload.user._id;
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
@@ -162,6 +167,7 @@ const authSlice = createSlice({
       ) => {
         state.user.username = action.payload.username;
         state.user.email = action.payload.email;
+        state.user.id = action.payload._id;
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
@@ -179,6 +185,7 @@ const authSlice = createSlice({
         (state.user.avatarURL = null),
         (state.user.email = null),
         (state.user.username = null);
+        state.user.id = null;
     });
 
     builder.addCase(getInvitationsData.pending, state => {

@@ -202,9 +202,9 @@ const createRestaurantTable = async (req, res, next) => {
 
         res.status(201).json({
           success: true,
-          message: 'Table created successfully',
           ResponseBody: {
-            Table: newTable,
+            message: 'Table created successfully',
+            table: newTable,
           },
         });
       } catch (error) {
@@ -230,7 +230,7 @@ const createRestaurantTable = async (req, res, next) => {
   }
 };
 
-const getRestaurantTables = async (req, res, next) => {
+const updateRestaurantTable = async (req, res, next) => {
   try {
     const { _id } = req.user;
     if (!_id) {
@@ -240,6 +240,142 @@ const getRestaurantTables = async (req, res, next) => {
         ResponseBody: {
           message: 'Unauthorized',
         },
+      });
+    }
+
+    try {
+      const { name, icon, description, orders, tableId, ordersToDelete } =
+        req.body;
+      const { restaurantId } = req.params;
+
+      try {
+        const restaurantById = await serviceRestaurant.getRestaurantById(
+          restaurantId,
+          req.user._id
+        );
+
+        const table = await serviceRestaurant.getRestaurantTableById(
+          restaurantId,
+          tableId
+        );
+
+        const restaurantTableIndex = restaurantById.tables.findIndex(
+          table => table._id === tableId
+        );
+
+        //dla każdego id z tablicy orders toDelete trzeba usunąć order
+        if (ordersToDelete.length > 0) {
+          for (const orderToDelete of ordersToDelete) {
+            const orderIndexToRemove = table.orders.findIndex(
+              order => order._id === orderToDelete
+            );
+            table.orders.splice(orderIndexToRemove, 1);
+
+            await serviceRestaurant.removeRestaurantTableOrderById(
+              restaurantId,
+              tableId,
+              orderToDelete
+            );
+          }
+        }
+
+        table.name = name;
+        table.icon = icon;
+        table.description = description;
+
+        for (const orderData of orders) {
+          if (!orderData._id) {
+            const { name, dishes } = orderData;
+
+            const newOrder = new Order({
+              name,
+              dishes,
+              restaurant: restaurantById._id,
+              owner: req.user._id,
+              table: table._id,
+            });
+            const kcalValues = newOrder.dishes.map(dish => dish.kcal);
+            const fullKcal = kcalValues.reduce(
+              (total, kcal) => total + kcal,
+              0
+            );
+
+            const priceValues = newOrder.dishes.map(dish => dish.price);
+            const fullPrice = priceValues.reduce(
+              (total, price) => total + price,
+              0
+            );
+
+            newOrder.fullKcal = fullKcal;
+            newOrder.fullPrice = fullPrice;
+            const savedOrder = await newOrder.save();
+            table.orders.push(savedOrder);
+          } else {
+            const orderToUpdate =
+              await serviceRestaurant.getRestaurantTableOrderById(
+                restaurantId,
+                tableId,
+                orderData._id
+              );
+
+            const { name, dishes } = orderData;
+
+            orderToUpdate.name = name;
+            orderToUpdate.dishes = dishes;
+
+            const kcalValues = orderToUpdate.dishes.map(dish => dish.kcal);
+            const fullKcal = kcalValues.reduce(
+              (total, kcal) => total + kcal,
+              0
+            );
+
+            const priceValues = orderToUpdate.dishes.map(dish => dish.price);
+            const fullPrice = priceValues.reduce(
+              (total, price) => total + price,
+              0
+            );
+
+            orderToUpdate.fullKcal = fullKcal;
+            orderToUpdate.fullPrice = fullPrice;
+
+            await orderToUpdate.save();
+
+            const orderIndexToUpdate = table.orders.findIndex(
+              orderRestaurant => orderRestaurant._id == orderData._id
+            );
+
+            table.orders.splice(orderIndexToUpdate, 1, orderToUpdate);
+          }
+        }
+
+        restaurantById.tables.splice(restaurantTableIndex, 1, table);
+        await restaurantById.save();
+        await table.save();
+
+        res.status(201).json({
+          success: true,
+          ResponseBody: {
+            message: 'Table updated successfully',
+            table: table,
+            restaurantId: restaurantId,
+          },
+        });
+      } catch (error) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: error.message,
+          },
+        });
+      }
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        ResponseBody: {
+          message: 'Missing fields',
+        },
+        code: 400,
       });
     }
   } catch (error) {
@@ -394,8 +530,8 @@ const removeColabolatorRestaurant = async (req, res, next) => {
           },
         });
       }
-      const indexToRemove = restaurant.colabolators.findIndex(
-        colabolator => colabolator.equals(user._id)
+      const indexToRemove = restaurant.colabolators.findIndex(colabolator =>
+        colabolator.equals(user._id)
       );
 
       if (indexToRemove === -1) {
@@ -423,14 +559,254 @@ const removeColabolatorRestaurant = async (req, res, next) => {
   }
 };
 
+const completeOrder = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+    const { orderId, tableId } = req.body;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+    const table = await serviceRestaurant.getRestaurantTableById(
+      restaurantId,
+      tableId
+    );
+    if (!table) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found table with id ${tableId}`,
+        },
+      });
+    }
+
+    const order = await serviceRestaurant.getRestaurantTableOrderById(
+      restaurantId,
+      tableId,
+      orderId
+    );
+    if (!order) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found order with id ${orderId}`,
+        },
+      });
+    }
+
+    const restaurantTableIndex = restaurant.tables.findIndex(
+      tableToDelete => tableToDelete._id == tableId
+    );
+
+    const orderIndexToRemove = table.orders.findIndex(
+      order => order._id == orderId
+    );
+    table.orders.splice(orderIndexToRemove, 1);
+
+    restaurant.tables.splice(restaurantTableIndex, 1, table);
+
+    await serviceRestaurant.removeRestaurantTableOrderById(
+      restaurantId,
+      table._id,
+      order._id
+    );
+
+    await table.save();
+    await restaurant.save();
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      ResponseBody: {
+        message: 'Order completed successfully',
+        data: restaurant,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const removeRestaurantTable = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+    const { tableId } = req.body;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+    const table = await serviceRestaurant.getRestaurantTableById(
+      restaurantId,
+      tableId
+    );
+    if (!table) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found table with id ${tableId}`,
+        },
+      });
+    }
+
+    const restaurantTableIndex = restaurant.tables.findIndex(
+      tableToDelete => tableToDelete._id == tableId
+    );
+    restaurant.tables.splice(restaurantTableIndex, 1);
+
+    await serviceRestaurant.removeRestaurantTable(restaurantId, tableId);
+    await restaurant.save();
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      ResponseBody: {
+        message: 'Table finished successfully',
+        restaurant: restaurant,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getRestaurantTables = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      ResponseBody: {
+        message: 'Order completed successfully',
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getRestaurantColabolators = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+    try {
+      const colabolators = restaurant.colabolators;
+      const userColabolators = await userService.getRestaurantColabolators(
+        colabolators
+      );
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          colabolators: userColabolators,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 const controllerRestaurant = {
   create,
   getUserRestaurants,
   getUserRestaurantById,
-  getRestaurantTables,
   createRestaurantTable,
   createInviteRestaurantColabolator,
   removeColabolatorRestaurant,
+  completeOrder,
+  updateRestaurantTable,
+  removeRestaurantTable,
+  getRestaurantColabolators,
 };
 
 export default controllerRestaurant;

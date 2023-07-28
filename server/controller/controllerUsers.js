@@ -128,6 +128,7 @@ const register = async (req, res, next) => {
             username: newUser.username,
             email: newUser.email,
             token: newUser.token,
+            _id: newUser._id,
           },
         },
       });
@@ -248,6 +249,7 @@ const currentUser = async (req, res, next) => {
       ResponseBody: {
         username: user.username,
         email: user.email,
+        _id: user._id,
       },
     });
   } catch (error) {
@@ -458,6 +460,7 @@ const acceptUserInvitation = async (req, res, next) => {
         status: 'success',
         ResponseBody: {
           message: `User with id ${user._id} is added to restaurant ${restaurant.name}`,
+          restaurant: restaurant,
         },
       });
     } catch (error) {
@@ -466,6 +469,10 @@ const acceptUserInvitation = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+const getRestaurantColabolators = colabolators => {
+  return User.findOne({ _id: { $in: colabolators } });
 };
 
 const userController = {
@@ -478,5 +485,6 @@ const userController = {
   getUserInvitations,
   rejectUserInvitation,
   acceptUserInvitation,
+  getRestaurantColabolators
 };
 export default userController;

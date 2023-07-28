@@ -30,10 +30,17 @@ router.patch(
 
 router.get('/users/invitations', authUser, userController.getUserInvitations);
 
-router.post('/users/invitations/reject', authUser, userController.rejectUserInvitation);
+router.post(
+  '/users/invitations/reject',
+  authUser,
+  userController.rejectUserInvitation
+);
 
-
-router.post('/users/invitations/accept', authUser, userController.acceptUserInvitation);
+router.post(
+  '/users/invitations/accept',
+  authUser,
+  userController.acceptUserInvitation
+);
 // Restaurants
 //jako body przekazuje name, icon, menu=[{name,description,price}]
 router.post('/restaurants', authUser, controllerRestaurant.create);
@@ -52,11 +59,22 @@ router.post(
   controllerRestaurant.createRestaurantTable
 );
 
-router.get(
+router.post(
+  '/restaurants/:restaurantId/tables/remove',
+  authUser,
+  controllerRestaurant.removeRestaurantTable
+);
+
+router.patch(
   '/restaurants/:restaurantId/tables',
   authUser,
-  controllerRestaurant.getRestaurantTables
+  controllerRestaurant.updateRestaurantTable
 );
+// router.get(
+//   '/restaurants/:restaurantId/tables',
+//   authUser,
+//   controllerRestaurant.getRestaurantTables
+// );
 
 router.post(
   '/restaurants/:restaurantId/invitations',
@@ -69,5 +87,7 @@ router.post(
   authUser,
   controllerRestaurant.removeColabolatorRestaurant
 );
+
+ router.post( `/restaurants/:restaurantId/order/complete`, authUser, controllerRestaurant.completeOrder)
 //By dodać zamówienie trzeba bedzie nowy obiekt zamówienia dodać push do tablicy orders danego stolika czyli ten stolik albo lepiej order trzeba wyszukać apotem table.orders.push(object)
 export default router;

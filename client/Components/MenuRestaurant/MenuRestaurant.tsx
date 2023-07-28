@@ -22,7 +22,6 @@ export const MenuRestaurant = ({ menu }: menuProps) => {
     <div>
       <div className={css.menuSearchForm}>
         <div className={css.menuBox}>
-          <h2 className={css.menuTitle}>Menu</h2>
           <button
             onClick={() => setIsEditMenuOpen(true)}
             className={css.button}

@@ -13,6 +13,8 @@ import { getInvitationsData } from '../../redux/user/userOperations';
 import { FiRefreshCcw } from 'react-icons/fi';
 import { rejectInvitation } from '../../redux/user/userOperations';
 import { acceptInvitation } from '../../redux/user/userOperations';
+import { refreshRestaurantsData } from '../../redux/restaurants/restaurantsOperations';
+import { useRouter } from 'next/router';
 
 type User = {
   user: {
@@ -23,6 +25,9 @@ type User = {
 };
 
 export const Header = ({ user }: User) => {
+  const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
+
   const [userMenuOpen, setUserMenu] = useState(false);
   const userInvitations = useSelector(selectAuthUserInvitations);
 
@@ -30,10 +35,10 @@ export const Header = ({ user }: User) => {
   const [invitationData, setInvitationData] = useState<invitationType | null>(
     null
   );
-  const dispatch: AppDispatch = useDispatch();
 
-  const handleOnClickLogOut = () => {
-    dispatch(logOut());
+  const handleOnClickLogOut = async () => {
+    await dispatch(logOut());
+    router.push('/');
   };
 
   const handleOnClickOpenInvitation = async (invitation: invitationType) => {
@@ -53,19 +58,21 @@ export const Header = ({ user }: User) => {
   };
 
   const handleOnClickRejectInvitation = (id: string | null | undefined) => {
-
     const idToDelete = {
       invitationId: id,
     };
     setIsInvitationOpen(false);
     dispatch(rejectInvitation(idToDelete));
   };
-  const handleOnClickAcceptInvitation = (id: string | null | undefined) => {
+  const handleOnClickAcceptInvitation = async (
+    id: string | null | undefined
+  ) => {
     const idToAccept = {
       invitationId: id,
     };
     setIsInvitationOpen(false);
-    dispatch(acceptInvitation(idToAccept));
+    await dispatch(acceptInvitation(idToAccept));
+    dispatch(refreshRestaurantsData());
   };
 
   return (
