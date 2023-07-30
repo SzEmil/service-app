@@ -79,7 +79,7 @@ router.patch(
 router.get(
   '/restaurants/:restaurantId/colabolators',
   authUser,
-  controllerRestaurant.getRestaurantColabolators
+  controllerRestaurant.getRestaurantColabolatorsAndOwner
 );
 
 router.patch(

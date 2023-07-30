@@ -22,10 +22,12 @@ export const RestaurantBlock = ({ restaurant }: restaurantPropType) => {
   //   router.push(`/restaurants/${restaurant._id}`);
   // };
   return (
-    <div className={css.container} >
+    <div className={css.container}>
       <div className={css.descriptionBlock}>
-        <p className={css.descriptionDate}>{cutDate(restaurant.createdAt)}</p>
-        <h2 className={css.descriptionTitle}>{restaurant.name}</h2>
+        <div className={css.descriptionTitleBox}>
+          <h2 className={css.descriptionTitle}>{restaurant.name}</h2>
+          <p className={css.descriptionDate}>{cutDate(restaurant.createdAt)}</p>
+        </div>
         <div className={css.infoBox}>
           <div className={css.infoItem}>
             <p className={css.infoLabel}>Active tables</p>

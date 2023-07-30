@@ -1,7 +1,7 @@
 import React from 'react';
 import { BiSolidUserCircle } from 'react-icons/bi';
 import css from './Header.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { logOut } from '../../redux/user/userOperations';
@@ -15,15 +15,18 @@ import { rejectInvitation } from '../../redux/user/userOperations';
 import { acceptInvitation } from '../../redux/user/userOperations';
 import { refreshRestaurantsData } from '../../redux/restaurants/restaurantsOperations';
 import { useRouter } from 'next/router';
+import { setClearRestaurants } from '../../redux/restaurants/restaurantsSlice';
 
 type User = {
   user: {
     username: string | null;
     email: string | null;
-    avatarURL: string | null;
+    avatarURL: string | undefined;
   };
 };
-
+export const imageSrc = 'http://localhost:3001';
+// export const imageSrc = "https://github.com/SzEmil/service-app/tree/dev";
+// export const imageSrc = "https://github.com/SzEmil/service-app";
 export const Header = ({ user }: User) => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
@@ -36,9 +39,31 @@ export const Header = ({ user }: User) => {
     null
   );
 
-  const handleOnClickLogOut = async () => {
-    await dispatch(logOut());
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const menuWrapper = document.getElementById('userMenuOptionsWrapper');
+      const menuBtn = document.getElementById('userMenuBtn');
+
+      if (
+        menuWrapper &&
+        !menuBtn?.contains(target) &&
+        !menuWrapper.contains(target)
+      ) {
+        setUserMenu(false);
+      }
+    };
+    document.addEventListener('click', handleDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
+
+  const handleOnClickLogOut = () => {
     router.push('/');
+    dispatch(setClearRestaurants());
+    dispatch(logOut());
   };
 
   const handleOnClickOpenInvitation = async (invitation: invitationType) => {
@@ -75,6 +100,11 @@ export const Header = ({ user }: User) => {
     dispatch(refreshRestaurantsData());
   };
 
+  const handleMakeImageURL = (userAvatarURL: String | undefined) => {
+    return `${imageSrc}/${userAvatarURL}`;
+  };
+
+  const userImage = handleMakeImageURL(user.avatarURL);
   return (
     <header className={css.header}>
       {/* <p className={css.title}>SERVISE</p> */}
@@ -83,17 +113,25 @@ export const Header = ({ user }: User) => {
       </Link>
       <nav>
         <div
+          id="userMenuBtn"
           className={css.userIcon}
           onClick={() => setUserMenu(prevVal => !prevVal)}
         >
           <div className={css.user}>
             <p className={css.userName}>{user.username}</p>
-
-            <BiSolidUserCircle size={'36px'} />
+            {userImage ? (
+              <img
+                className={css.colabolatorImage}
+                src={userImage}
+                alt="user pic"
+              />
+            ) : (
+              <BiSolidUserCircle size={'36px'} />
+            )}
           </div>
         </div>
         {userMenuOpen && (
-          <div className={css.userMenu}>
+          <div className={css.userMenu} id="userMenuOptionsWrapper">
             <ul className={css.userNav}>
               <li key={nanoid()}>
                 <button

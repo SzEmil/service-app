@@ -41,6 +41,9 @@ const restaurantSlice = createSlice({
       state.error = null;
       state.colabolators = [...action.payload];
     },
+    setClearRestaurants(state) {
+      state.restaurants = [];
+    },
   },
   extraReducers(builder) {
     builder.addCase(addRestaurant.fulfilled, (state, action) => {
@@ -137,5 +140,6 @@ export const {
   setRestaurantData,
   setCurrentRestaurant,
   setCurrentRestaurantColabolators,
+  setClearRestaurants
 } = restaurantSlice.actions;
 export const restaurantsReducer = restaurantSlice.reducer;

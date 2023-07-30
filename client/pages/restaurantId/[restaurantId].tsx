@@ -15,14 +15,15 @@ import { selectAuthUser } from '../../redux/user/userSelectors';
 // import { getRestaurantColabolators } from '../../redux/restaurants/restaurantsOperations';
 import { setCurrentRestaurantColabolators } from '../../redux/restaurants/restaurantsSlice';
 import { userType } from '../../types/user';
+import { imageSrc } from '../../Components/Header/Header';
 
 type leaveRestaurantData = {
   restaurantId: string | string[] | undefined;
 };
-const RestaurantPage = ({ restaurant, colabolators }: any) => {
+const RestaurantPage = ({ restaurant, restaurantData }: any) => {
   const [isTablesOpen, setIsTablesOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const [restaurantMenuOpen, setRestaurantMenuOpen] = useState(false);
   const [isInviteFormOpen, setIsInviteFormOpen] = useState(false);
 
   const handleOpenTables = () => {
@@ -42,7 +43,7 @@ const RestaurantPage = ({ restaurant, colabolators }: any) => {
 
   useEffect(() => {
     dispatch(setCurrentRestaurant(restaurant));
-    dispatch(setCurrentRestaurantColabolators(colabolators));
+    dispatch(setCurrentRestaurantColabolators(restaurantData.colabolators));
   }, [dispatch]);
 
   const handleOnClickLeaveRestaurant = () => {
@@ -59,52 +60,121 @@ const RestaurantPage = ({ restaurant, colabolators }: any) => {
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
+  const handleMakeImageURL = (userAvatarURL: String | undefined) => {
+    return `${imageSrc}/${userAvatarURL}`;
+  };
+
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const menuWrapper = document.getElementById('restaurantOptionsWrapper');
+      const menuBtn = document.getElementById('menuBtn');
+
+      if (
+        menuWrapper &&
+        !menuBtn?.contains(target) &&
+        !menuWrapper.contains(target)
+      ) {
+        setRestaurantMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
 
   return (
     <>
       {restaurant && (
-        <div>
+        <div className={css.restaurant}>
           <div className={css.restaurantNameWrapper}>
-            <h1 className={css.restaurantName}>{restaurant.name}</h1>
+            <button
+              id="menuBtn"
+              onClick={() => {
+                setRestaurantMenuOpen(prevVal => !prevVal);
+              }}
+              className={`${css.restaurantName} ${
+                restaurantMenuOpen && css.activeLink
+              }`}
+            >
+              {restaurant.name}
+            </button>
             <ul className={css.colabolatorsList}>
-              <li>
-                {user.user.username}
-                <img src={user.user.avatarURL} alt="user pic" />
-                <p>{user.user.avatarURL}</p>
+              <li key={user.user.id} className={css.colabolatorsItem}>
+                <img
+                  className={css.colabolatorImage}
+                  src={handleMakeImageURL(restaurantData.owner.avatarURL)}
+                  alt="user pic"
+                />
+                <div className={css.userNameBox}>
+                  <p className={css.colaboratorUsername}>
+                    {restaurantData.owner.username}
+                  </p>
+                </div>
               </li>
-              {colabolators.map((colabolator: userType) => (
-                <li key={colabolator._id}>
-                  <p>{colabolator.username}</p>
+              {restaurantData.colabolators.map((colabolator: userType) => (
+                <li className={css.colabolatorsItem} key={colabolator._id}>
+                  <img
+                    className={css.colabolatorImage}
+                    src={handleMakeImageURL(colabolator.avatarURL)}
+                    alt="user pic"
+                  />
+                  <div className={css.userNameBox}>
+                    <p className={css.colaboratorUsername}>
+                      {colabolator.username}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>
           </div>
-          <div className={css.restaurantBtnOptions}>
-            <button
-              className={css.button}
-              onClick={() => setIsInviteFormOpen(true)}
+
+          {restaurantMenuOpen && (
+            <div
+              id="restaurantOptionsWrapper"
+              className={css.restaurantOptionsWrapper}
             >
-              Invite friend
-            </button>
-            {restaurant.colabolators && (
-              <div>
-                {restaurant.colabolators.includes(user.user.id) && (
+              <div className={css.restaurantBtnOptions}>
+                <div>
                   <button
-                    className={`${css.button} ${css.buttonMarginLeft}`}
-                    onClick={() => handleOnClickLeaveRestaurant()}
+                    className={`${css.button} ${css.btnMenuRestaurant}`}
+                    onClick={() => setIsInviteFormOpen(true)}
                   >
-                    Leave restaurant
+                    Invite friend
                   </button>
-                )}
+                </div>
+                {restaurant.colabolators &&
+                  restaurant.colabolators.includes(user.user.id) && (
+                    <div>
+                      <button
+                        className={`${css.button} ${css.btnMenuRestaurant}`}
+                        onClick={() => handleOnClickLeaveRestaurant()}
+                      >
+                        Leave restaurant
+                      </button>
+                    </div>
+                  )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <ul className={css.navBtn}>
             <li>
               <button
-                onClick={() => handleOpenTables()}
                 className={`${css.button} ${
+                  !isTablesOpen && isMenuOpen ? css.btnActive : null
+                }`}
+              >
+                Overview
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleOpenTables()}
+                className={`${css.button} ${css.buttonMarginLeft} ${
                   isTablesOpen && !isMenuOpen ? css.btnActive : null
                 }`}
               >
@@ -168,12 +238,12 @@ export async function getServerSideProps(context: any) {
     const responseColabolators = await axios.get(
       `/restaurants/${restaurantId}/colabolators`
     );
-    const colabolators: userType[] =
-      responseColabolators.data.ResponseBody.colabolators;
+    const restaurantData: userType[] =
+      responseColabolators.data.ResponseBody.restaurantData;
     return {
       props: {
         restaurant,
-        colabolators,
+        restaurantData,
       },
     };
   } catch (error) {
@@ -182,7 +252,10 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         restaurant: {},
-        colabolators: [],
+        restaurantData: {
+          colabolators: [],
+          owner: null,
+        },
       },
     };
   }

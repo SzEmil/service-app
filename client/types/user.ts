@@ -4,7 +4,7 @@ export type userType = {
   email: string | undefined;
   token?: string | undefined;
   password?: string | undefined;
-  avatarURL: string | null;
+  avatarURL: string | undefined;
   createdAt?: string | undefined;
   updatedAt?: string | undefined;
   invitations?: string[] | [];

@@ -128,6 +128,7 @@ const register = async (req, res, next) => {
             username: newUser.username,
             email: newUser.email,
             token: newUser.token,
+            avatarURL,
             _id: newUser._id,
           },
         },
@@ -189,6 +190,7 @@ const login = async (req, res, next) => {
           _id: user._id,
           username: user.username,
           email: user.email,
+          avatarURL: user.avatarURL,
         },
       },
     });
@@ -250,6 +252,7 @@ const currentUser = async (req, res, next) => {
         username: user.username,
         email: user.email,
         _id: user._id,
+        avatarURL: user.avatarURL
       },
     });
   } catch (error) {
@@ -471,9 +474,9 @@ const acceptUserInvitation = async (req, res, next) => {
   }
 };
 
-const getRestaurantColabolators = colabolators => {
-  return User.findOne({ _id: { $in: colabolators } });
-};
+// const getRestaurantColabolators = colabolators => {
+//   return User.findOne({ _id: { $in: colabolators } });
+// };
 
 const userController = {
   get,
@@ -485,6 +488,5 @@ const userController = {
   getUserInvitations,
   rejectUserInvitation,
   acceptUserInvitation,
-  getRestaurantColabolators
 };
 export default userController;

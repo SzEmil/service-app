@@ -459,7 +459,8 @@ const createInviteRestaurantColabolator = async (req, res, next) => {
 
       const isRestaurantColabolator =
         await serviceRestaurant.getRestaurantByColabolator(
-          foundColabolator._id, restaurantId
+          foundColabolator._id,
+          restaurantId
         );
 
       if (isRestaurantColabolator) {
@@ -752,7 +753,7 @@ const getRestaurantTables = async (req, res, next) => {
   }
 };
 
-const getRestaurantColabolators = async (req, res, next) => {
+const getRestaurantColabolatorsAndOwner = async (req, res, next) => {
   try {
     const { _id } = req.user;
     const user = await userService.getUserById(_id);
@@ -784,10 +785,17 @@ const getRestaurantColabolators = async (req, res, next) => {
       const userColabolators = await userService.getRestaurantColabolators(
         colabolators
       );
+
+      const ownerId = restaurant.owner;
+      const owner = await userService.getUserById(ownerId);
+
       return res.status(200).json({
         status: 'success',
         ResponseBody: {
-          colabolators: userColabolators,
+          restaurantData: {
+            colabolators: userColabolators,
+            owner,
+          },
         },
       });
     } catch (error) {
@@ -913,7 +921,7 @@ const controllerRestaurant = {
   completeOrder,
   updateRestaurantTable,
   removeRestaurantTable,
-  getRestaurantColabolators,
+  getRestaurantColabolatorsAndOwner,
   updateRestaurantMenu,
 };
 
