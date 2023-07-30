@@ -9,17 +9,22 @@ import {
   updateRestaurantTable,
   removeRestaurantTable,
   updateRestaurantMenu,
+  getRestaurantColabolators,
 } from './restaurantsOperations';
+import { userType } from '../../types/user';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
   currentRestaurant: restaurantType | null;
   error: any;
+
+  colabolators: userType[] | [];
 };
 const restaurantInitialState: restaurantsStateType = {
   restaurants: [],
   currentRestaurant: null,
   error: null,
+  colabolators: [],
 };
 
 const restaurantSlice = createSlice({
@@ -31,6 +36,10 @@ const restaurantSlice = createSlice({
     },
     setCurrentRestaurant(state, action) {
       state.currentRestaurant = action.payload;
+    },
+    setCurrentRestaurantColabolators(state, action) {
+      state.error = null;
+      state.colabolators = [...action.payload];
     },
   },
   extraReducers(builder) {
@@ -108,13 +117,25 @@ const restaurantSlice = createSlice({
     builder.addCase(updateRestaurantMenu.rejected, (state, action) => {
       state.error = action.payload;
     });
-    builder.addCase(updateRestaurantMenu.fulfilled, (state,action)=>{
+    builder.addCase(updateRestaurantMenu.fulfilled, (state, action) => {
       state.error = null;
       state.currentRestaurant!.menu = action.payload;
-    })
+    });
+
+    builder.addCase(getRestaurantColabolators.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+
+    builder.addCase(getRestaurantColabolators.fulfilled, (state, action) => {
+      state.error = null;
+      state.colabolators = [...action.payload];
+    });
   },
 });
 
-export const { setRestaurantData, setCurrentRestaurant } =
-  restaurantSlice.actions;
+export const {
+  setRestaurantData,
+  setCurrentRestaurant,
+  setCurrentRestaurantColabolators,
+} = restaurantSlice.actions;
 export const restaurantsReducer = restaurantSlice.reducer;

@@ -21,7 +21,7 @@ export type authInitialStateType = {
     id: string | null | undefined;
     username: string | null;
     email: string | null;
-    avatarURL: string | null;
+    avatarURL: string | undefined;
   };
   token: string | null;
   isRefreshing: boolean;
@@ -37,7 +37,7 @@ export type authInitialStateType = {
 };
 
 const authInitialState: authInitialStateType = {
-  user: { username: null, email: null, avatarURL: null, id: null },
+  user: { username: null, email: null, avatarURL: "", id: null },
   token: null,
   isLoggedIn: false,
   isRefreshing: false,
@@ -60,7 +60,7 @@ const authSlice = createSlice({
       (state.token = null),
         (state.error = null),
         (state.isLoggedIn = false),
-        (state.user.avatarURL = null),
+        (state.user.avatarURL = ""),
         (state.user.email = null),
         (state.user.username = null);
     },
@@ -182,7 +182,7 @@ const authSlice = createSlice({
       (state.token = null),
         (state.error = null),
         (state.isLoggedIn = false),
-        (state.user.avatarURL = null),
+        (state.user.avatarURL = ""),
         (state.user.email = null),
         (state.user.username = null);
         state.user.id = null;

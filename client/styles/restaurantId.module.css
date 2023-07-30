@@ -52,3 +52,15 @@
   display: flex;
   align-items: center;
 }
+
+.restaurantNameWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.colabolatorsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}

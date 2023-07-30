@@ -42,7 +42,7 @@ router.post(
   userController.acceptUserInvitation
 );
 // Restaurants
-//jako body przekazuje name, icon, menu=[{name,description,price}]
+
 router.post('/restaurants', authUser, controllerRestaurant.create);
 
 router.get('/restaurants', authUser, controllerRestaurant.getUserRestaurants);
@@ -52,7 +52,7 @@ router.get(
   authUser,
   controllerRestaurant.getUserRestaurantById
 );
-//req params id restauracji restaurantId ,jako body przekazuje name,icon,description, orders=[{name, dishes:[stringi ID dań]}]
+
 router.post(
   '/restaurants/:restaurantId/tables',
   authUser,
@@ -75,6 +75,12 @@ router.patch(
 //   authUser,
 //   controllerRestaurant.getRestaurantTables
 // );
+
+router.get(
+  '/restaurants/:restaurantId/colabolators',
+  authUser,
+  controllerRestaurant.getRestaurantColabolators
+);
 
 router.patch(
   '/restaurants/:restaurantId/menu',

@@ -12,11 +12,14 @@ import { TablesRestaurant } from '../../Components/TablesRestaurant/TablesRestau
 import { InviteForm } from '../../Components/InviteForm/InviteForm';
 import { removeRestaurantColabolator } from '../../redux/restaurants/restaurantsOperations';
 import { selectAuthUser } from '../../redux/user/userSelectors';
+// import { getRestaurantColabolators } from '../../redux/restaurants/restaurantsOperations';
+import { setCurrentRestaurantColabolators } from '../../redux/restaurants/restaurantsSlice';
+import { userType } from '../../types/user';
 
 type leaveRestaurantData = {
   restaurantId: string | string[] | undefined;
 };
-const RestaurantPage = ({ restaurant }: any) => {
+const RestaurantPage = ({ restaurant, colabolators }: any) => {
   const [isTablesOpen, setIsTablesOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -39,6 +42,7 @@ const RestaurantPage = ({ restaurant }: any) => {
 
   useEffect(() => {
     dispatch(setCurrentRestaurant(restaurant));
+    dispatch(setCurrentRestaurantColabolators(colabolators));
   }, [dispatch]);
 
   const handleOnClickLeaveRestaurant = () => {
@@ -60,7 +64,21 @@ const RestaurantPage = ({ restaurant }: any) => {
     <>
       {restaurant && (
         <div>
-          <h1 className={css.restaurantName}>{restaurant.name}</h1>
+          <div className={css.restaurantNameWrapper}>
+            <h1 className={css.restaurantName}>{restaurant.name}</h1>
+            <ul className={css.colabolatorsList}>
+              <li>
+                {user.user.username}
+                <img src={user.user.avatarURL} alt="user pic" />
+                <p>{user.user.avatarURL}</p>
+              </li>
+              {colabolators.map((colabolator: userType) => (
+                <li key={colabolator._id}>
+                  <p>{colabolator.username}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className={css.restaurantBtnOptions}>
             <button
               className={css.button}
@@ -141,15 +159,21 @@ export async function getServerSideProps(context: any) {
 
     const { restaurantId } = context.params;
 
-    const response = await axios.get(
+    const responseRestaurant = await axios.get(
       `http://localhost:3001/api/restaurants/${restaurantId}`
     );
-    const data = response.data;
+    const data = responseRestaurant.data;
     const restaurant = data.ResponseBody.restaurant;
 
+    const responseColabolators = await axios.get(
+      `/restaurants/${restaurantId}/colabolators`
+    );
+    const colabolators: userType[] =
+      responseColabolators.data.ResponseBody.colabolators;
     return {
       props: {
         restaurant,
+        colabolators,
       },
     };
   } catch (error) {
@@ -158,6 +182,7 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         restaurant: {},
+        colabolators: [],
       },
     };
   }

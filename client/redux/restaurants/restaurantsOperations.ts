@@ -224,3 +224,24 @@ export const updateRestaurantMenu = createAsyncThunk(
     }
   }
 );
+
+export const getRestaurantColabolators = createAsyncThunk(
+  'restaurants/getRestaurantColabolators',
+  async (restaurantId: string | string[] | undefined, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.get(
+        `/restaurants/${restaurantId}/colabolators`,
+      );
+      return response.data.ResponseBody.colabolators;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);

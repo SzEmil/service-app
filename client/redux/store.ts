@@ -21,18 +21,18 @@ const authPersistConfig = {
   whitelist: ['token', 'user', 'invitations'],
 };
 
-const restaurantsPersistConfig = {
-  key: 'restaurants',
-  storage,
-  whitelist: ['restaurants, "currentRestaurant'],
-};
+// const restaurantsPersistConfig = {
+//   key: 'restaurants',
+//   storage,
+//   whitelist: ['restaurants, "currentRestaurant'],
+// };
 
 const ignoredActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER];
 export const store = configureStore({
   reducer: {
     auth: persistReducer(authPersistConfig, authReducer),
     // auth: authReducer,
-    restaurants: persistReducer(restaurantsPersistConfig, restaurantsReducer),
+    restaurants: restaurantsReducer,
     filter: filterReducer,
   },
 
