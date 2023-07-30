@@ -84,14 +84,21 @@ const RestaurantPage = ({ restaurant }: any) => {
 
           <ul className={css.navBtn}>
             <li>
-              <button onClick={() => handleOpenTables()} className={css.button}>
+              <button
+                onClick={() => handleOpenTables()}
+                className={`${css.button} ${
+                  isTablesOpen && !isMenuOpen ? css.btnActive : null
+                }`}
+              >
                 Tables
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleOpenMenu()}
-                className={`${css.button} ${css.buttonMarginLeft}`}
+                className={`${css.button} ${css.buttonMarginLeft} ${
+                  !isTablesOpen && isMenuOpen ? css.btnActive : null
+                }`}
               >
                 Menu
               </button>

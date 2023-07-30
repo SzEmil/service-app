@@ -3,6 +3,7 @@ import Table from './schemas/table.js';
 import Dish from './schemas/dish.js';
 import Invitation from './schemas/invitation.js';
 import Order from './schemas/order.js';
+import mongoose from 'mongoose';
 
 const getRestaurantsByOwner = async (userId, restaurantId) => {
   return await Restaurant.findOne({
@@ -20,8 +21,10 @@ const getAllUserRestaurants = async userId => {
   });
 };
 
-const getRestaurantByColabolator = async userId => {
-  return Restaurant.findOne({ colabolators: { $in: [userId] } });
+const getRestaurantByColabolator = async (userId, restaurantId) => {
+  return Restaurant.findOne({
+    $and: [{ colabolators: { $in: [userId] } }, { _id: restaurantId }],
+  });
 };
 
 const getRestaurantById = async (restaurantId, userId) => {
@@ -86,12 +89,17 @@ const removeRestaurantTable = (restaurantId, tableId) => {
 const getDishById = async (dishId, restaurantId, userId) => {
   return Dish.findOne({
     $and: [
-      { owner: userId },
       { owner: { $exists: true } },
       { _id: dishId },
       { owner: userId },
       { restaurant: restaurantId },
     ],
+  });
+};
+
+const getDishOnlyById = async (dishId, restaurantId) => {
+  return Dish.findOne({
+    $and: [{ _id: dishId }, { restaurant: restaurantId }],
   });
 };
 
@@ -105,11 +113,15 @@ const getInvitationByEmailAndRestaurantName = async (email, restaurantName) => {
   });
 };
 
-const findTableAndUpdate = async (restaurantId, tableId) => {
-  return Table.findTableAndUpdate({
-    $and: [{ restaurantId }, { _id: tableId }],
+const removeDishesFromRestaurant = async (dishesToDelete, restaurantId) => {
+  const dishIds = dishesToDelete.map(
+    dishId => new mongoose.Types.ObjectId(dishId)
+  );
+  Dish.deleteMany({
+    $and: [{ restaurant: restaurantId }, { _id: { $in: [dishIds] } }],
   });
 };
+
 const serviceRestaurant = {
   getRestaurantById,
   getRestaurantsByOwner,
@@ -124,6 +136,8 @@ const serviceRestaurant = {
   getUserRestaurantById,
   getRestaurantTableOrderById,
   removeRestaurantTableOrderById,
-  removeRestaurantTable
+  removeRestaurantTable,
+  removeDishesFromRestaurant,
+  getDishOnlyById,
 };
 export default serviceRestaurant;

@@ -15,6 +15,8 @@ import { EditTableForm } from '../EditTableForm/EditTableForm';
 import { nanoid } from 'nanoid';
 import Notiflix from 'notiflix';
 import { removeRestaurantTable } from '../../redux/restaurants/restaurantsOperations';
+import { useSelector } from 'react-redux';
+import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
 
 type tableProps = {
   tables: tableType[] | [] | null | undefined;
@@ -30,6 +32,7 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
 
+  const currency = useSelector(selectCurrentRestaurantCurrency);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [animateOrders, setAnimateOrders] = useState(false);
   const [isNewTableOpen, setIsNewTableOpen] = useState(false);
@@ -118,12 +121,18 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
             }`}
           >
             <div className={css.tableInfo}>
-              <div>
+              <div className={css.tableOptions}>
                 <h2 className={css.tableName}>{table.name}</h2>
-                <button onClick={() => handleOnClickEditTable(table)}>
+                <button
+                  className={`${css.button}`}
+                  onClick={() => handleOnClickEditTable(table)}
+                >
                   Edit table
                 </button>
-                <button onClick={() => handleOnClickRemoveTable(table)}>
+                <button
+                  className={`${css.button} ${css.buttonFinishTable}`}
+                  onClick={() => handleOnClickRemoveTable(table)}
+                >
                   Finish table
                 </button>
               </div>
@@ -171,7 +180,9 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                     </div>
                   </div>
                   <p>Full kcal: {order.fullKcal}</p>
-                  <p>Full Price: {order.fullPrice}</p>
+                  <p>
+                    Full Price: {order.fullPrice} {currency}
+                  </p>
                   <ul className={css.dishesList}>
                     {order.dishes.map(dish => (
                       <li
@@ -180,7 +191,9 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                       >
                         <h2>{dish.name}</h2>
                         <p>kcal: {dish.kcal}</p>
-                        <p>price: {dish.price}</p>
+                        <p>
+                          price: {dish.price} {currency}
+                        </p>
                       </li>
                     ))}
                   </ul>

@@ -85,7 +85,7 @@ const create = async (req, res, next) => {
       });
     }
 
-    const { name, icon, menu } = req.body;
+    const { name, icon, menu, currency } = req.body;
 
     const restaurant = await serviceRestaurant.getRestaurantByName(name, _id);
 
@@ -98,7 +98,7 @@ const create = async (req, res, next) => {
         },
       });
     }
-    // Tworzenie nowej restauracji
+
     const newRestaurant = new Restaurant({
       name,
       icon,
@@ -106,6 +106,7 @@ const create = async (req, res, next) => {
       menu: [],
       tables: [],
       colabolators: [],
+      currency,
     });
 
     for (const dishData of menu) {
@@ -458,8 +459,9 @@ const createInviteRestaurantColabolator = async (req, res, next) => {
 
       const isRestaurantColabolator =
         await serviceRestaurant.getRestaurantByColabolator(
-          foundColabolator._id
+          foundColabolator._id, restaurantId
         );
+
       if (isRestaurantColabolator) {
         return res.status(404).json({
           status: 'error',
@@ -796,6 +798,111 @@ const getRestaurantColabolators = async (req, res, next) => {
   }
 };
 
+const updateRestaurantMenu = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    if (!_id) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+
+    try {
+      const { menu, dishesToDelete } = req.body;
+      const { restaurantId } = req.params;
+
+      try {
+        const restaurantById = await serviceRestaurant.getRestaurantById(
+          restaurantId,
+          req.user._id
+        );
+        if (dishesToDelete.length > 0) {
+          for (const dishToDelete of dishesToDelete) {
+            const dishIndexToRemove = restaurantById.menu.findIndex(
+              dish => dish._id === dishToDelete
+            );
+            restaurantById.menu.splice(dishIndexToRemove, 1);
+          }
+          await serviceRestaurant.removeDishesFromRestaurant(
+            dishesToDelete,
+            restaurantId
+          );
+        }
+
+        for (const dishData of menu) {
+          if (!dishData._id) {
+            const { name, description, price, kcal } = dishData;
+
+            const newDish = new Dish({
+              name,
+              description,
+              price,
+              kcal,
+              restaurant: restaurantById._id,
+              owner: req.user._id,
+            });
+
+            restaurantById.menu.push(newDish);
+            await newDish.save();
+          } else {
+            const dishToUpdate = await serviceRestaurant.getDishOnlyById(
+              dishData._id,
+              restaurantId
+            );
+
+            const { name, description, price, kcal } = dishData;
+
+            dishToUpdate.name = name;
+            dishToUpdate.description = description;
+            dishToUpdate.price = price;
+            dishToUpdate.kcal = kcal;
+
+            await dishToUpdate.save();
+
+            const dishIndexToUpdate = restaurantById.menu.findIndex(
+              dishRestaurant => dishRestaurant._id == dishData._id
+            );
+
+            restaurantById.menu.splice(dishIndexToUpdate, 1, dishToUpdate);
+          }
+        }
+
+        await restaurantById.save();
+
+        res.status(201).json({
+          success: true,
+          ResponseBody: {
+            message: 'Menu updated successfully',
+            menu: restaurantById.menu,
+          },
+        });
+      } catch (error) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: error.message,
+          },
+        });
+      }
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        ResponseBody: {
+          message: 'Missing fields',
+        },
+        code: 400,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 const controllerRestaurant = {
   create,
   getUserRestaurants,
@@ -807,6 +914,7 @@ const controllerRestaurant = {
   updateRestaurantTable,
   removeRestaurantTable,
   getRestaurantColabolators,
+  updateRestaurantMenu,
 };
 
 export default controllerRestaurant;

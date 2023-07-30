@@ -7,6 +7,7 @@ import { orderType } from '../../types/restaurant';
 import Notiflix from 'notiflix';
 import { editRestaurantTableType } from '../../Components/EditTableForm/EditTableForm';
 import { tableRemoveDataType } from '../../Components/TablesRestaurant/TablesRestaurant';
+import { menuDataType } from '../../Components/MenuForm/MenuForm';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
@@ -195,6 +196,29 @@ export const removeRestaurantTable = createAsyncThunk(
       );
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return tableRemoveData.table.tableId;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateRestaurantMenu = createAsyncThunk(
+  'restaurants/updateRestaurantMenu',
+  async (menuData: menuDataType, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.patch(
+        `/restaurants/${menuData.restaurantId}/menu`,
+        menuData.menu
+      );
+      Notiflix.Notify.success(response.data.ResponseBody.message);
+      return response.data.ResponseBody.menu;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }

@@ -76,6 +76,12 @@ router.patch(
 //   controllerRestaurant.getRestaurantTables
 // );
 
+router.patch(
+  '/restaurants/:restaurantId/menu',
+  authUser,
+  controllerRestaurant.updateRestaurantMenu
+);
+
 router.post(
   '/restaurants/:restaurantId/invitations',
   authUser,
