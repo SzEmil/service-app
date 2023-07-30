@@ -21,14 +21,15 @@
   border-radius: 4px;
   cursor: pointer;
 }
-.button:hover,
-.button:focus {
+.button:hover {
   background-color: #474747;
 }
 .buttonMarginLeft {
   margin-left: 20px;
 }
-
+.btnActive {
+  color: rgb(33, 165, 253);
+}
 .inviteFormBackdrop {
   position: fixed;
   left: 0;

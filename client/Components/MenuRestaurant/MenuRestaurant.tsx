@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { selectFilterInput } from '../../redux/filter/filterSelectors';
 import { MenuForm } from '../MenuForm/MenuForm';
 import { useState } from 'react';
+import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
 
 type menuProps = {
   menu: dishType[] | [] | null | undefined;
@@ -14,12 +15,13 @@ type menuProps = {
 export const MenuRestaurant = ({ menu }: menuProps) => {
   const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
 
+  const currency = useSelector(selectCurrentRestaurantCurrency);
   const filteredInput = useSelector(selectFilterInput);
   const filteredMenu = menu!.filter(dish =>
     dish.name.toLowerCase().includes(filteredInput.toLocaleLowerCase())
   );
   return (
-    <div>
+    <div className={css.menuContainer}>
       <div className={css.menuSearchForm}>
         <div className={css.menuBox}>
           <button
@@ -28,37 +30,32 @@ export const MenuRestaurant = ({ menu }: menuProps) => {
           >
             Edit menu
           </button>
+          <FilterMenu />
         </div>
-        <FilterMenu />
       </div>
       <ul className={css.list}>
-        {filteredMenu!.map(dish => (
+        {filteredMenu.map(dish => (
           <li className={css.item} key={dish._id}>
-            <div>
+            <div className={css.dishInfo}>
               <h2 className={css.dishName}>{dish.name}</h2>
-              <div className={css.dishParameters}>
-                <p className={css.dishParametersVal}>
-                  <span className={css.dishParametersText}>Price:</span>{' '}
-                  {dish.price}
-                </p>
-                <p className={css.dishParametersVal}>
-                  <span className={css.dishParametersText}>kcal:</span>{' '}
-                  {dish.kcal}
-                </p>
-              </div>
+              <p className={css.dishDescription}>{dish.description}</p>
             </div>
-            <p className={css.dishDescription}>{dish.description}</p>
+            <div className={css.dishDetails}>
+              <p className={css.dishPrice}>
+                {dish.price} {currency}
+              </p>
+              <p className={css.dishKcal}>{dish.kcal} kcal</p>
+            </div>
           </li>
         ))}
       </ul>
       {isEditMenuOpen && (
-        <div className={css.editMenuFormBackdrop}>
-          <div className={css.editMenuFormWrapper}>
+        <div className={css.menuFormBackdrop}>
+          <div className={css.menuFormWrapper}>
             <MenuForm setIsEditMenuOpen={setIsEditMenuOpen} />
           </div>
         </div>
       )}
-
     </div>
   );
 };

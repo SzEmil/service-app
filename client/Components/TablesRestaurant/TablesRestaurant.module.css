@@ -1,3 +1,10 @@
+.tableOptions {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
 .button {
   padding: 10px 20px;
   font-size: 16px;
@@ -11,7 +18,8 @@
 .button:focus {
   background-color: #474747;
 }
-
+.buttonFinishTable {
+}
 .tablesList {
   list-style: none;
   display: flex;

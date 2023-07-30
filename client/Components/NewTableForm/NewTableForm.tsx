@@ -9,7 +9,7 @@ import { orderType } from '../../types/restaurant';
 import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
 import { addRestaurantTable } from '../../redux/restaurants/restaurantsOperations';
-
+import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
 type setOrderType = {
   name: string;
   dishes: dishType[] | [];
@@ -28,6 +28,7 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const currentMenu = useSelector(selectCurrentRestaurantMenu);
+  const currency = useSelector(selectCurrentRestaurantCurrency);
 
   const [isOrderMenuOpen, setIsOrderMenuOpen] = useState(false);
   const [shouldKeepMenuOpen, setShouldKeepMenuOpen] = useState(false);
@@ -230,7 +231,7 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
                     {' '}
                     <p className={styles.pickedDishesName}>
                       - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
-                      (kcal: {dish.kcal}, price: {dish.price})
+                      (kcal: {dish.kcal}, price: {dish.price} {currency})
                     </p>
                   </li>
                 ))}

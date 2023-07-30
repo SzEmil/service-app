@@ -8,6 +8,7 @@ import {
   completeOrder,
   updateRestaurantTable,
   removeRestaurantTable,
+  updateRestaurantMenu,
 } from './restaurantsOperations';
 
 export type restaurantsStateType = {
@@ -103,6 +104,14 @@ const restaurantSlice = createSlice({
         state.currentRestaurant?.tables?.splice(tableIndexToRemove, 1);
       }
     });
+
+    builder.addCase(updateRestaurantMenu.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+    builder.addCase(updateRestaurantMenu.fulfilled, (state,action)=>{
+      state.error = null;
+      state.currentRestaurant!.menu = action.payload;
+    })
   },
 });
 

@@ -16,3 +16,7 @@ export const selectCurrentRestaurantMenu = (state: {
 export const selectCurrentRestaurantOrder = (state: {
   restaurants: restaurantsStateType;
 }) => state.restaurants.currentRestaurant?.menu;
+
+export const selectCurrentRestaurantCurrency = (state: {
+  restaurants: restaurantsStateType;
+}) => state.restaurants.currentRestaurant?.currency;

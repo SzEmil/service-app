@@ -40,7 +40,8 @@ export type restaurantType = {
   updatedAt: string | null | undefined;
   icon: string | undefined;
   menu: dishType[] | null | undefined | [];
-  name: string  | undefined;
+  name: string | undefined;
   owner: string | null | undefined;
   tables: tableType[] | null | undefined | [];
+  currency: string;
 };
