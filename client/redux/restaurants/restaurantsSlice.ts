@@ -9,17 +9,23 @@ import {
   updateRestaurantTable,
   removeRestaurantTable,
   updateRestaurantMenu,
+  getRestaurantColabolators,
+  removeRestaurant,
 } from './restaurantsOperations';
+import { userType } from '../../types/user';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
   currentRestaurant: restaurantType | null;
   error: any;
+
+  colabolators: userType[] | [];
 };
 const restaurantInitialState: restaurantsStateType = {
   restaurants: [],
   currentRestaurant: null,
   error: null,
+  colabolators: [],
 };
 
 const restaurantSlice = createSlice({
@@ -31,6 +37,13 @@ const restaurantSlice = createSlice({
     },
     setCurrentRestaurant(state, action) {
       state.currentRestaurant = action.payload;
+    },
+    setCurrentRestaurantColabolators(state, action) {
+      state.error = null;
+      state.colabolators = [...action.payload];
+    },
+    setClearRestaurants(state) {
+      state.restaurants = [];
     },
   },
   extraReducers(builder) {
@@ -108,13 +121,34 @@ const restaurantSlice = createSlice({
     builder.addCase(updateRestaurantMenu.rejected, (state, action) => {
       state.error = action.payload;
     });
-    builder.addCase(updateRestaurantMenu.fulfilled, (state,action)=>{
+    builder.addCase(updateRestaurantMenu.fulfilled, (state, action) => {
       state.error = null;
       state.currentRestaurant!.menu = action.payload;
-    })
+    });
+
+    builder.addCase(getRestaurantColabolators.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+
+    builder.addCase(getRestaurantColabolators.fulfilled, (state, action) => {
+      state.error = null;
+      state.colabolators = [...action.payload];
+    });
+
+    builder.addCase(removeRestaurant.rejected, (state, action) => {
+      state.error = action.payload;
+      const indexToRemove = state.restaurants.findIndex(
+        restaurant => restaurant._id === action.payload
+      );
+      state.restaurants.splice(indexToRemove, 1);
+    });
   },
 });
 
-export const { setRestaurantData, setCurrentRestaurant } =
-  restaurantSlice.actions;
+export const {
+  setRestaurantData,
+  setCurrentRestaurant,
+  setCurrentRestaurantColabolators,
+  setClearRestaurants,
+} = restaurantSlice.actions;
 export const restaurantsReducer = restaurantSlice.reducer;

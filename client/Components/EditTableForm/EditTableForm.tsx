@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { FormEvent } from 'react';
 import { updateRestaurantTable } from '../../redux/restaurants/restaurantsOperations';
+import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
 
 type setOrderType = {
   _id?: string | undefined;
@@ -32,14 +33,18 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const currentMenu = useSelector(selectCurrentRestaurantMenu);
-
+  const currency = useSelector(selectCurrentRestaurantCurrency);
   const [isOrderMenuOpen, setIsOrderMenuOpen] = useState(false);
   const [shouldKeepMenuOpen, setShouldKeepMenuOpen] = useState(false);
   const [activeOrderIndex, setActiveOrderIndex] = useState<number | null>(null);
-
+  const [menuFilter, setMenuFilter] = useState('');
   const [ordersToDelete, setOrdersToDelete] = useState<string[] | []>([]);
   const [ordersItems, setOrdersItems] = useState<setOrderType[]>(
     currentTable.orders
+  );
+
+  const filteredMenu = currentMenu!.filter(dish =>
+    dish.name.toLowerCase().includes(menuFilter.toLocaleLowerCase())
   );
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -65,8 +70,8 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
 
     console.log(restaurantTableData);
     await dispatch(updateRestaurantTable(restaurantTableData));
-     setIsEditTableOpen(false);
-     form.reset();
+    setIsEditTableOpen(false);
+    form.reset();
   };
 
   const handleInputChange = (
@@ -126,6 +131,21 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
         setOrdersToDelete(prevOrders => [...prevOrders, orderId]);
       }
 
+      return updatedMenuItems;
+    });
+  };
+
+  const handleremoveDishFromOrder = (dishIndex: number, orderIndex: number) => {
+    setOrdersItems((prevMenuItems: setOrderType[]) => {
+      const updatedMenuItems = prevMenuItems.map((item, i) => {
+        if (i === orderIndex) {
+          const updatedDishes = item.dishes.filter(
+            (dish, j) => j !== dishIndex
+          );
+          return { ...item, dishes: updatedDishes };
+        }
+        return item;
+      });
       return updatedMenuItems;
     });
   };
@@ -199,6 +219,10 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
                   setIsOrderMenuOpen(false);
                 }
               }}
+              onChange={event => {
+                const value = event.target.value;
+                setMenuFilter(value);
+              }}
               type="text"
               name={`name${index}`}
               className={styles.input}
@@ -207,7 +231,7 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
             {isOrderMenuOpen && activeOrderIndex === index && (
               <div className={styles.menuBlock}>
                 <ul className={styles.menuList}>
-                  {currentMenu?.map(dish => (
+                  {filteredMenu?.map(dish => (
                     <li
                       key={`${dish._id}_${nanoid()}`}
                       className={styles.menuItem}
@@ -234,13 +258,22 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
             <div className={styles.pickedDishesBlock}>
               <h2 className={styles.pickedDishesTitle}>Picked dishes</h2>
               <ul className={styles.pickedDishesList}>
-                {item.dishes.map(dish => (
-                  <li key={nanoid()}>
-                    {' '}
-                    <p className={styles.pickedDishesName}>
-                      - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
-                      (kcal: {dish.kcal}, price: {dish.price})
-                    </p>
+                {item.dishes?.map((dish, dishIndex) => (
+                  <li key={`${dish._id}_${dishIndex}`}>
+                    <div className={styles.dishWrapper}>
+                      <p className={styles.pickedDishesName}>
+                        - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
+                        (kcal: {dish.kcal}, price: {dish.price} {currency})
+                      </p>
+                      <button
+                        className={styles.btnRemoveDish}
+                        onClick={() =>
+                          handleremoveDishFromOrder(dishIndex, index)
+                        }
+                      >
+                        X
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

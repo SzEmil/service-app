@@ -210,3 +210,30 @@ export const createInvitation = createAsyncThunk(
     }
   }
 );
+type avatarDataType = {
+  formData: any;
+};
+export const changeUserAvatar = createAsyncThunk(
+  'user/changeUserAvatar',
+  async (avatarData: avatarDataType, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      const res = await axios.patch('/users/avatars', avatarData.formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      Notiflix.Notify.success(res.data.ResponseBody.message);
+      return res.data.ResponseBody.avatarURL;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);

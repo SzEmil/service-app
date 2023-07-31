@@ -32,10 +32,13 @@ const Restaurants = ({ restaurantData }: any) => {
   };
   return (
     <div className={css.container}>
-      <h2 className={css.restaurantTitle}>Restaurants</h2>
-      <button onClick={() => handleOnClickRefreshRestaurants()}>
-        <FiRefreshCcw size={'24px'} />
+      <button
+        className={css.btnRefresh}
+        onClick={() => handleOnClickRefreshRestaurants()}
+      >
+        Refresh data <FiRefreshCcw size={'24px'} />
       </button>
+      
       <ul className={css.restaurantsList}>
         <li key={nanoid()}>
           <div className={css.newRestaurantBlock}>

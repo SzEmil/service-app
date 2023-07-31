@@ -29,6 +29,9 @@ const getInvitationById = async id => {
   return Invitation.findOne({ _id: id });
 };
 
+const getRestaurantColabolators = usersId => {
+  return User.find({ _id: { $in: [usersId] } });
+};
 
 const userService = {
   getUsers,
@@ -37,6 +40,7 @@ const userService = {
   getUserById,
   getInvitationByEmail,
   deleteInvitationById,
-  getInvitationById
+  getInvitationById,
+  getRestaurantColabolators
 };
 export default userService;

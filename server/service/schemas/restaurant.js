@@ -45,6 +45,7 @@ const restaurantSchema = new Schema(
     colabolators: [
       {
         type: Schema.Types.ObjectId,
+        ref: "User"
       },
     ],
   },

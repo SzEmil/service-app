@@ -166,3 +166,21 @@
   gap: 5px;
   padding: 5px;
 }
+
+.dishWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.btnRemoveDish {
+  font-family: 'Roboto';
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 400;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+.btnRemoveDish:hover {
+  color: rgb(197, 75, 75);
+}

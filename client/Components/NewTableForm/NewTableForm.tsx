@@ -29,17 +29,20 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
   const dispatch: AppDispatch = useDispatch();
   const currentMenu = useSelector(selectCurrentRestaurantMenu);
   const currency = useSelector(selectCurrentRestaurantCurrency);
-
   const [isOrderMenuOpen, setIsOrderMenuOpen] = useState(false);
   const [shouldKeepMenuOpen, setShouldKeepMenuOpen] = useState(false);
   const [activeOrderIndex, setActiveOrderIndex] = useState<number | null>(null);
-
+  const [menuFilter, setMenuFilter] = useState('');
   const [ordersItems, setOrdersItems] = useState<setOrderType[]>([
     {
       name: '',
       dishes: [],
     },
   ]);
+
+  const filteredMenu = currentMenu!.filter(dish =>
+    dish.name.toLowerCase().includes(menuFilter.toLocaleLowerCase())
+  );
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -129,6 +132,13 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
     });
   };
 
+  const handleremoveDishFromOrder = (dishIndex: number, orderIndex: number) => {
+    setOrdersItems((prevMenuItems: any) => {
+      const updatedMenuItems = [...prevMenuItems];
+      updatedMenuItems[orderIndex].dishes.splice(dishIndex, 1);
+      return updatedMenuItems;
+    });
+  };
   return (
     <form
       className={styles.form}
@@ -191,6 +201,10 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
                   setIsOrderMenuOpen(false);
                 }
               }}
+              onChange={event => {
+                const value = event.target.value;
+                setMenuFilter(value);
+              }}
               type="text"
               name={`name${index}`}
               className={styles.input}
@@ -199,11 +213,13 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
             {isOrderMenuOpen && activeOrderIndex === index && (
               <div className={styles.menuBlock}>
                 <ul className={styles.menuList}>
-                  {currentMenu?.map(dish => (
+                  {filteredMenu?.map(dish => (
                     <li
                       key={`${dish._id}_${nanoid()}`}
                       className={styles.menuItem}
-                      onMouseDown={() => handleSelectDish(dish, index)}
+                      onMouseDown={e => {
+                        handleSelectDish(dish, index);
+                      }}
                       onClick={() => {
                         console.log('mouse down');
                         setShouldKeepMenuOpen(true);
@@ -226,13 +242,22 @@ export const NewTableForm = ({ setIsNewTableOpen }: any) => {
             <div className={styles.pickedDishesBlock}>
               <h2 className={styles.pickedDishesTitle}>Picked dishes</h2>
               <ul className={styles.pickedDishesList}>
-                {item.dishes.map(dish => (
-                  <li key={nanoid()}>
-                    {' '}
-                    <p className={styles.pickedDishesName}>
-                      - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
-                      (kcal: {dish.kcal}, price: {dish.price} {currency})
-                    </p>
+                {item.dishes?.map((dish, dishIndex) => (
+                  <li key={`${dish._id}_${dishIndex}`}>
+                    <div className={styles.dishWrapper}>
+                      <p className={styles.pickedDishesName}>
+                        - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
+                        (kcal: {dish.kcal}, price: {dish.price} {currency})
+                      </p>
+                      <button
+                        className={styles.btnRemoveDish}
+                        onClick={() =>
+                          handleremoveDishFromOrder(dishIndex, index)
+                        }
+                      >
+                        X
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

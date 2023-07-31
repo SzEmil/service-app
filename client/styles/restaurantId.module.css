@@ -1,9 +1,19 @@
+.restaurant {
+  position: relative;
+}
+
 .restaurantName {
   font-family: 'Roboto';
   font-size: 34px;
   line-height: 36px;
   font-weight: 400;
-  padding-bottom: 15px;
+  border: none;
+  background-color: transparent;
+
+  cursor: pointer;
+}
+.restaurantName:hover {
+  color: rgb(33, 165, 253);
 }
 
 .navBtn {
@@ -12,24 +22,7 @@
   justify-content: center;
   padding: 15px 0;
 }
-.button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.button:hover {
-  background-color: #474747;
-}
-.buttonMarginLeft {
-  margin-left: 20px;
-}
-.btnActive {
-  color: rgb(33, 165, 253);
-}
+
 .inviteFormBackdrop {
   position: fixed;
   left: 0;
@@ -48,7 +41,82 @@
 
   transform: translateX(-50%);
 }
+.activeLink {
+  color: rgb(33, 165, 253);
+}
+.buttonMarginLeft {
+  margin-left: 15px;
+}
+.restaurantOptionsWrapper {
+  background-color: #f5f5f5;
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 2000;
+}
+.btnMenuRestaurant {
+  width: 100%;
+}
 .restaurantBtnOptions {
   display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 10px;
+}
+.button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button:hover {
+  background-color: #474747;
+}
+.btnActive {
+  color: rgb(33, 165, 253);
+}
+.restaurantNameWrapper {
+  display: flex;
   align-items: center;
+  gap: 10px;
+  z-index: 200;
+}
+.colabolatorsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.colabolatorImage {
+  /* width: 40px; */
+  height: auto;
+  border-radius: 50%;
+  border: 0.2px solid rgba(0, 0, 0, 0.1);
+}
+.colabolatorsItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.colabolatorsItem:hover .colabolatorImage {
+  border-color: rgb(33, 165, 253);
+}
+.colabolatorsItem:hover .userNameBox {
+  opacity: 1;
+}
+.userNameBox {
+  position: absolute;
+  opacity: 0;
+  bottom: -18px;
+}
+.colaboratorUsername {
+  font-family: 'Roboto';
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 300;
 }
