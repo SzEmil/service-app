@@ -38,12 +38,13 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <div className={styles.descriptionBox}>
-          {/* <h1 className={styles.title}>Service</h1>
-          <p className={styles.motto}>Manage your own service now!</p> */}
-          <img
-            className={styles.titleImg}
-            src={'./logo-low.png'}
+
+          <Image
+            src={'/logo-low.png'}
             alt="logo pic"
+            width={500}
+            height={100}
+            className={styles.titleImg}
           />
           <p className={styles.question}>What is Service?</p>
           <p className={styles.about}>

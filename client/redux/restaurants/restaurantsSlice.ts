@@ -10,6 +10,7 @@ import {
   removeRestaurantTable,
   updateRestaurantMenu,
   getRestaurantColabolators,
+  removeRestaurant,
 } from './restaurantsOperations';
 import { userType } from '../../types/user';
 
@@ -133,6 +134,14 @@ const restaurantSlice = createSlice({
       state.error = null;
       state.colabolators = [...action.payload];
     });
+
+    builder.addCase(removeRestaurant.rejected, (state, action) => {
+      state.error = action.payload;
+      const indexToRemove = state.restaurants.findIndex(
+        restaurant => restaurant._id === action.payload
+      );
+      state.restaurants.splice(indexToRemove, 1);
+    });
   },
 });
 
@@ -140,6 +149,6 @@ export const {
   setRestaurantData,
   setCurrentRestaurant,
   setCurrentRestaurantColabolators,
-  setClearRestaurants
+  setClearRestaurants,
 } = restaurantSlice.actions;
 export const restaurantsReducer = restaurantSlice.reducer;

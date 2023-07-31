@@ -53,6 +53,12 @@ router.get(
   controllerRestaurant.getUserRestaurantById
 );
 
+router.delete(
+  '/restaurants/:restaurantId',
+  authUser,
+  controllerRestaurant.removeRestaurant
+);
+
 router.post(
   '/restaurants/:restaurantId/tables',
   authUser,

@@ -782,9 +782,12 @@ const getRestaurantColabolatorsAndOwner = async (req, res, next) => {
     }
     try {
       const colabolators = restaurant.colabolators;
-      const userColabolators = await userService.getRestaurantColabolators(
-        colabolators
-      );
+      let userColabolators = [];
+
+      for (const colabolator of colabolators) {
+        const foundColabolator = await userService.getUserById(colabolator);
+        userColabolators.push(foundColabolator);
+      }
 
       const ownerId = restaurant.owner;
       const owner = await userService.getUserById(ownerId);
@@ -911,6 +914,63 @@ const updateRestaurantMenu = async (req, res, next) => {
   }
 };
 
+const removeRestaurant = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    try {
+      const { restaurantId } = req.params;
+      const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+        restaurantId
+      );
+      if (!restaurant) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found restaurant with id ${restaurantId}`,
+          },
+        });
+      }
+
+      const removeRestaurant = serviceRestaurant.removeRestaurant(
+        user._id,
+        restaurantId
+      );
+      if (!removeRestaurant) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `User ${user.email} is not allowed to remove`,
+          },
+        });
+      }
+
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          message: 'Restaurant was successfully removed',
+          restaurantId: removeRestaurant._id,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 const controllerRestaurant = {
   create,
   getUserRestaurants,
@@ -923,6 +983,7 @@ const controllerRestaurant = {
   removeRestaurantTable,
   getRestaurantColabolatorsAndOwner,
   updateRestaurantMenu,
+  removeRestaurant,
 };
 
 export default controllerRestaurant;

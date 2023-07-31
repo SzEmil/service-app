@@ -16,6 +16,9 @@
 
   transition: color 200ms ease;
 }
+.userIconImage {
+  position: relative;
+}
 .userIcon:hover,
 .userIcon:focus {
   color: rgb(33, 165, 253);
@@ -23,6 +26,18 @@
 .userIcon:hover .colabolatorImage {
   border-color: rgb(33, 165, 253);
 }
+.warning {
+  position: absolute;
+  top: -5px;
+  right: 0;
+  color: red;
+  font-size: 18px;
+  font-weight: 500;
+  /* padding: 2px 11px;
+  background-color: black;
+  border-radius: 50%; */
+}
+
 .colabolatorImage {
   width: 45px;
   height: auto;

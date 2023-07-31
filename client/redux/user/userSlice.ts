@@ -7,6 +7,7 @@ import {
   getInvitationsData,
   rejectInvitation,
   acceptInvitation,
+  changeUserAvatar,
 } from './userOperations';
 
 export type invitationType = {
@@ -252,6 +253,13 @@ const authSlice = createSlice({
         invitation => invitation._id!.toString() === action.payload
       );
       state.invitations.invitations.splice(indexToRemove, 1);
+    });
+
+    builder.addCase(changeUserAvatar.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+    builder.addCase(changeUserAvatar.fulfilled, (state, action) => {
+      state.user.avatarURL = action.payload;
     });
   },
 });

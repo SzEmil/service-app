@@ -12,6 +12,7 @@ import { nanoid } from 'nanoid';
 import { storeImageDir } from '../middlewares/fileUpload/upload.js';
 import fs from 'fs/promises';
 import serviceRestaurant from '../service/serviceRestaurant.js';
+import { join } from 'path';
 
 dotenv.config();
 
@@ -252,7 +253,7 @@ const currentUser = async (req, res, next) => {
         username: user.username,
         email: user.email,
         _id: user._id,
-        avatarURL: user.avatarURL
+        avatarURL: user.avatarURL,
       },
     });
   } catch (error) {
@@ -273,6 +274,8 @@ const uploadAvatar = async (req, res, next) => {
         },
       });
     }
+    const oldAvatarPath = user.avatarURL;
+    const newOldAvatarPath = join('public', oldAvatarPath);
 
     const file = req.file;
     if (!file)
@@ -291,6 +294,9 @@ const uploadAvatar = async (req, res, next) => {
     const destinationPath = path.join(storeImageDir, newAvatarName);
     try {
       await fs.rename(avatarPath, destinationPath);
+      if (!oldAvatarPath.includes('gravatar')) {
+        fs.unlink(newOldAvatarPath);
+      }
     } catch (error) {
       await fs.unlink(avatarPath);
       return next(error);
@@ -303,6 +309,7 @@ const uploadAvatar = async (req, res, next) => {
       message: 'Avatar uploaded successfully',
       ResponseBody: {
         avatarURL: user.avatarURL,
+        message: 'Avatar was successfully uploaded',
       },
     });
   } catch (error) {

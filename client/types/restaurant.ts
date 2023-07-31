@@ -34,6 +34,7 @@ export type tableType = {
   orders: orderType[];
 };
 
+
 export type restaurantType = {
   _id: string | undefined;
   createdAt: string | null | undefined;
@@ -43,5 +44,6 @@ export type restaurantType = {
   name: string | undefined;
   owner: string | null | undefined;
   tables: tableType[] | null | undefined | [];
+  colabolators: string[] | [];
   currency: string;
 };

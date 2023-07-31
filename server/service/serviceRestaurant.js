@@ -122,7 +122,14 @@ const removeDishesFromRestaurant = async (dishesToDelete, restaurantId) => {
   });
 };
 
+const removeRestaurant = async (userId, restaurantId) => {
+  return Restaurant.findOneAndRemove({
+    $and: [{ _id: restaurantId }, { owner: userId }],
+  });
+};
+
 const serviceRestaurant = {
+  removeRestaurant,
   getRestaurantById,
   getRestaurantsByOwner,
   getRestaurantByName,

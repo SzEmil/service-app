@@ -12,10 +12,11 @@ import { TablesRestaurant } from '../../Components/TablesRestaurant/TablesRestau
 import { InviteForm } from '../../Components/InviteForm/InviteForm';
 import { removeRestaurantColabolator } from '../../redux/restaurants/restaurantsOperations';
 import { selectAuthUser } from '../../redux/user/userSelectors';
-// import { getRestaurantColabolators } from '../../redux/restaurants/restaurantsOperations';
 import { setCurrentRestaurantColabolators } from '../../redux/restaurants/restaurantsSlice';
 import { userType } from '../../types/user';
 import { imageSrc } from '../../Components/Header/Header';
+import Image from 'next/image';
+import { removeRestaurant } from '../../redux/restaurants/restaurantsOperations';
 
 type leaveRestaurantData = {
   restaurantId: string | string[] | undefined;
@@ -26,43 +27,10 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
   const [restaurantMenuOpen, setRestaurantMenuOpen] = useState(false);
   const [isInviteFormOpen, setIsInviteFormOpen] = useState(false);
 
-  const handleOpenTables = () => {
-    setIsTablesOpen(true);
-    setIsMenuOpen(false);
-  };
-
-  const handleOpenMenu = () => {
-    setIsTablesOpen(false);
-    setIsMenuOpen(true);
-  };
-
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const user = useSelector(selectAuthUser);
   const currentRestaurant = useSelector(selectCurrentRestaurant);
-
-  useEffect(() => {
-    dispatch(setCurrentRestaurant(restaurant));
-    dispatch(setCurrentRestaurantColabolators(restaurantData.colabolators));
-  }, [dispatch]);
-
-  const handleOnClickLeaveRestaurant = () => {
-    const { restaurantId } = router.query;
-
-    const leaveRestaurantData: leaveRestaurantData = {
-      restaurantId: restaurantId,
-    };
-
-    dispatch(removeRestaurantColabolator(leaveRestaurantData));
-    router.push('/restaurants');
-  };
-
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
-  const handleMakeImageURL = (userAvatarURL: String | undefined) => {
-    return `${imageSrc}/${userAvatarURL}`;
-  };
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
@@ -86,6 +54,46 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
     };
   }, []);
 
+  useEffect(() => {
+    dispatch(setCurrentRestaurant(restaurant));
+    dispatch(setCurrentRestaurantColabolators(restaurantData.colabolators));
+  }, [dispatch, restaurant, restaurantData.colabolators]);
+
+  const handleOpenTables = () => {
+    setIsTablesOpen(true);
+    setIsMenuOpen(false);
+  };
+
+  const handleOpenMenu = () => {
+    setIsTablesOpen(false);
+    setIsMenuOpen(true);
+  };
+
+  const handleOnClickLeaveRestaurant = () => {
+    const { restaurantId } = router.query;
+
+    const leaveRestaurantData: leaveRestaurantData = {
+      restaurantId: restaurantId,
+    };
+
+    dispatch(removeRestaurantColabolator(leaveRestaurantData));
+    router.push('/restaurants');
+  };
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+  const handleMakeImageURL = (userAvatarURL: String | undefined) => {
+    return `${imageSrc}/${userAvatarURL}`;
+  };
+
+  const handleOnClickRemoveRestaurant = async () => {
+    const { restaurantId } = router.query;
+    console.log('usuwamy restauracje');
+    await dispatch(removeRestaurant(restaurantId));
+    router.push('/restaurants');
+  };
+
   return (
     <>
       {restaurant && (
@@ -102,12 +110,15 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
             >
               {restaurant.name}
             </button>
+
             <ul className={css.colabolatorsList}>
               <li key={user.user.id} className={css.colabolatorsItem}>
-                <img
-                  className={css.colabolatorImage}
+                <Image
                   src={handleMakeImageURL(restaurantData.owner.avatarURL)}
                   alt="user pic"
+                  width={40}
+                  height={40}
+                  className={css.colabolatorImage}
                 />
                 <div className={css.userNameBox}>
                   <p className={css.colaboratorUsername}>
@@ -117,10 +128,12 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
               </li>
               {restaurantData.colabolators.map((colabolator: userType) => (
                 <li className={css.colabolatorsItem} key={colabolator._id}>
-                  <img
-                    className={css.colabolatorImage}
+                  <Image
                     src={handleMakeImageURL(colabolator.avatarURL)}
                     alt="user pic"
+                    width={40}
+                    height={40}
+                    className={css.colabolatorImage}
                   />
                   <div className={css.userNameBox}>
                     <p className={css.colaboratorUsername}>
@@ -157,19 +170,23 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
                       </button>
                     </div>
                   )}
+                {restaurant.owner === user.user.id && (
+                  <div>
+                    <button
+                      onClick={() => handleOnClickRemoveRestaurant()}
+                      className={`${css.button} ${css.btnMenuRestaurant}`}
+                    >
+                      Remove restaurant
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           <ul className={css.navBtn}>
             <li>
-              <button
-                className={`${css.button} ${
-                  !isTablesOpen && isMenuOpen ? css.btnActive : null
-                }`}
-              >
-                Overview
-              </button>
+              <button className={`${css.button} `}>Overview</button>
             </li>
             <li>
               <button
