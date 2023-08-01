@@ -26,8 +26,9 @@ type User = {
     avatarURL: string | undefined;
   };
 };
-export const imageSrc = 'http://localhost:3001';
-// export const imageSrc = "https://github.com/SzEmil/service-app/tree/dev";
+//export const imageSrc = 'http://localhost:3001';
+ export const imageSrc="https://service-api-x2zr.onrender.com"
+ //export const imageSrc = "https://github.com/SzEmil/service-app/tree/dev/server/public";
 // export const imageSrc = "https://github.com/SzEmil/service-app";
 export const Header = ({ user }: User) => {
   const dispatch: AppDispatch = useDispatch();
@@ -103,7 +104,7 @@ export const Header = ({ user }: User) => {
   };
 
   const handleMakeImageURL = (userAvatarURL: String | undefined) => {
-    return `${imageSrc}/${userAvatarURL}`;
+    return `${imageSrc}${userAvatarURL}`;
   };
 
   const userImage = handleMakeImageURL(user.avatarURL);

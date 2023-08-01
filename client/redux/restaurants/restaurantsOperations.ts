@@ -10,7 +10,10 @@ import { tableRemoveDataType } from '../../Components/TablesRestaurant/TablesRes
 import { menuDataType } from '../../Components/MenuForm/MenuForm';
 import { editOrderType } from '../../Components/EditOrderForm/EditOrderForm';
 
-axios.defaults.baseURL = 'http://localhost:3001/api';
+   export const apiLink = "https://service-api-x2zr.onrender.com/api";
+  //export const apiLink = 'http://localhost:3001/api';
+
+axios.defaults.baseURL = apiLink;
 
 const setAuthHeader = (token: string) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;

@@ -10,6 +10,10 @@ module.exports = {
         port: '3001',
         // pathname: '/account123/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'service-api-x2zr.onrender.com',
+      },
     ],
   },
 };

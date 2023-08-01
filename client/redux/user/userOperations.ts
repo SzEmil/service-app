@@ -4,8 +4,9 @@ import { authInitialStateType } from './userSlice';
 import { setCookie, destroyCookie } from 'nookies';
 import { logoutSuccess } from './userSlice';
 import Notiflix from 'notiflix';
+import { apiLink } from '../restaurants/restaurantsOperations';
 
-axios.defaults.baseURL = 'http://localhost:3001/api';
+axios.defaults.baseURL = apiLink;
 
 const setAuthHeader = (token: string) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
