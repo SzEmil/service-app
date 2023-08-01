@@ -11,6 +11,8 @@ import { nanoid } from 'nanoid';
 import { useState } from 'react';
 import Link from 'next/link';
 import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
+import { FiRefreshCcw } from 'react-icons/fi';
+import { refreshRestaurantsData } from '../redux/restaurants/restaurantsOperations';
 
 const Restaurants = ({ restaurantData }: any) => {
   const dispatch: AppDispatch = useDispatch();
@@ -25,9 +27,18 @@ const Restaurants = ({ restaurantData }: any) => {
     }
   }, [dispatch, restaurants.length, restaurantData]);
 
+  const handleOnClickRefreshRestaurants = () => {
+    dispatch(refreshRestaurantsData());
+  };
   return (
     <div className={css.container}>
-      <h2 className={css.restaurantTitle}>Restaurants</h2>
+      <button
+        className={css.btnRefresh}
+        onClick={() => handleOnClickRefreshRestaurants()}
+      >
+        Refresh data <FiRefreshCcw size={'24px'} />
+      </button>
+      
       <ul className={css.restaurantsList}>
         <li key={nanoid()}>
           <div className={css.newRestaurantBlock}>

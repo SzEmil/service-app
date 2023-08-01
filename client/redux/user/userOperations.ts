@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { authInitialStateType } from './authSlice';
+import { authInitialStateType } from './userSlice';
 import { setCookie, destroyCookie } from 'nookies';
-import { logoutSuccess } from './authSlice';
+import { logoutSuccess } from './userSlice';
+import Notiflix from 'notiflix';
 
 axios.defaults.baseURL = 'http://localhost:3001/api';
 
@@ -125,6 +126,112 @@ export const getInvitationsData = createAsyncThunk(
     try {
       const res = await axios.get('/users/invitations');
       return res.data.ResponseBody.invitations;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+type idToDeleteType = {
+  invitationId: string | null | undefined;
+};
+export const rejectInvitation = createAsyncThunk(
+  'user/rejectInvitation',
+  async (idToDelete: idToDeleteType, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      await axios.post('/users/invitations/reject', idToDelete);
+      return idToDelete.invitationId;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+type idToAcceptType = {
+  invitationId: string | null | undefined;
+};
+export const acceptInvitation = createAsyncThunk(
+  'user/acceptInvitation',
+  async (idToAccept: idToAcceptType, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      await axios.post('/users/invitations/accept', idToAccept);
+      return idToAccept.invitationId;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+type createInvitationsCredentialsType = {
+  email: string;
+};
+
+type invitationData = {
+  credentials: createInvitationsCredentialsType;
+  restaurantId: string | string[] | undefined;
+};
+export const createInvitation = createAsyncThunk(
+  'user/createInvitation',
+  async (invitationData: invitationData, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      const res = await axios.post(
+        `/restaurants/${invitationData.restaurantId}/invitations`,
+        invitationData.credentials
+      );
+      const message = res.data.ResponseBody.message;
+      Notiflix.Notify.success(message);
+      return;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e.message.ResponseBody.message);
+    }
+  }
+);
+type avatarDataType = {
+  formData: any;
+};
+export const changeUserAvatar = createAsyncThunk(
+  'user/changeUserAvatar',
+  async (avatarData: avatarDataType, thunkAPI) => {
+    const state = thunkAPI.getState() as AuthStateType;
+    const token = state?.auth?.token || '';
+
+    if (!token)
+      return thunkAPI.rejectWithValue('Login or register to get access');
+
+    setAuthHeader(token);
+    setCookieHeader(token);
+    try {
+      const res = await axios.patch('/users/avatars', avatarData.formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      Notiflix.Notify.success(res.data.ResponseBody.message);
+      return res.data.ResponseBody.avatarURL;
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
     }

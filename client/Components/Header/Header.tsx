@@ -1,26 +1,38 @@
 import React from 'react';
 import { BiSolidUserCircle } from 'react-icons/bi';
 import css from './Header.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { logOut } from '../../redux/auth/authOperations';
+import { logOut } from '../../redux/user/userOperations';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
-import { selectAuthUserInvitations } from '../../redux/auth/authSelectors';
-import { invitationType } from '../../redux/auth/authSlice';
-import { getInvitationsData } from '../../redux/auth/authOperations';
+import { selectAuthUserInvitations } from '../../redux/user/userSelectors';
+import { invitationType } from '../../redux/user/userSlice';
+import { getInvitationsData } from '../../redux/user/userOperations';
 import { FiRefreshCcw } from 'react-icons/fi';
+import { rejectInvitation } from '../../redux/user/userOperations';
+import { acceptInvitation } from '../../redux/user/userOperations';
+import { refreshRestaurantsData } from '../../redux/restaurants/restaurantsOperations';
+import { useRouter } from 'next/router';
+import { setClearRestaurants } from '../../redux/restaurants/restaurantsSlice';
+import Image from 'next/image';
+import { ChangeUserAvatar } from '../ChangeUserAvatar/ChangeUserAvatar';
 
 type User = {
   user: {
     username: string | null;
     email: string | null;
-    avatarURL: string | null;
+    avatarURL: string | undefined;
   };
 };
-
+export const imageSrc = 'http://localhost:3001';
+// export const imageSrc = "https://github.com/SzEmil/service-app/tree/dev";
+// export const imageSrc = "https://github.com/SzEmil/service-app";
 export const Header = ({ user }: User) => {
+  const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
+
   const [userMenuOpen, setUserMenu] = useState(false);
   const userInvitations = useSelector(selectAuthUserInvitations);
 
@@ -28,10 +40,32 @@ export const Header = ({ user }: User) => {
   const [invitationData, setInvitationData] = useState<invitationType | null>(
     null
   );
-  const dispatch: AppDispatch = useDispatch();
+  const [changeProfileModalOpen, setChangeProfileModalOpen] = useState(false);
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const menuWrapper = document.getElementById('userMenuOptionsWrapper');
+      const menuBtn = document.getElementById('userMenuBtn');
 
-  const handleOnClickLogOut = () => {
-    dispatch(logOut());
+      if (
+        menuWrapper &&
+        !menuBtn?.contains(target) &&
+        !menuWrapper.contains(target)
+      ) {
+        setUserMenu(false);
+      }
+    };
+    document.addEventListener('click', handleDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
+
+  const handleOnClickLogOut = async () => {
+    dispatch(setClearRestaurants());
+    await dispatch(logOut());
+    router.push('/');
   };
 
   const handleOnClickOpenInvitation = async (invitation: invitationType) => {
@@ -45,29 +79,70 @@ export const Header = ({ user }: User) => {
 
     return `${year}  ${time}`;
   };
+
   const handleOnClickRefreshInvitations = async () => {
     dispatch(getInvitationsData());
   };
+
+  const handleOnClickRejectInvitation = (id: string | null | undefined) => {
+    const idToDelete = {
+      invitationId: id,
+    };
+    setIsInvitationOpen(false);
+    dispatch(rejectInvitation(idToDelete));
+  };
+  const handleOnClickAcceptInvitation = async (
+    id: string | null | undefined
+  ) => {
+    const idToAccept = {
+      invitationId: id,
+    };
+    setIsInvitationOpen(false);
+    await dispatch(acceptInvitation(idToAccept));
+    dispatch(refreshRestaurantsData());
+  };
+
+  const handleMakeImageURL = (userAvatarURL: String | undefined) => {
+    return `${imageSrc}/${userAvatarURL}`;
+  };
+
+  const userImage = handleMakeImageURL(user.avatarURL);
   return (
     <header className={css.header}>
-      {/* <p className={css.title}>SERVISE</p> */}
       <Link href={'/restaurants'}>
-        <img className={css.title} src={'./logo-low.png'} alt="logo pic" />
+        <Image
+          src={'/logo-low.png'}
+          alt="logo pic"
+          width={240}
+          height={70}
+          className={css.title}
+        />
       </Link>
       <nav>
         <div
+          id="userMenuBtn"
           className={css.userIcon}
           onClick={() => setUserMenu(prevVal => !prevVal)}
         >
           <div className={css.user}>
             <p className={css.userName}>{user.username}</p>
-
-            <BiSolidUserCircle size={'36px'} />
+            {!userImage.includes('gravatar') ? (
+              <div className={css.userIconImage}>
+                <img
+                  className={css.colabolatorImage}
+                  src={userImage}
+                  alt="user pic"
+                />
+                {userInvitations.length > 0 && <p className={css.warning}>!</p>}
+              </div>
+            ) : (
+              <BiSolidUserCircle size={'36px'} />
+            )}
           </div>
         </div>
         {userMenuOpen && (
-          <div className={css.userMenu}>
-            <ul>
+          <div className={css.userMenu} id="userMenuOptionsWrapper">
+            <ul className={css.userNav}>
               <li key={nanoid()}>
                 <button
                   className={css.menuBtn}
@@ -76,14 +151,29 @@ export const Header = ({ user }: User) => {
                   LogOut
                 </button>
               </li>
+            </ul>
+
+            <ul className={css.invitationsBlock}>
               <li key={nanoid()}>
                 <button
-                  className={css.invitationButtonRefresh}
-                  onClick={() => handleOnClickRefreshInvitations()}
+                  className={css.menuBtn}
+                  onClick={() => setChangeProfileModalOpen(true)}
                 >
-                  <FiRefreshCcw size={'24px'} />
+                  Change profile picture
                 </button>
               </li>
+              <li key={nanoid()}>
+                <div className={css.userInvitationsBtnWrapper}>
+                  <p className={css.invitationsTitle}>User invitations</p>
+                  <button
+                    className={css.invitationButtonRefresh}
+                    onClick={() => handleOnClickRefreshInvitations()}
+                  >
+                    <FiRefreshCcw size={'24px'} />
+                  </button>
+                </div>
+              </li>
+
               {userInvitations.map(invitation => (
                 <li key={invitation._id}>
                   <div
@@ -96,6 +186,10 @@ export const Header = ({ user }: User) => {
                   </div>
                 </li>
               ))}
+
+              <li key={nanoid()}>
+                <button className={css.menuBtn}>Delete account</button>
+              </li>
             </ul>
           </div>
         )}
@@ -105,27 +199,51 @@ export const Header = ({ user }: User) => {
           <div className={css.inviteFormWrapper}>
             {invitationData !== null && (
               <div className={css.invitationBlock}>
-                <button
-                  className={` ${css.invitationCloseBtn}`}
-                  onClick={() => setIsInvitationOpen(false)}
-                >
-                  X
-                </button>
-                <p className={css.invitationCreatedAt}>
-                  {invitationData.createdAt}
-                </p>
+                <div className={css.invitationFormHeader}>
+                  <p className={css.invitationCreatedAt}>
+                    {cutDate(invitationData.createdAt)}
+                  </p>
+                  <button
+                    className={` ${css.invitationCloseBtn}`}
+                    onClick={() => setIsInvitationOpen(false)}
+                  >
+                    X
+                  </button>
+                </div>
                 <p className={css.invitationFormText}>
                   A user with an email {invitationData.sender} wants you to join
-                  his restaurant {invitationData.restaurantName}
+                  his restaurant {invitationData.restaurantName}.
                 </p>
-                <button className={`${css.button} ${css.invitationAcceptBtn}`}>
-                  Accept
-                </button>
-                <button className={`${css.button} ${css.invitationRejectBtn}`}>
-                  Reject
-                </button>
+                <div className={css.invitationFormButtonsWrapper}>
+                  <button
+                    onClick={() =>
+                      handleOnClickAcceptInvitation(invitationData._id)
+                    }
+                    className={`${css.button} ${css.invitationAcceptBtn}`}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleOnClickRejectInvitation(invitationData._id)
+                    }
+                    className={`${css.button} ${css.invitationRejectBtn}`}
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {changeProfileModalOpen && (
+        <div className={css.inviteFormBackdrop}>
+          <div className={css.inviteFormWrapper}>
+            <ChangeUserAvatar
+              setChangeProfileModalOpen={setChangeProfileModalOpen}
+            />
           </div>
         </div>
       )}

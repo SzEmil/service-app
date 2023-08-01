@@ -2,7 +2,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import { filterReducer } from './filter/filterSlice';
 import storage from 'redux-persist/lib/storage';
-import { authReducer } from './auth/authSlice';
+import { authReducer } from './user/userSlice';
 import { restaurantsReducer } from './restaurants/restaurantsSlice';
 import {
   FLUSH,
@@ -21,18 +21,18 @@ const authPersistConfig = {
   whitelist: ['token', 'user', 'invitations'],
 };
 
-const restaurantsPersistConfig = {
-  key: 'restaurants',
-  storage,
-  whitelist: ['restaurants, "currentRestaurant'],
-};
+// const restaurantsPersistConfig = {
+//   key: 'restaurants',
+//   storage,
+//   whitelist: ['restaurants, "currentRestaurant'],
+// };
 
 const ignoredActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER];
 export const store = configureStore({
   reducer: {
     auth: persistReducer(authPersistConfig, authReducer),
     // auth: authReducer,
-    restaurants: persistReducer(restaurantsPersistConfig, restaurantsReducer),
+    restaurants: restaurantsReducer,
     filter: filterReducer,
   },
 

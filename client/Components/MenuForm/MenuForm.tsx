@@ -4,31 +4,54 @@ import { AppDispatch } from '../../redux/store';
 import styles from './MenuForm.module.css';
 import { useSelector } from 'react-redux';
 import { selectCurrentRestaurantMenu } from '../../redux/restaurants/restaurantsSelectors';
+import { useRouter } from 'next/router';
+import { dishType } from '../../types/restaurant';
+import { updateRestaurantMenu } from '../../redux/restaurants/restaurantsOperations';
+
+export type menuDataType = {
+  menu: {
+    menu: dishType[] | [] | null | undefined;
+    dishesToDelete: string[];
+  };
+  restaurantId: string | string[] | undefined;
+};
 
 export const MenuForm = ({ setIsEditMenuOpen }: any) => {
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
   const currentMenu = useSelector(selectCurrentRestaurantMenu);
 
   const [menuItems, setMenuItems] = useState(currentMenu);
+  const [dishesToDelete, setDishesToDelete] = useState<string[] | []>([]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
 
+    const { restaurantId } = router.query;
+
+    // menuItems?.forEach(menuItem => Number(menuItem.price));
+
     const credentials = {
       menu: menuItems,
-      icon: 'icon.img',
+      dishesToDelete,
     };
-    console.log(credentials);
-    //   setMenuItems([
-    //     {
-    //       name: '',
-    //       description: '',
-    //       kcal: 0,
-    //       price: 0,
-    //     },
-    //   ]);
-    //   dispatch(addRestaurant(credentials));
+
+    const menuData: menuDataType = {
+      menu: credentials,
+      restaurantId,
+    };
+    console.log(menuData);
+    // setMenuItems([
+    //   {
+    //     name: '',
+    //     description: '',
+    //     kcal: 0,
+    //     price: 0,
+    //   },
+    // ]);
+    dispatch(updateRestaurantMenu(menuData));
+    setIsEditMenuOpen(false);
     form.reset();
   };
 
@@ -40,7 +63,7 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
     fieldName: string
   ) => {
     const { value } = e.target;
-    let parsedValue: number | string = value;
+    let parsedValue: string | number = value;
 
     if (fieldName === 'kcal' || fieldName === 'price') {
       parsedValue = parseFloat(value);
@@ -63,15 +86,20 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
         name: '',
         description: '',
         kcal: 0,
-        price: 0,
+        price: '',
       },
     ]);
   };
 
-  const handleRemoveDish = (index: number) => {
+  const handleRemoveDish = (index: number, dishId: string | undefined) => {
     setMenuItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];
       updatedMenuItems.splice(index, 1);
+
+      if (dishId) {
+        setDishesToDelete(prevDish => [...prevDish, dishId]);
+      }
+
       return updatedMenuItems;
     });
   };
@@ -143,6 +171,7 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
               className={styles.input}
               value={item.price}
               min={0}
+              step={0.01}
               onChange={e => handleInputChange(e, index, 'price')}
               required
             />
@@ -150,7 +179,7 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
           <button
             className={`${styles.button} ${styles.buttonCancel}`}
             type="button"
-            onClick={() => handleRemoveDish(index)}
+            onClick={() => handleRemoveDish(index, item._id)}
           >
             Remove Dish {`${index + 1}`}
           </button>

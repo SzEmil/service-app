@@ -10,12 +10,54 @@ import { setCurrentRestaurant } from '../../redux/restaurants/restaurantsSlice';
 import { MenuRestaurant } from '../../Components/MenuRestaurant/MenuRestaurant';
 import { TablesRestaurant } from '../../Components/TablesRestaurant/TablesRestaurant';
 import { InviteForm } from '../../Components/InviteForm/InviteForm';
+import { removeRestaurantColabolator } from '../../redux/restaurants/restaurantsOperations';
+import { selectAuthUser } from '../../redux/user/userSelectors';
+import { setCurrentRestaurantColabolators } from '../../redux/restaurants/restaurantsSlice';
+import { userType } from '../../types/user';
+import { imageSrc } from '../../Components/Header/Header';
+import Image from 'next/image';
+import { removeRestaurant } from '../../redux/restaurants/restaurantsOperations';
 
-const RestaurantPage = ({ restaurant }: any) => {
+type leaveRestaurantData = {
+  restaurantId: string | string[] | undefined;
+};
+const RestaurantPage = ({ restaurant, restaurantData }: any) => {
   const [isTablesOpen, setIsTablesOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const [restaurantMenuOpen, setRestaurantMenuOpen] = useState(false);
   const [isInviteFormOpen, setIsInviteFormOpen] = useState(false);
+
+  const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
+  const user = useSelector(selectAuthUser);
+  const currentRestaurant = useSelector(selectCurrentRestaurant);
+
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const menuWrapper = document.getElementById('restaurantOptionsWrapper');
+      const menuBtn = document.getElementById('menuBtn');
+
+      if (
+        menuWrapper &&
+        !menuBtn?.contains(target) &&
+        !menuWrapper.contains(target)
+      ) {
+        setRestaurantMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    dispatch(setCurrentRestaurant(restaurant));
+    dispatch(setCurrentRestaurantColabolators(restaurantData.colabolators));
+  }, [dispatch, restaurant, restaurantData.colabolators]);
 
   const handleOpenTables = () => {
     setIsTablesOpen(true);
@@ -27,66 +69,172 @@ const RestaurantPage = ({ restaurant }: any) => {
     setIsMenuOpen(true);
   };
 
-  const dispatch: AppDispatch = useDispatch();
-  const router = useRouter();
+  const handleOnClickLeaveRestaurant = () => {
+    const { restaurantId } = router.query;
 
-  const currentRestaurant = useSelector(selectCurrentRestaurant);
-  useEffect(() => {
-    dispatch(setCurrentRestaurant(restaurant));
-  }, [dispatch]);
+    const leaveRestaurantData: leaveRestaurantData = {
+      restaurantId: restaurantId,
+    };
+
+    dispatch(removeRestaurantColabolator(leaveRestaurantData));
+    router.push('/restaurants');
+  };
 
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
+  const handleMakeImageURL = (userAvatarURL: String | undefined) => {
+    return `${imageSrc}/${userAvatarURL}`;
+  };
+
+  const handleOnClickRemoveRestaurant = async () => {
+    const { restaurantId } = router.query;
+    console.log('usuwamy restauracje');
+    await dispatch(removeRestaurant(restaurantId));
+    router.push('/restaurants');
+  };
 
   return (
     <>
-      <div>
-        <h1>{restaurant.name}</h1>
-        <button
-          className={css.button}
-          onClick={() => setIsInviteFormOpen(true)}
-        >
-          Invite friend
-        </button>
-        <ul className={css.navBtn}>
-          <li>
-            <button onClick={() => handleOpenTables()} className={css.button}>
-              Tables
+      {restaurant && (
+        <div className={css.restaurant}>
+          <div className={css.restaurantNameWrapper}>
+            <button
+              id="menuBtn"
+              onClick={() => {
+                setRestaurantMenuOpen(prevVal => !prevVal);
+              }}
+              className={`${css.restaurantName} ${
+                restaurantMenuOpen && css.activeLink
+              }`}
+            >
+              {restaurant.name}
             </button>
-          </li>
-          <li>
-            <button onClick={() => handleOpenMenu()} className={css.button}>
-              Menu
-            </button>
-          </li>
-        </ul>
-        {currentRestaurant !== null ? (
-          <div>
-            {isMenuOpen && isTablesOpen === false && (
-              <div>
-                <MenuRestaurant menu={currentRestaurant!.menu} />
-              </div>
-            )}
 
-            {isTablesOpen && isMenuOpen === false && (
-              <div>
-                <TablesRestaurant tables={currentRestaurant.tables} />
-              </div>
-            )}
+            <ul className={css.colabolatorsList}>
+              <li key={user.user.id} className={css.colabolatorsItem}>
+                <Image
+                  src={handleMakeImageURL(restaurantData.owner.avatarURL)}
+                  alt="user pic"
+                  width={40}
+                  height={40}
+                  className={css.colabolatorImage}
+                />
+                <div className={css.userNameBox}>
+                  <p className={css.colaboratorUsername}>
+                    {restaurantData.owner.username}
+                  </p>
+                </div>
+              </li>
+              {restaurantData.colabolators.map((colabolator: userType) => (
+                <li className={css.colabolatorsItem} key={colabolator._id}>
+                  <Image
+                    src={handleMakeImageURL(colabolator.avatarURL)}
+                    alt="user pic"
+                    width={40}
+                    height={40}
+                    className={css.colabolatorImage}
+                  />
+                  <div className={css.userNameBox}>
+                    <p className={css.colaboratorUsername}>
+                      {colabolator.username}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-        ) : (
-          <p>Loading data...</p>
-        )}
-        {isInviteFormOpen && (
-          <div className={css.inviteFormBackdrop}>
-            <div className={css.inviteFormWrapper}>
-              <InviteForm setIsInviteFormOpen={setIsInviteFormOpen}/>
+
+          {restaurantMenuOpen && (
+            <div
+              id="restaurantOptionsWrapper"
+              className={css.restaurantOptionsWrapper}
+            >
+              <div className={css.restaurantBtnOptions}>
+                <div>
+                  <button
+                    className={`${css.button} ${css.btnMenuRestaurant}`}
+                    onClick={() => setIsInviteFormOpen(true)}
+                  >
+                    Invite friend
+                  </button>
+                </div>
+                {restaurant.colabolators &&
+                  restaurant.colabolators.includes(user.user.id) && (
+                    <div>
+                      <button
+                        className={`${css.button} ${css.btnMenuRestaurant}`}
+                        onClick={() => handleOnClickLeaveRestaurant()}
+                      >
+                        Leave restaurant
+                      </button>
+                    </div>
+                  )}
+                {restaurant.owner === user.user.id && (
+                  <div>
+                    <button
+                      onClick={() => handleOnClickRemoveRestaurant()}
+                      className={`${css.button} ${css.btnMenuRestaurant}`}
+                    >
+                      Remove restaurant
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-      </div>
+          <ul className={css.navBtn}>
+            <li>
+              <button className={`${css.button} `}>Overview</button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleOpenTables()}
+                className={`${css.button} ${css.buttonMarginLeft} ${
+                  isTablesOpen && !isMenuOpen ? css.btnActive : null
+                }`}
+              >
+                Tables
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleOpenMenu()}
+                className={`${css.button} ${css.buttonMarginLeft} ${
+                  !isTablesOpen && isMenuOpen ? css.btnActive : null
+                }`}
+              >
+                Menu
+              </button>
+            </li>
+          </ul>
+          {currentRestaurant !== null ? (
+            <div>
+              {isMenuOpen && isTablesOpen === false && (
+                <div>
+                  <MenuRestaurant menu={currentRestaurant!.menu} />
+                </div>
+              )}
+
+              {isTablesOpen && isMenuOpen === false && (
+                <div>
+                  <TablesRestaurant tables={currentRestaurant.tables} />
+                </div>
+              )}
+            </div>
+          ) : (
+            <p>Loading data...</p>
+          )}
+          {isInviteFormOpen && (
+            <div className={css.inviteFormBackdrop}>
+              <div className={css.inviteFormWrapper}>
+                <InviteForm setIsInviteFormOpen={setIsInviteFormOpen} />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };
@@ -98,15 +246,21 @@ export async function getServerSideProps(context: any) {
 
     const { restaurantId } = context.params;
 
-    const response = await axios.get(
+    const responseRestaurant = await axios.get(
       `http://localhost:3001/api/restaurants/${restaurantId}`
     );
-    const data = response.data;
+    const data = responseRestaurant.data;
     const restaurant = data.ResponseBody.restaurant;
 
+    const responseColabolators = await axios.get(
+      `/restaurants/${restaurantId}/colabolators`
+    );
+    const restaurantData: userType[] =
+      responseColabolators.data.ResponseBody.restaurantData;
     return {
       props: {
         restaurant,
+        restaurantData,
       },
     };
   } catch (error) {
@@ -115,6 +269,10 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         restaurant: {},
+        restaurantData: {
+          colabolators: [],
+          owner: null,
+        },
       },
     };
   }

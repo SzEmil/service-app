@@ -25,6 +25,9 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
         .value,
       menu: menuItems,
       icon: 'icon.img',
+      currency: (
+        form.elements.namedItem('restaurantCurrency') as HTMLSelectElement
+      ).value,
     };
     console.log(credentials);
     setMenuItems([
@@ -109,6 +112,31 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
         />
       </div>
 
+      <div className={styles.formGroup}>
+        <label htmlFor="restaurantCurrency" className={styles.label}>
+          Currency
+        </label>
+        <select
+          id="restaurantCurrency"
+          name="restaurantCurrency"
+          className={styles.input}
+          required
+          placeholder="Pick Currency"
+        >
+          <option value="$">USD - United States Dollar</option>
+          <option value="€">EUR - Euro</option>
+          <option value="zł">PLN - Polish Złoty</option>
+          <option value="¥">JPY - Japanese Yen</option>
+          <option value="£">GBP - British Pound Sterling</option>
+          <option value="$">AUD - Australian Dollar</option>
+          <option value="$">CAD - Canadian Dollar</option>
+          <option value="Fr">CHF - Swiss Franc</option>
+          <option value="¥">CNY - Chinese Yuan</option>
+          <option value="SEK">kr - Swedish Krona</option>
+          <option value="NZD">$ - New Zealand Dollar</option>
+        </select>
+      </div>
+
       {menuItems.map((item, index) => (
         <div className={styles.dish} key={index}>
           <div className={styles.formGroup}>
@@ -149,6 +177,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
               className={styles.input}
               value={item.kcal}
               min={0}
+              step={0.01}
               onChange={e => handleInputChange(e, index, 'kcal')}
             />
           </div>

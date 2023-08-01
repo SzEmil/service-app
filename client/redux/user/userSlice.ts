@@ -5,7 +5,10 @@ import {
   logOut,
   refreshUser,
   getInvitationsData,
-} from './authOperations';
+  rejectInvitation,
+  acceptInvitation,
+  changeUserAvatar,
+} from './userOperations';
 
 export type invitationType = {
   _id: string | null | undefined;
@@ -16,9 +19,10 @@ export type invitationType = {
 };
 export type authInitialStateType = {
   user: {
+    id: string | null | undefined;
     username: string | null;
     email: string | null;
-    avatarURL: string | null;
+    avatarURL: string | undefined;
   };
   token: string | null;
   isRefreshing: boolean;
@@ -34,7 +38,7 @@ export type authInitialStateType = {
 };
 
 const authInitialState: authInitialStateType = {
-  user: { username: null, email: null, avatarURL: null },
+  user: { username: null, email: null, avatarURL: '', id: null },
   token: null,
   isLoggedIn: false,
   isRefreshing: false,
@@ -57,7 +61,7 @@ const authSlice = createSlice({
       (state.token = null),
         (state.error = null),
         (state.isLoggedIn = false),
-        (state.user.avatarURL = null),
+        (state.user.avatarURL = ''),
         (state.user.email = null),
         (state.user.username = null);
     },
@@ -75,6 +79,10 @@ const authSlice = createSlice({
           (state.isLoggedIn = false),
           (state.isRefreshing = false),
           (state.error = action.payload);
+        (state.user.avatarURL = ''),
+          (state.user.email = null),
+          (state.user.username = null);
+        state.user.id = null;
       }
     );
     builder.addCase(
@@ -85,12 +93,16 @@ const authSlice = createSlice({
           payload: {
             username: string | null;
             email: string | null;
+            avatarURL: string;
             token: string | null;
+            _id: string | null;
           };
         }
       ) => {
         state.user.username = action.payload.username;
         state.user.email = action.payload.email;
+        state.user.id = action.payload._id;
+        state.user.avatarURL = action.payload.avatarURL;
         state.token = action.payload.token;
         state.isLoggedIn = true;
         state.error = null;
@@ -110,6 +122,10 @@ const authSlice = createSlice({
           (state.isLoggedIn = false),
           (state.isRefreshing = false),
           (state.error = action.payload);
+        (state.user.avatarURL = ''),
+          (state.user.email = null),
+          (state.user.username = null);
+        state.user.id = null;
       }
     );
     builder.addCase(
@@ -121,8 +137,10 @@ const authSlice = createSlice({
             token: string | null;
             user: {
               username: string | null;
+              avatarURL: string;
               email: string | null;
               token: string | null;
+              _id: string | null;
             };
           };
         }
@@ -130,6 +148,8 @@ const authSlice = createSlice({
         state.user.username = action.payload.user.username;
         state.user.email = action.payload.user.email;
         state.token = action.payload.token;
+        state.user.avatarURL = action.payload.user.avatarURL;
+        state.user.id = action.payload.user._id;
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
@@ -148,6 +168,10 @@ const authSlice = createSlice({
           (state.isLoggedIn = false),
           (state.isRefreshing = false),
           (state.error = action.payload);
+        (state.user.avatarURL = ''),
+          (state.user.email = null),
+          (state.user.username = null);
+        state.user.id = null;
       }
     );
     builder.addCase(
@@ -160,6 +184,7 @@ const authSlice = createSlice({
       ) => {
         state.user.username = action.payload.username;
         state.user.email = action.payload.email;
+        state.user.id = action.payload._id;
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
@@ -174,9 +199,10 @@ const authSlice = createSlice({
       (state.token = null),
         (state.error = null),
         (state.isLoggedIn = false),
-        (state.user.avatarURL = null),
+        (state.user.avatarURL = ''),
         (state.user.email = null),
         (state.user.username = null);
+      state.user.id = null;
     });
 
     builder.addCase(getInvitationsData.pending, state => {
@@ -190,7 +216,50 @@ const authSlice = createSlice({
     builder.addCase(getInvitationsData.fulfilled, (state, action) => {
       state.invitations.isLoading = false;
       state.invitations.error = null;
-      state.invitations.invitations = [...action.payload]
+      state.invitations.invitations = [...action.payload];
+    });
+
+    builder.addCase(rejectInvitation.pending, state => {
+      state.invitations.isLoading = true;
+      state.invitations.error = null;
+    });
+    builder.addCase(rejectInvitation.rejected, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = action.payload;
+    });
+    builder.addCase(rejectInvitation.fulfilled, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = null;
+
+      const indexToRemove = state.invitations.invitations.findIndex(
+        invitation => invitation._id!.toString() === action.payload
+      );
+      state.invitations.invitations.splice(indexToRemove, 1);
+    });
+
+    builder.addCase(acceptInvitation.pending, state => {
+      state.invitations.isLoading = true;
+      state.invitations.error = null;
+    });
+    builder.addCase(acceptInvitation.rejected, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = action.payload;
+    });
+    builder.addCase(acceptInvitation.fulfilled, (state, action) => {
+      state.invitations.isLoading = false;
+      state.invitations.error = null;
+
+      const indexToRemove = state.invitations.invitations.findIndex(
+        invitation => invitation._id!.toString() === action.payload
+      );
+      state.invitations.invitations.splice(indexToRemove, 1);
+    });
+
+    builder.addCase(changeUserAvatar.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+    builder.addCase(changeUserAvatar.fulfilled, (state, action) => {
+      state.user.avatarURL = action.payload;
     });
   },
 });

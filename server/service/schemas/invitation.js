@@ -15,6 +15,10 @@ const invitationSchema = new Schema(
       type: String,
       required: [true, 'Restaurant name is required'],
     },
+    restaurantId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Restaurant',
+    },
   },
   { versionKey: false, timestamps: true }
 );

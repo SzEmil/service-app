@@ -11,6 +11,8 @@ import path from 'path';
 import { nanoid } from 'nanoid';
 import { storeImageDir } from '../middlewares/fileUpload/upload.js';
 import fs from 'fs/promises';
+import serviceRestaurant from '../service/serviceRestaurant.js';
+import { join } from 'path';
 
 dotenv.config();
 
@@ -127,6 +129,8 @@ const register = async (req, res, next) => {
             username: newUser.username,
             email: newUser.email,
             token: newUser.token,
+            avatarURL,
+            _id: newUser._id,
           },
         },
       });
@@ -187,6 +191,7 @@ const login = async (req, res, next) => {
           _id: user._id,
           username: user.username,
           email: user.email,
+          avatarURL: user.avatarURL,
         },
       },
     });
@@ -247,6 +252,8 @@ const currentUser = async (req, res, next) => {
       ResponseBody: {
         username: user.username,
         email: user.email,
+        _id: user._id,
+        avatarURL: user.avatarURL,
       },
     });
   } catch (error) {
@@ -267,6 +274,8 @@ const uploadAvatar = async (req, res, next) => {
         },
       });
     }
+    const oldAvatarPath = user.avatarURL;
+    const newOldAvatarPath = join('public', oldAvatarPath);
 
     const file = req.file;
     if (!file)
@@ -285,6 +294,9 @@ const uploadAvatar = async (req, res, next) => {
     const destinationPath = path.join(storeImageDir, newAvatarName);
     try {
       await fs.rename(avatarPath, destinationPath);
+      if (!oldAvatarPath.includes('gravatar')) {
+        fs.unlink(newOldAvatarPath);
+      }
     } catch (error) {
       await fs.unlink(avatarPath);
       return next(error);
@@ -297,6 +309,7 @@ const uploadAvatar = async (req, res, next) => {
       message: 'Avatar uploaded successfully',
       ResponseBody: {
         avatarURL: user.avatarURL,
+        message: 'Avatar was successfully uploaded',
       },
     });
   } catch (error) {
@@ -336,6 +349,142 @@ const getUserInvitations = async (req, res, next) => {
   }
 };
 
+const rejectUserInvitation = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    try {
+      const { invitationId } = req.body;
+
+      const results = await userService.deleteInvitationById(invitationId);
+      if (!results) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found invitation with id ${invitationId}`,
+          },
+        });
+      }
+      const indexToRemove = user.invitations.findIndex(
+        invitation => invitation._id.toString() === invitationId
+      );
+
+      if (indexToRemove === -1) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found user with invitation with id ${invitationId}`,
+          },
+        });
+      }
+      user.invitations.splice(indexToRemove, 1);
+      await user.save();
+
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          message: 'Invitation removed successfully',
+          invitation: results,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const acceptUserInvitation = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    try {
+      const { invitationId } = req.body;
+
+      const invitation = await userService.getInvitationById(invitationId);
+      if (!invitation) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found invitation with id ${invitationId}`,
+          },
+        });
+      }
+
+      await userService.deleteInvitationById(invitationId);
+
+      const indexToRemove = user.invitations.findIndex(
+        invitation => invitation._id.toString() === invitationId
+      );
+
+      if (indexToRemove === -1) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found user with invitation with id ${invitationId}`,
+          },
+        });
+      }
+      user.invitations.splice(indexToRemove, 1);
+
+      const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+        invitation.restaurantId
+      );
+
+      if (!restaurant) {
+        return res.status(404).json({
+          status: 'error',
+          code: 404,
+          ResponseBody: {
+            message: `Not found restaurant with id ${invitation.restaurantId}`,
+          },
+        });
+      }
+      restaurant.colabolators.push(user._id);
+      await restaurant.save();
+      await user.save();
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          message: `User with id ${user._id} is added to restaurant ${restaurant.name}`,
+          restaurant: restaurant,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// const getRestaurantColabolators = colabolators => {
+//   return User.findOne({ _id: { $in: colabolators } });
+// };
+
 const userController = {
   get,
   register,
@@ -344,5 +493,7 @@ const userController = {
   currentUser,
   uploadAvatar,
   getUserInvitations,
+  rejectUserInvitation,
+  acceptUserInvitation,
 };
 export default userController;

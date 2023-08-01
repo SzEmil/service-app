@@ -27,6 +27,10 @@ const restaurantSchema = new Schema(
         type: Object,
       },
     ],
+    currency: {
+      type: String,
+      default: null,
+    },
     // tables: [
     //   {
     //     type: Schema.Types.ObjectId,
@@ -41,6 +45,7 @@ const restaurantSchema = new Schema(
     colabolators: [
       {
         type: Schema.Types.ObjectId,
+        ref: "User"
       },
     ],
   },

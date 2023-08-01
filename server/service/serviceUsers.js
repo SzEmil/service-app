@@ -21,13 +21,26 @@ const getInvitationByEmail = async email => {
   });
 };
 
+const deleteInvitationById = async id => {
+  return Invitation.findOneAndRemove({ _id: id });
+};
 
+const getInvitationById = async id => {
+  return Invitation.findOne({ _id: id });
+};
+
+const getRestaurantColabolators = usersId => {
+  return User.find({ _id: { $in: [usersId] } });
+};
 
 const userService = {
   getUsers,
   getUserByEmail,
   createUser,
   getUserById,
-  getInvitationByEmail
+  getInvitationByEmail,
+  deleteInvitationById,
+  getInvitationById,
+  getRestaurantColabolators
 };
 export default userService;
