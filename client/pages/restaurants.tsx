@@ -38,7 +38,7 @@ const Restaurants = ({ restaurantData }: any) => {
       >
         Refresh data <FiRefreshCcw size={'24px'} />
       </button>
-      
+
       <ul className={css.restaurantsList}>
         <li key={nanoid()}>
           <div className={css.newRestaurantBlock}>
@@ -78,10 +78,8 @@ export async function getServerSideProps({ req }: any) {
     console.log('cookie', req.headers.cookie);
     const token = req.headers.cookie?.replace('token=', '');
     axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    // const headers = {
-    //   Authorization: `Bearer ${token}`,
-    // };
-    const response = await axios.get('http://localhost:3001/api/restaurants');
+
+    const response = await axios.get(`/restaurants`);
     const data = response.data;
     const restaurantData = data.ResponseBody.restaurants;
 

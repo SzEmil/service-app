@@ -18,6 +18,7 @@ import { imageSrc } from '../../Components/Header/Header';
 import Image from 'next/image';
 import { removeRestaurant } from '../../redux/restaurants/restaurantsOperations';
 
+
 type leaveRestaurantData = {
   restaurantId: string | string[] | undefined;
 };
@@ -247,7 +248,7 @@ export async function getServerSideProps(context: any) {
     const { restaurantId } = context.params;
 
     const responseRestaurant = await axios.get(
-      `http://localhost:3001/api/restaurants/${restaurantId}`
+      `/restaurants/${restaurantId}`
     );
     const data = responseRestaurant.data;
     const restaurant = data.ResponseBody.restaurant;

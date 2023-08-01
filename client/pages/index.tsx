@@ -12,8 +12,6 @@ import { AppDispatch } from '../redux/store';
 import { useRouter } from 'next/router';
 import { useAuth } from '../hooks/useAuth';
 
-import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
-
 const Home: NextPage = () => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
