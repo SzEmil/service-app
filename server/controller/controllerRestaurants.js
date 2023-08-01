@@ -1004,7 +1004,6 @@ const editTableOrder = async (req, res, next) => {
       }
       const { orders } = req.body;
 
-      // const ordersTab = orders.orders;
       if (!orders) {
         return res.status(400).json({
           status: 'error',
@@ -1037,9 +1036,22 @@ const editTableOrder = async (req, res, next) => {
           order._id
         );
         foundOrder.name = order.name;
-        foundOrder.fullPrice = order.fullPrice;
-        foundOrder.fullKcal = order.fullKcal;
         foundOrder.dishes = order.dishes;
+
+        const kcalValues = order.dishes.map(dish => dish.kcal);
+        const fullKcal = kcalValues.reduce(
+          (total, kcal) => total + kcal,
+          0
+        );
+
+        const priceValues = order.dishes.map(dish => dish.price);
+        const fullPrice = priceValues.reduce(
+          (total, price) => total + price,
+          0
+        );
+
+        foundOrder.fullPrice = fullPrice;
+        foundOrder.fullKcal = fullKcal;
 
 
         const tableIndex = restaurant.tables.findIndex(tableToFind =>
