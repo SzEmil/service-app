@@ -9,13 +9,15 @@ import styles from './EditOrderForm.module.css';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { FormEvent } from 'react';
+import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
+import { editOrder } from '../../redux/restaurants/restaurantsOperations';
 
 type setOrderType = {
   name: string;
   dishes: dishType[] | [];
 };
 
-type editOrderType = {
+export type editOrderType = {
   ordersData: {
     orders: orderType[];
   };
@@ -28,20 +30,27 @@ export const EditOrderForm = ({
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const currentMenu = useSelector(selectCurrentRestaurantMenu);
+  const currency = useSelector(selectCurrentRestaurantCurrency);
 
   const [isOrderMenuOpen, setIsOrderMenuOpen] = useState(false);
   const [shouldKeepMenuOpen, setShouldKeepMenuOpen] = useState(false);
   const [activeOrderIndex, setActiveOrderIndex] = useState<number | null>(null);
-
+  const [menuFilter, setMenuFilter] = useState('');
   const [ordersItems, setOrdersItems] = useState<setOrderType[]>([
     currentOrder,
   ]);
+  const filteredMenu = currentMenu!.filter(dish =>
+    dish.name.toLowerCase().includes(menuFilter.toLocaleLowerCase())
+  );
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const { restaurantId } = router.query;
 
+    const credentials = {
+      orders: ordersItems,
+    };
     const orderObjData: editOrderType = {
       ordersData: {
         orders: ordersItems,
@@ -50,15 +59,9 @@ export const EditOrderForm = ({
     };
 
     console.log(orderObjData);
-    //   await dispatch(addRestaurantTable(orderObjData));
-    //   setIsNewTableOpen(false);
-    //   setOrdersItems([
-    //     {
-    //       name: '',
-    //       dishes: [],
-    //     },
-    //   ]);
-    // form.reset();
+    await dispatch(editOrder(orderObjData));
+
+     form.reset();
     setIsEditOrderMenuOpen(false);
   };
 
@@ -87,7 +90,6 @@ export const EditOrderForm = ({
   };
 
   const handleSelectDish = (selectedDish: dishType, orderIndex: number) => {
-    console.log('funkcja działa chyba');
     setOrdersItems(prevOrdersItems => {
       const updatedOrdersItems = [...prevOrdersItems];
       updatedOrdersItems[orderIndex] = {
@@ -98,6 +100,20 @@ export const EditOrderForm = ({
     });
     setShouldKeepMenuOpen(false);
     setIsOrderMenuOpen(false);
+  };
+  const handleremoveDishFromOrder = (dishIndex: number, orderIndex: number) => {
+    setOrdersItems((prevMenuItems: setOrderType[]) => {
+      const updatedMenuItems = prevMenuItems.map((item, i) => {
+        if (i === orderIndex) {
+          const updatedDishes = item.dishes.filter(
+            (dish, j) => j !== dishIndex
+          );
+          return { ...item, dishes: updatedDishes };
+        }
+        return item;
+      });
+      return updatedMenuItems;
+    });
   };
 
   return (
@@ -144,6 +160,10 @@ export const EditOrderForm = ({
                   setIsOrderMenuOpen(false);
                 }
               }}
+              onChange={event => {
+                const value = event.target.value;
+                setMenuFilter(value);
+              }}
               type="text"
               name={`name${index}`}
               className={styles.input}
@@ -152,7 +172,7 @@ export const EditOrderForm = ({
             {isOrderMenuOpen && activeOrderIndex === index && (
               <div className={styles.menuBlock}>
                 <ul className={styles.menuList}>
-                  {currentMenu?.map(dish => (
+                  {filteredMenu?.map(dish => (
                     <li
                       key={`${dish._id}_${nanoid()}`}
                       className={styles.menuItem}
@@ -179,13 +199,22 @@ export const EditOrderForm = ({
             <div className={styles.pickedDishesBlock}>
               <h2 className={styles.pickedDishesTitle}>Picked dishes</h2>
               <ul className={styles.pickedDishesList}>
-                {item.dishes.map(dish => (
-                  <li key={nanoid()}>
-                    {' '}
-                    <p className={styles.pickedDishesName}>
-                      - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
-                      (kcal: {dish.kcal}, price: {dish.price})
-                    </p>
+                {item.dishes?.map((dish, dishIndex) => (
+                  <li key={`${dish._id}_${dishIndex}`}>
+                    <div className={styles.dishWrapper}>
+                      <p className={styles.pickedDishesName}>
+                        - <span style={{ fontWeight: '400' }}>{dish.name}</span>{' '}
+                        (kcal: {dish.kcal}, price: {dish.price} {currency})
+                      </p>
+                      <button
+                        className={styles.btnRemoveDish}
+                        onClick={() =>
+                          handleremoveDishFromOrder(dishIndex, index)
+                        }
+                      >
+                        X
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -194,11 +223,8 @@ export const EditOrderForm = ({
         </div>
       ))}
 
-      <button
-        type="submit"
-        className={`${styles.button} ${styles.buttonAddOrder}`}
-      >
-        Confrim modifications
+      <button type="submit" className={styles.button}>
+        Submit changes
       </button>
     </form>
   );

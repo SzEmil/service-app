@@ -11,8 +11,10 @@ import {
   updateRestaurantMenu,
   getRestaurantColabolators,
   removeRestaurant,
+  editOrder,
 } from './restaurantsOperations';
 import { userType } from '../../types/user';
+import { BsFillNutFill } from 'react-icons/bs';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
@@ -137,10 +139,36 @@ const restaurantSlice = createSlice({
 
     builder.addCase(removeRestaurant.rejected, (state, action) => {
       state.error = action.payload;
+    });
+    builder.addCase(removeRestaurant.fulfilled, (state, action) => {
+      state.error = null;
       const indexToRemove = state.restaurants.findIndex(
         restaurant => restaurant._id === action.payload
       );
       state.restaurants.splice(indexToRemove, 1);
+    });
+
+    builder.addCase(editOrder.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+    builder.addCase(editOrder.fulfilled, (state, action) => {
+      state.error = null;
+
+      const tableIndexToUpdate = state.currentRestaurant?.tables?.findIndex(
+        table => table._id === action.payload.tableId
+      );
+      if (tableIndexToUpdate !== undefined) {
+        const orderIndex = state.currentRestaurant?.tables![
+          tableIndexToUpdate
+        ].orders.findIndex(order => order._id === action.payload.order._id);
+
+        if (orderIndex !== undefined)
+          state.currentRestaurant?.tables![tableIndexToUpdate].orders.splice(
+            orderIndex,
+            1,
+            action.payload.order
+          );
+      }
     });
   },
 });

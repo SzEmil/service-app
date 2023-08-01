@@ -84,9 +84,9 @@ export const EditTableForm = ({ setIsEditTableOpen, currentTable }: any) => {
     const { value } = e.target;
     let parsedValue: number | string = value;
 
-    if (fieldName === 'kcal' || fieldName === 'price') {
-      parsedValue = parseFloat(value);
-    }
+    // if (fieldName === 'kcal' || fieldName === 'price') {
+    //   parsedValue = parseFloat(value);
+    // }
 
     setOrdersItems((prevMenuItems: any) => {
       const updatedMenuItems = [...prevMenuItems];

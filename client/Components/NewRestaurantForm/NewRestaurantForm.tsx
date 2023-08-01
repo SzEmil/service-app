@@ -25,7 +25,9 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
         .value,
       menu: menuItems,
       icon: 'icon.img',
-      currency: (form.elements.namedItem('restaurantCurrency') as HTMLSelectElement).value,
+      currency: (
+        form.elements.namedItem('restaurantCurrency') as HTMLSelectElement
+      ).value,
     };
     console.log(credentials);
     setMenuItems([
@@ -119,7 +121,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
           name="restaurantCurrency"
           className={styles.input}
           required
-          placeholder='Pick Currency'
+          placeholder="Pick Currency"
         >
           <option value="$">USD - United States Dollar</option>
           <option value="€">EUR - Euro</option>
@@ -175,6 +177,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
               className={styles.input}
               value={item.kcal}
               min={0}
+              step={0.01}
               onChange={e => handleInputChange(e, index, 'kcal')}
             />
           </div>

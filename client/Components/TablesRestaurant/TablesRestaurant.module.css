@@ -14,8 +14,7 @@
   border-radius: 4px;
   cursor: pointer;
 }
-.button:hover,
-.button:focus {
+.button:hover{
   background-color: #474747;
 }
 .buttonFinishTable {
