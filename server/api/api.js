@@ -105,7 +105,16 @@ router.post(
   authUser,
   controllerRestaurant.removeColabolatorRestaurant
 );
+router.patch(
+  `/restaurants/:restaurantId/order`,
+  authUser,
+  controllerRestaurant.editTableOrder
+);
 
- router.post( `/restaurants/:restaurantId/order/complete`, authUser, controllerRestaurant.completeOrder)
+router.post(
+  `/restaurants/:restaurantId/order/complete`,
+  authUser,
+  controllerRestaurant.completeOrder
+);
 //By dodać zamówienie trzeba bedzie nowy obiekt zamówienia dodać push do tablicy orders danego stolika czyli ten stolik albo lepiej order trzeba wyszukać apotem table.orders.push(object)
 export default router;

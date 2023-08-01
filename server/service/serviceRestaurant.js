@@ -118,7 +118,7 @@ const removeDishesFromRestaurant = async (dishesToDelete, restaurantId) => {
     dishId => new mongoose.Types.ObjectId(dishId)
   );
   Dish.deleteMany({
-    $and: [{ restaurant: restaurantId }, { _id: { $in: [dishIds] } }],
+    $and: [{ restaurant: restaurantId }, { _id: { $in: dishIds } }],
   });
 };
 
@@ -127,6 +127,7 @@ const removeRestaurant = async (userId, restaurantId) => {
     $and: [{ _id: restaurantId }, { owner: userId }],
   });
 };
+
 
 const serviceRestaurant = {
   removeRestaurant,

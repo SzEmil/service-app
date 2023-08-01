@@ -78,9 +78,9 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
   };
 
   const handleOnClickEditOrder = async (orderData: orderType) => {
-    await setCurrentOrder(orderData);
+    setCurrentOrder(orderData);
 
-    if (currentOrder) setIsEditOrderMenuOpen(true);
+    setIsEditOrderMenuOpen(true);
   };
 
   const handleOnClickEditTable = async (tableData: tableType) => {
@@ -105,6 +105,10 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
     };
 
     dispatch(removeRestaurantTable(tableRemoveData));
+  };
+
+  const formatNumberToTwoDecimalPlaces = (number: number | undefined) => {
+    return number!.toFixed(2);
   };
 
   return (
@@ -140,7 +144,14 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
             </div>
             <div className={css.tableInfo}>
               <div className={css.ordersWrapper}>
-                <p className={css.ordersCount}>Active orders:</p>
+                <p
+                  className={css.ordersCount}
+                  style={
+                    table.orders.length === 0 ? { color: 'grey' } : undefined
+                  }
+                >
+                  Active orders:
+                </p>
                 <div className={css.orderIcon}>
                   <BiSolidDish size={'24px'} />
                 </div>
@@ -181,7 +192,8 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                   </div>
                   <p>Full kcal: {order.fullKcal}</p>
                   <p>
-                    Full Price: {order.fullPrice} {currency}
+                    Full Price:{' '}
+                    {formatNumberToTwoDecimalPlaces(order.fullPrice)} {currency}
                   </p>
                   <ul className={css.dishesList}>
                     {order.dishes.map(dish => (

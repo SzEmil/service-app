@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: 15px;
 }
 
 .button {
@@ -14,8 +14,7 @@
   border-radius: 4px;
   cursor: pointer;
 }
-.button:hover,
-.button:focus {
+.button:hover {
   background-color: #474747;
 }
 .buttonFinishTable {
@@ -59,16 +58,16 @@
 .tableName {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  /* padding: 5px 12px; */
 }
 .createdAt {
   color: #888;
-  margin-bottom: 5px;
 }
 .tableInfo {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 10px;
 }
 .ordersWrapper {
   display: flex;

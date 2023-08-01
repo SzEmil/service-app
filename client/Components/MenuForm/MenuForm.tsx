@@ -23,11 +23,15 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
 
   const [menuItems, setMenuItems] = useState(currentMenu);
   const [dishesToDelete, setDishesToDelete] = useState<string[] | []>([]);
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
 
     const { restaurantId } = router.query;
+
+    // menuItems?.forEach(menuItem => Number(menuItem.price));
+
     const credentials = {
       menu: menuItems,
       dishesToDelete,
@@ -38,15 +42,16 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
       restaurantId,
     };
     console.log(menuData);
-    //   setMenuItems([
-    //     {
-    //       name: '',
-    //       description: '',
-    //       kcal: 0,
-    //       price: 0,
-    //     },
-    //   ]);
+    // setMenuItems([
+    //   {
+    //     name: '',
+    //     description: '',
+    //     kcal: 0,
+    //     price: 0,
+    //   },
+    // ]);
     dispatch(updateRestaurantMenu(menuData));
+    setIsEditMenuOpen(false);
     form.reset();
   };
 
@@ -58,7 +63,7 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
     fieldName: string
   ) => {
     const { value } = e.target;
-    let parsedValue: number | string = value;
+    let parsedValue: string | number = value;
 
     if (fieldName === 'kcal' || fieldName === 'price') {
       parsedValue = parseFloat(value);
@@ -81,7 +86,7 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
         name: '',
         description: '',
         kcal: 0,
-        price: 0,
+        price: '',
       },
     ]);
   };
@@ -166,6 +171,7 @@ export const MenuForm = ({ setIsEditMenuOpen }: any) => {
               className={styles.input}
               value={item.price}
               min={0}
+              step={0.01}
               onChange={e => handleInputChange(e, index, 'price')}
               required
             />
