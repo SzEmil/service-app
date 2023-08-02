@@ -103,6 +103,10 @@ const getDishOnlyById = async (dishId, restaurantId) => {
   });
 };
 
+const getAllRestaurantDishes = async restaurantId => {
+  return Dish.find({ restaurant: restaurantId });
+};
+
 const getInvitationByEmailAndRestaurantName = async (email, restaurantName) => {
   return Invitation.findOne({
     $and: [
@@ -128,8 +132,8 @@ const removeRestaurant = async (userId, restaurantId) => {
   });
 };
 
-
 const serviceRestaurant = {
+  getAllRestaurantDishes,
   removeRestaurant,
   getRestaurantById,
   getRestaurantsByOwner,

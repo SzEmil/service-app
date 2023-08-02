@@ -13,8 +13,14 @@ import Link from 'next/link';
 import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurantForm';
 import { FiRefreshCcw } from 'react-icons/fi';
 import { refreshRestaurantsData } from '../redux/restaurants/restaurantsOperations';
+import { LoadingPage } from '../Components/LoadingPage/LoadingPage';
 
 const Restaurants = ({ restaurantData }: any) => {
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  useEffect(() => {
+    setIsPageLoading(false);
+  }, [restaurantData]);
+
   const dispatch: AppDispatch = useDispatch();
   const [isNewRestaurantFormVisible, setIsNewRestaurantFormVisible] =
     useState(false);
@@ -31,47 +37,57 @@ const Restaurants = ({ restaurantData }: any) => {
     dispatch(refreshRestaurantsData());
   };
   return (
-    <div className={css.container}>
+    <div>
       <div
-        className={css.btnRefreshWrapper}
-        onClick={() => handleOnClickRefreshRestaurants()}
+        className={`${css.loadingPage} ${
+          isPageLoading ? css.loadingActive : null
+        }`}
       >
-        <p className={css.btnRefreshText}>Refresh data</p>
-        <div className={css.btnRefresh}>
-          <FiRefreshCcw size={'24px'} />
-        </div>
+        <LoadingPage />
       </div>
 
-      <ul className={css.restaurantsList}>
-        <li key={nanoid()}>
-          <div className={css.newRestaurantBlock}>
-            <button
-              onClick={() => setIsNewRestaurantFormVisible(true)}
-              className={css.newRestaurantBtn}
-            >
-              Add new restaurant
-            </button>
-          </div>
-        </li>
-
-        {restaurants.length !== 0 &&
-          restaurants.map(restaurant => (
-            <li key={restaurant._id}>
-              <Link href={`/restaurantId/${restaurant._id}`}>
-                <RestaurantBlock restaurant={restaurant} />
-              </Link>
-            </li>
-          ))}
-      </ul>
-      {isNewRestaurantFormVisible && (
-        <div className={css.newRestaurantFormWrapper}>
-          <div className={css.newFormBlock}>
-            <NewRestaurantForm
-              setIsNewRestaurantFormVisible={setIsNewRestaurantFormVisible}
-            />
+      <div className={css.container}>
+        <div
+          className={css.btnRefreshWrapper}
+          onClick={() => handleOnClickRefreshRestaurants()}
+        >
+          <p className={css.btnRefreshText}>Refresh data</p>
+          <div className={css.btnRefresh}>
+            <FiRefreshCcw size={'24px'} />
           </div>
         </div>
-      )}
+
+        <ul className={css.restaurantsList}>
+          <li key={nanoid()}>
+            <div className={css.newRestaurantBlock}>
+              <button
+                onClick={() => setIsNewRestaurantFormVisible(true)}
+                className={css.newRestaurantBtn}
+              >
+                Add new restaurant
+              </button>
+            </div>
+          </li>
+
+          {restaurants.length !== 0 &&
+            restaurants.map(restaurant => (
+              <li key={restaurant._id}>
+                <Link href={`/restaurantId/${restaurant._id}`}>
+                  <RestaurantBlock restaurant={restaurant} />
+                </Link>
+              </li>
+            ))}
+        </ul>
+        {isNewRestaurantFormVisible && (
+          <div className={css.newRestaurantFormWrapper}>
+            <div className={css.newFormBlock}>
+              <NewRestaurantForm
+                setIsNewRestaurantFormVisible={setIsNewRestaurantFormVisible}
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

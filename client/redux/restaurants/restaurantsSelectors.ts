@@ -8,7 +8,7 @@ export const selectState = (state: restaurantsStateType) => state;
 export const selectCurrentRestaurant = (state: {
   restaurants: restaurantsStateType;
 }) => state.restaurants.currentRestaurant;
- 
+
 export const selectCurrentRestaurantMenu = (state: {
   restaurants: restaurantsStateType;
 }) => state.restaurants.currentRestaurant?.menu;
@@ -20,3 +20,11 @@ export const selectCurrentRestaurantOrder = (state: {
 export const selectCurrentRestaurantCurrency = (state: {
   restaurants: restaurantsStateType;
 }) => state.restaurants.currentRestaurant?.currency;
+
+export const selectRestaurantOverview = (state: {
+  restaurants: restaurantsStateType;
+}) => state.restaurants.restaurantOverview.overview;
+
+export const selectRestaurantOverviewLoading = (state: {
+  restaurants: restaurantsStateType;
+}) => state.restaurants.restaurantOverview.isLoading;

@@ -10,6 +10,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { getInvitationsData } from '../../redux/user/userOperations';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
+import { selectAuthUserIsLoading } from '../../redux/user/userSelectors';
+import { LoadingPage } from '../LoadingPage/LoadingPage';
 
 type LayoutProps = {
   children: ReactNode;
@@ -18,16 +20,16 @@ type LayoutProps = {
 export const SharedLayout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector(selectAuthUserData);
-
+  const isLoading = useSelector(selectAuthUserIsLoading)
   const router = useRouter();
   const { isLoggedIn, isRefreshing } = useAuth();
 
-  // useEffect(() => {
-  //   if (!isLoggedIn) {
-  //     router.push('/');
-  //   }
-  //   dispatch(getInvitationsData)
-  // }, [isLoggedIn, router]);
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push('/');
+    }
+    dispatch(getInvitationsData)
+  }, [isLoggedIn, router]);
 
   return (
     <div className={css.container}>
@@ -36,6 +38,14 @@ export const SharedLayout: React.FC<LayoutProps> = ({ children }) => {
       <main className={css.main}>{children}</main>
       <div className={css.cookieBox}>
         <CookieBaner />
+      </div>
+
+      <div
+        className={`${css.loadingPage} ${
+          isLoading ? css.loadingActive : null
+        }`}
+      >
+        <LoadingPage />
       </div>
     </div>
   );

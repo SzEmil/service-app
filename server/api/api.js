@@ -88,6 +88,12 @@ router.get(
   controllerRestaurant.getRestaurantColabolatorsAndOwner
 );
 
+router.get(
+  '/restaurants/:restaurantId/overview',
+  authUser,
+  controllerRestaurant.getRestaurantOverview
+);
+
 router.patch(
   '/restaurants/:restaurantId/menu',
   authUser,

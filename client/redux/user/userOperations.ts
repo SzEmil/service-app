@@ -59,6 +59,8 @@ export const logIn = createAsyncThunk(
       const response = await axios.post('/users/login', credentials);
       setAuthHeader(response.data.ResponseBody.token);
       setCookieHeader(response.data.ResponseBody.token);
+
+      Notiflix.Notify.success(response.data.ResponseBody.message);
       return response.data.ResponseBody;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);

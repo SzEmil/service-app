@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { restaurantType } from '../../types/restaurant';
+import { dishType, restaurantType } from '../../types/restaurant';
 import {
   addRestaurant,
   refreshRestaurantsData,
@@ -13,12 +13,24 @@ import {
   removeRestaurant,
   editOrder,
   refreshTablesData,
+  getRestaurantOverview,
 } from './restaurantsOperations';
 import { userType } from '../../types/user';
+
+export type overviewType = {
+  totalOrders: number;
+  cashEarned: number;
+  topDishes: dishType[];
+};
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
   currentRestaurant: restaurantType | null;
+  restaurantOverview: {
+    overview: overviewType;
+    isLoading: boolean;
+    error: any;
+  };
   error: any;
 
   colabolators: userType[] | [];
@@ -26,6 +38,15 @@ export type restaurantsStateType = {
 const restaurantInitialState: restaurantsStateType = {
   restaurants: [],
   currentRestaurant: null,
+  restaurantOverview: {
+    overview: {
+      totalOrders: 0,
+      cashEarned: 0,
+      topDishes: [],
+    },
+    isLoading: false,
+    error: null,
+  },
   error: null,
   colabolators: [],
 };
@@ -169,13 +190,31 @@ const restaurantSlice = createSlice({
             action.payload.order
           );
       }
+    });
+    builder.addCase(refreshTablesData.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+    builder.addCase(refreshTablesData.fulfilled, (state, action) => {
+      state.currentRestaurant!.tables = [...action.payload];
+    });
 
-      builder.addCase(refreshTablesData.rejected, (state, action) => {
-        state.error = action.payload;
-      });
-      builder.addCase(refreshTablesData.fulfilled, (state, action) => {
-        state.currentRestaurant!.tables = [...action.payload];
-      });
+    builder.addCase(getRestaurantOverview.pending, state => {
+      state.restaurantOverview.error = null;
+      state.restaurantOverview.isLoading = true;
+    });
+    builder.addCase(getRestaurantOverview.rejected, (state, action) => {
+      state.restaurantOverview.error = action.payload;
+      state.restaurantOverview.isLoading = false;
+    });
+    builder.addCase(getRestaurantOverview.fulfilled, (state, action) => {
+      state.restaurantOverview.error = null;
+      state.restaurantOverview.isLoading = false;
+      state.restaurantOverview.overview!.cashEarned = action.payload.cashEarned;
+      state.restaurantOverview.overview!.totalOrders =
+        action.payload.totalOrders;
+      state.restaurantOverview.overview!.topDishes = [
+        ...action.payload.topDishes,
+      ];
     });
   },
 });

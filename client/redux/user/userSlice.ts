@@ -50,6 +50,7 @@ const authInitialState: authInitialStateType = {
     isLoading: false,
     error: null,
   },
+  
 };
 
 const authSlice = createSlice({
@@ -107,6 +108,7 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
+        state.isLoading = false;
       }
     );
 
@@ -153,6 +155,7 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
+        state.isLoading = false;
       }
     );
 
@@ -188,13 +191,17 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
+        state.isLoading = false;
       }
     );
 
     builder.addCase(logOut.pending, state => {
-      state.isRefreshing = true;
+      state.isLoading = true;
     });
-    builder.addCase(logOut.rejected, (state, action) => {});
+    builder.addCase(logOut.rejected, (state, action) => {
+      state.error = action.payload;
+      state.isLoading = false;
+    });
     builder.addCase(logOut.fulfilled, (state, action) => {
       (state.token = null),
         (state.error = null),
@@ -203,6 +210,7 @@ const authSlice = createSlice({
         (state.user.email = null),
         (state.user.username = null);
       state.user.id = null;
+      state.isLoading = false;
     });
 
     builder.addCase(getInvitationsData.pending, state => {

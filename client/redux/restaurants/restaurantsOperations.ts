@@ -314,3 +314,22 @@ export const refreshTablesData = createAsyncThunk(
     }
   }
 );
+
+export const getRestaurantOverview = createAsyncThunk(
+  'restaurants/getRestaurantOverview',
+  async (restaurantId:string | string[] | undefined, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.get(`/restaurants/${restaurantId}/overview`);
+      return response.data.ResponseBody.overviewData;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
