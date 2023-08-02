@@ -109,7 +109,8 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
     setIsTablesOpen(false);
     setIsMenuOpen(false);
     const { restaurantId } = router.query;
-    await dispatch(getRestaurantOverview(restaurantId));
+    //usunalem tutaj await by dane sie doczytywały w miedzyczasie
+    dispatch(getRestaurantOverview(restaurantId));
     setIsOverviewOpen(true);
   };
 
