@@ -94,6 +94,8 @@
   justify-content: space-between;
   padding: 5px 10px;
   gap: 20px;
+
+  cursor: pointer;
 }
 .invitationsTitle {
   color: white;
@@ -120,12 +122,12 @@
   color: white;
   border: none;
   cursor: pointer;
-  transform-origin: center;
-  transition: transform 2s linear;
+  transition: all 2s ease;
+  display: flex;
+  align-items: center;
 }
-.invitationButtonRefresh:hover,
-.invitationButtonRefresh:focus {
-  color: rgb(33, 165, 253);
+.userInvitationsBtnWrapper:hover .invitationButtonRefresh {
+  transform: rotate(360deg);
 }
 .invitationText {
   color: white;

@@ -27,6 +27,10 @@ const dishSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    sold: {
+      type: Number,
+      default: 0,
+    },
   },
   { versionKey: false, timestamps: true }
 );

@@ -10,6 +10,11 @@ export const selectAuthUserIsLoggedIn = (state: {
   auth: authInitialStateType;
 }) => state.auth.isLoggedIn;
 
+export const selectAuthUserIsLoading = (state: {
+  auth: authInitialStateType;
+}) => state.auth.isLoading;
+
+
 export const selectAuthUserIsRefreshing = (state: {
   auth: authInitialStateType;
 }) => state.auth.isRefreshing;

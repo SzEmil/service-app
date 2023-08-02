@@ -29,20 +29,27 @@
   padding-bottom: 20px;
 }
 
-.btnRefresh {
-  display: flex;
-  align-items: center;
+.btnRefreshWrapper {
+  display: inline-flex;
   gap: 10px;
-  border: none;
-  background-color: transparent;
+  align-items: center;
   cursor: pointer;
-
+  margin-bottom: 15px;
+}
+.btnRefreshText {
   font-family: 'Roboto';
   font-size: 22px;
   line-height: 24px;
   font-weight: 400;
+}
+.btnRefresh {
+  display: flex;
+  align-items: center;
 
-  margin-bottom: 10px;
+  transition: all 2s ease;
+}
+.btnRefreshWrapper:hover .btnRefresh {
+  transform: rotate(360deg);
 }
 .newRestaurantBlock {
   background-color: #ffffff;
@@ -83,4 +90,23 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.loadingPage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 500ms ease;
+}
+.loadingActive {
+  opacity: 1;
+  z-index: 99999;
 }

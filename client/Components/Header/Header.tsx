@@ -27,9 +27,8 @@ type User = {
   };
 };
 //export const imageSrc = 'http://localhost:3001';
- export const imageSrc="https://service-api-x2zr.onrender.com"
- //export const imageSrc = "https://github.com/SzEmil/service-app/tree/dev/server/public";
-// export const imageSrc = "https://github.com/SzEmil/service-app";
+export const imageSrc="https://service-api-x2zr.onrender.com"
+
 export const Header = ({ user }: User) => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
@@ -164,14 +163,14 @@ export const Header = ({ user }: User) => {
                 </button>
               </li>
               <li key={nanoid()}>
-                <div className={css.userInvitationsBtnWrapper}>
+                <div
+                  className={css.userInvitationsBtnWrapper}
+                  onClick={() => handleOnClickRefreshInvitations()}
+                >
                   <p className={css.invitationsTitle}>User invitations</p>
-                  <button
-                    className={css.invitationButtonRefresh}
-                    onClick={() => handleOnClickRefreshInvitations()}
-                  >
+                  <div className={css.invitationButtonRefresh}>
                     <FiRefreshCcw size={'24px'} />
-                  </button>
+                  </div>
                 </div>
               </li>
 

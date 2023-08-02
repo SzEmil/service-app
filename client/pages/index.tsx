@@ -11,12 +11,22 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
 import { useRouter } from 'next/router';
 import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { selectAuthUserIsLoading } from '../redux/user/userSelectors';
+import { LoadingPage } from '../Components/LoadingPage/LoadingPage';
 
 const Home: NextPage = () => {
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  useEffect(() => {
+    setIsPageLoading(false);
+  }, []);
+
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const [form, setForm] = useState('register');
   const { isLoggedIn, isRefreshing } = useAuth();
+  const isLoading = useSelector(selectAuthUserIsLoading);
   useEffect(() => {
     dispatch(refreshUser());
   }, [dispatch]);
@@ -36,7 +46,6 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <div className={styles.descriptionBox}>
-
           <Image
             src={'/logo-low.png'}
             alt="logo pic"
@@ -99,6 +108,14 @@ const Home: NextPage = () => {
           </span>
         </a>
       </footer>
+
+      <div
+        className={`${styles.loadingPage} ${
+          isLoading || isPageLoading ? styles.loadingActive : null
+        }`}
+      >
+        <LoadingPage />
+      </div>
     </div>
   );
 };

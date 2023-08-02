@@ -186,6 +186,7 @@ const login = async (req, res, next) => {
       status: 'success',
       code: 200,
       ResponseBody: {
+        message: "User logged in successfully",
         token,
         user: {
           _id: user._id,

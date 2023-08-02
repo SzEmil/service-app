@@ -8,6 +8,7 @@ export type dishType = {
   kcal: number;
   owner: string;
   restaurant: string;
+  sold: number;
 };
 
 export type orderType = {
@@ -33,7 +34,6 @@ export type tableType = {
   restaurant: string;
   orders: orderType[];
 };
-
 
 export type restaurantType = {
   _id: string | undefined;

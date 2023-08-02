@@ -76,16 +76,22 @@ router.patch(
   authUser,
   controllerRestaurant.updateRestaurantTable
 );
-// router.get(
-//   '/restaurants/:restaurantId/tables',
-//   authUser,
-//   controllerRestaurant.getRestaurantTables
-// );
+router.get(
+  '/restaurants/:restaurantId/tables',
+  authUser,
+  controllerRestaurant.getRestaurantTables
+);
 
 router.get(
   '/restaurants/:restaurantId/colabolators',
   authUser,
   controllerRestaurant.getRestaurantColabolatorsAndOwner
+);
+
+router.get(
+  '/restaurants/:restaurantId/overview',
+  authUser,
+  controllerRestaurant.getRestaurantOverview
 );
 
 router.patch(
