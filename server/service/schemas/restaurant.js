@@ -37,6 +37,20 @@ const restaurantSchema = new Schema(
     //     ref: 'Table',
     //   },
     // ],
+    overview: {
+      totalOrders: {
+        type: Number,
+        default: 0,
+      },
+      cashEarned: {
+        type: Number,
+        default: 0,
+      },
+      topDishes: {
+        type: Array,
+        default: [],
+      },
+    },
     tables: [
       {
         type: Object,
@@ -45,7 +59,7 @@ const restaurantSchema = new Schema(
     colabolators: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User"
+        ref: 'User',
       },
     ],
   },

@@ -98,7 +98,6 @@ const create = async (req, res, next) => {
         },
       });
     }
-
     const newRestaurant = new Restaurant({
       name,
       icon,
@@ -107,6 +106,7 @@ const create = async (req, res, next) => {
       tables: [],
       colabolators: [],
       currency,
+      overview,
     });
 
     for (const dishData of menu) {
@@ -190,7 +190,6 @@ const createRestaurantTable = async (req, res, next) => {
             (total, price) => total + price,
             0
           );
-
           (newOrder.fullKcal = fullKcal), (newOrder.fullPrice = fullPrice);
           const savedOrder = await newOrder.save();
           newTable.orders.push(savedOrder);
@@ -618,6 +617,18 @@ const completeOrder = async (req, res, next) => {
         },
       });
     }
+    for (const dish of order.dishes) {
+      const foundDish = await serviceRestaurant.getDishOnlyById(
+        dish._id,
+        restaurantId
+      );
+
+      foundDish.sold += 1;
+      await foundDish.save();
+    }
+
+    restaurant.overview.totalOrders += 1;
+    restaurant.overview.cashEarned += Number(order.fullPrice.toFixed(2));
 
     const restaurantTableIndex = restaurant.tables.findIndex(
       tableToDelete => tableToDelete._id == tableId
@@ -740,12 +751,27 @@ const getRestaurantTables = async (req, res, next) => {
         },
       });
     }
+    const tables = await serviceRestaurant.getRestaurantTables(restaurantId);
+
+    if (!tables) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `tables no found`,
+        },
+      });
+    }
+
+    restaurant.tables = tables;
+
+    restaurant.save();
 
     res.status(200).json({
       status: 'success',
       code: 200,
       ResponseBody: {
-        message: 'Order completed successfully',
+        tables: restaurant.tables,
       },
     });
   } catch (error) {
@@ -1039,10 +1065,7 @@ const editTableOrder = async (req, res, next) => {
         foundOrder.dishes = order.dishes;
 
         const kcalValues = order.dishes.map(dish => dish.kcal);
-        const fullKcal = kcalValues.reduce(
-          (total, kcal) => total + kcal,
-          0
-        );
+        const fullKcal = kcalValues.reduce((total, kcal) => total + kcal, 0);
 
         const priceValues = order.dishes.map(dish => dish.price);
         const fullPrice = priceValues.reduce(
@@ -1052,7 +1075,6 @@ const editTableOrder = async (req, res, next) => {
 
         foundOrder.fullPrice = fullPrice;
         foundOrder.fullKcal = fullKcal;
-
 
         const tableIndex = restaurant.tables.findIndex(tableToFind =>
           tableToFind._id.equals(table._id)
@@ -1094,6 +1116,60 @@ const editTableOrder = async (req, res, next) => {
   }
 };
 
+const getRestaurantOverview = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await userService.getUserById(_id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        code: 401,
+        ResponseBody: {
+          message: 'Unauthorized',
+        },
+      });
+    }
+    const { restaurantId } = req.params;
+
+    const restaurant = await serviceRestaurant.getRestaurantOnlyById(
+      restaurantId
+    );
+    if (!restaurant) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `Not found restaurant with id ${restaurantId}`,
+        },
+      });
+    }
+    try {
+      const dishes = await serviceRestaurant.getAllRestaurantDishes(
+        restaurantId
+      );
+
+      const sortedDishes = dishes.sort((a, b) => b.sold - a.sold);
+
+      const overviewData = {
+        totalOrders: restaurant.overview.totalOrders,
+        cashEarned: restaurant.overview.cashEarned,
+        topDishes: [...sortedDishes],
+      };
+
+      return res.status(200).json({
+        status: 'success',
+        ResponseBody: {
+          overviewData,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 const controllerRestaurant = {
   create,
   editTableOrder,
@@ -1108,6 +1184,8 @@ const controllerRestaurant = {
   getRestaurantColabolatorsAndOwner,
   updateRestaurantMenu,
   removeRestaurant,
+  getRestaurantTables,
+  getRestaurantOverview,
 };
 
 export default controllerRestaurant;

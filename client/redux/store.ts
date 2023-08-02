@@ -18,7 +18,7 @@ import { AnyAction } from '@reduxjs/toolkit';
 const authPersistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['token', 'user', 'invitations'],
+  whitelist: ['token', 'user', 'invitations', 'isLoggedIn'],
 };
 
 // const restaurantsPersistConfig = {
