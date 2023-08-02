@@ -12,9 +12,9 @@ import {
   getRestaurantColabolators,
   removeRestaurant,
   editOrder,
+  refreshTablesData,
 } from './restaurantsOperations';
 import { userType } from '../../types/user';
-import { BsFillNutFill } from 'react-icons/bs';
 
 export type restaurantsStateType = {
   restaurants: restaurantType[];
@@ -169,6 +169,13 @@ const restaurantSlice = createSlice({
             action.payload.order
           );
       }
+
+      builder.addCase(refreshTablesData.rejected, (state, action) => {
+        state.error = action.payload;
+      });
+      builder.addCase(refreshTablesData.fulfilled, (state, action) => {
+        state.currentRestaurant!.tables = [...action.payload];
+      });
     });
   },
 });

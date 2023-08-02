@@ -10,8 +10,9 @@ import { tableRemoveDataType } from '../../Components/TablesRestaurant/TablesRes
 import { menuDataType } from '../../Components/MenuForm/MenuForm';
 import { editOrderType } from '../../Components/EditOrderForm/EditOrderForm';
 
-   export const apiLink = "https://service-api-x2zr.onrender.com/api";
-  //export const apiLink = 'http://localhost:3001/api';
+
+  // export const apiLink = "https://service-api-x2zr.onrender.com/api";
+  export const apiLink = 'http://localhost:3001/api';
 
 axios.defaults.baseURL = apiLink;
 
@@ -289,6 +290,25 @@ export const editOrder = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
 
       return response.data.ResponseBody.orderData;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const refreshTablesData = createAsyncThunk(
+  'restaurants/refreshTablesData',
+  async (restaurantId:string | string[] | undefined, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as AuthStateType;
+      const token = state?.auth?.token || '';
+
+      if (!token)
+        return thunkAPI.rejectWithValue('Valid token is not provided');
+      setAuthHeader(token);
+      setCookieHeader(token);
+      const response = await axios.get(`/restaurants/${restaurantId}/tables`);
+      return response.data.ResponseBody.tables;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }

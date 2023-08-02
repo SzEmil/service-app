@@ -17,6 +17,8 @@ import Notiflix from 'notiflix';
 import { removeRestaurantTable } from '../../redux/restaurants/restaurantsOperations';
 import { useSelector } from 'react-redux';
 import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
+import { FiRefreshCcw } from 'react-icons/fi';
+import { refreshTablesData } from '../../redux/restaurants/restaurantsOperations';
 
 type tableProps = {
   tables: tableType[] | [] | null | undefined;
@@ -111,11 +113,24 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
     return number!.toFixed(2);
   };
 
+  const handleOnClickRefreshTableData = () => {
+    const { restaurantId } = router.query;
+
+    dispatch(refreshTablesData(restaurantId));
+  };
   return (
-    <div>
-      <button onClick={() => setIsNewTableOpen(true)} className={css.button}>
-        Add new table
-      </button>
+    <div className={css.tablesDashboard}>
+      <div className={css.tablesNav}>
+        <button onClick={() => setIsNewTableOpen(true)} className={css.button}>
+          Add new table
+        </button>
+        <button
+          className={css.refreshTablesBtn}
+          onClick={() => handleOnClickRefreshTableData()}
+        >
+          <FiRefreshCcw size={26} />
+        </button>
+      </div>
       <ul className={css.tablesList}>
         {tables?.map(table => (
           <li

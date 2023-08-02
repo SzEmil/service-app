@@ -740,12 +740,27 @@ const getRestaurantTables = async (req, res, next) => {
         },
       });
     }
+    const tables = await serviceRestaurant.getRestaurantTables(restaurantId);
+
+    if (!tables) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        ResponseBody: {
+          message: `tables no found`,
+        },
+      });
+    }
+
+    restaurant.tables = tables;
+
+    restaurant.save();
 
     res.status(200).json({
       status: 'success',
       code: 200,
       ResponseBody: {
-        message: 'Order completed successfully',
+        tables: restaurant.tables,
       },
     });
   } catch (error) {
@@ -1039,10 +1054,7 @@ const editTableOrder = async (req, res, next) => {
         foundOrder.dishes = order.dishes;
 
         const kcalValues = order.dishes.map(dish => dish.kcal);
-        const fullKcal = kcalValues.reduce(
-          (total, kcal) => total + kcal,
-          0
-        );
+        const fullKcal = kcalValues.reduce((total, kcal) => total + kcal, 0);
 
         const priceValues = order.dishes.map(dish => dish.price);
         const fullPrice = priceValues.reduce(
@@ -1052,7 +1064,6 @@ const editTableOrder = async (req, res, next) => {
 
         foundOrder.fullPrice = fullPrice;
         foundOrder.fullKcal = fullKcal;
-
 
         const tableIndex = restaurant.tables.findIndex(tableToFind =>
           tableToFind._id.equals(table._id)
@@ -1108,6 +1119,7 @@ const controllerRestaurant = {
   getRestaurantColabolatorsAndOwner,
   updateRestaurantMenu,
   removeRestaurant,
+  getRestaurantTables 
 };
 
 export default controllerRestaurant;
