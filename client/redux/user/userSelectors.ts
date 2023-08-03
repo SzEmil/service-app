@@ -14,7 +14,6 @@ export const selectAuthUserIsLoading = (state: {
   auth: authInitialStateType;
 }) => state.auth.isLoading;
 
-
 export const selectAuthUserIsRefreshing = (state: {
   auth: authInitialStateType;
 }) => state.auth.isRefreshing;
@@ -22,3 +21,7 @@ export const selectAuthUserIsRefreshing = (state: {
 export const selectAuthUserInvitations = (state: {
   auth: authInitialStateType;
 }) => state.auth.invitations.invitations;
+
+export const selectIsServerConnected = (state: {
+  auth: authInitialStateType;
+}) => state.auth.serverConnected;

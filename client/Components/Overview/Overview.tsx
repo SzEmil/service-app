@@ -7,11 +7,13 @@ import { Doughnut } from 'react-chartjs-2';
 import css from './Overview.module.css';
 import { selectRestaurantOverviewLoading } from '../../redux/restaurants/restaurantsSelectors';
 import { LoadingPage } from '../LoadingPage/LoadingPage';
+import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
 
 export const Overview = () => {
   ChartJS.register(ArcElement, Tooltip, Legend);
   const overview = useSelector(selectRestaurantOverview);
   const isLoading = useSelector(selectRestaurantOverviewLoading);
+  const currency = useSelector(selectCurrentRestaurantCurrency);
   function getRandomRGBA() {
     const randomColor = () => Math.floor(Math.random() * 256);
     const red = randomColor();
@@ -24,7 +26,8 @@ export const Overview = () => {
   const top10DishesSold = overview.topDishes.slice(0, 10);
   const valueArray = overview.topDishes.map(dish => dish.sold);
   const totalDishesSold = valueArray.reduce(
-    (prevVal, currentVal) => (currentVal += prevVal)
+    (prevVal, currentVal) => (currentVal += prevVal),
+    0
   );
   const data = {
     labels: overview.topDishes.map(
@@ -45,7 +48,7 @@ export const Overview = () => {
     plugins: {
       legend: {
         labels: {
-          color: 'black', // Kolor tekstu etykiet (labeli)
+          color: 'black',
         },
       },
     },
@@ -67,7 +70,10 @@ export const Overview = () => {
             <p>Total dishes sold: {totalDishesSold}</p>
           </div>
           <div className={css.overviewDetailsBox}>
-            <p>Total cash earned: {overview.cashEarned.toFixed(2)}</p>
+            <p>
+              Total cash earned: {overview.cashEarned.toFixed(2)}
+              {currency}
+            </p>
           </div>
         </div>
         <div className={css.topDishesWrapper}>
