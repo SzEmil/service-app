@@ -38,13 +38,13 @@ app.get('/api/stream', (req, res) => {
   connection
     .then(() => {
       res.write('data: connected\n\n');
+      res.end();
     })
     .catch(error => {
       res.write('data: error\n\n');
+      res.end();
     });
 
-
-  res.end();
 });
 
 app.use((_, res, __) => {
