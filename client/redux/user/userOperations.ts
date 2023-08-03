@@ -43,7 +43,8 @@ export const register = createAsyncThunk(
       setCookieHeader(response.data.ResponseBody.user.token);
       return response.data.ResponseBody.user;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+
+      return thunkAPI.rejectWithValue(error.response.data.ResponseBody.message);
     }
   }
 );
@@ -63,7 +64,7 @@ export const logIn = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return response.data.ResponseBody;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.response.data.ResponseBody.message);
     }
   }
 );
@@ -85,8 +86,8 @@ export const logOut = createAsyncThunk('auth/signOut', async (_, thunkAPI) => {
       thunkAPI.dispatch(logoutSuccess());
       return thunkAPI.rejectWithValue('Unauthorized');
     }
-
-    return thunkAPI.rejectWithValue(error.message);
+    Notiflix.Notify.failure(error.response.data.ResponseBody.message)
+    return thunkAPI.rejectWithValue(error.response.data.ResponseBody.message);
   }
 });
 
@@ -111,7 +112,8 @@ export const refreshUser = createAsyncThunk<
     const res = await axios.get('/users/current');
     return res.data.ResponseBody;
   } catch (e: any) {
-    return thunkAPI.rejectWithValue(e.message);
+    Notiflix.Notify.failure(e.response.data.ResponseBody.message)
+    return thunkAPI.rejectWithValue(e.response.data.ResponseBody.message);
   }
 });
 
@@ -130,7 +132,8 @@ export const getInvitationsData = createAsyncThunk(
       const res = await axios.get('/users/invitations');
       return res.data.ResponseBody.invitations;
     } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message);
+      Notiflix.Notify.failure(e.response.data.ResponseBody.message)
+      return thunkAPI.rejectWithValue(e.response.data.ResponseBody.message);
     }
   }
 );
@@ -153,7 +156,8 @@ export const rejectInvitation = createAsyncThunk(
       await axios.post('/users/invitations/reject', idToDelete);
       return idToDelete.invitationId;
     } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message);
+      Notiflix.Notify.failure(e.response.data.ResponseBody.message)
+      return thunkAPI.rejectWithValue(e.response.data.ResponseBody.message);
     }
   }
 );
@@ -176,7 +180,8 @@ export const acceptInvitation = createAsyncThunk(
       await axios.post('/users/invitations/accept', idToAccept);
       return idToAccept.invitationId;
     } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message);
+      Notiflix.Notify.failure(e.response.data.ResponseBody.message)
+      return thunkAPI.rejectWithValue(e.response.data.ResponseBody.message);
     }
   }
 );
@@ -209,7 +214,8 @@ export const createInvitation = createAsyncThunk(
       Notiflix.Notify.success(message);
       return;
     } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message.ResponseBody.message);
+      Notiflix.Notify.failure(e.response.data.ResponseBody.message)
+      return thunkAPI.rejectWithValue(e.response.data.ResponseBody.message);
     }
   }
 );
@@ -236,7 +242,8 @@ export const changeUserAvatar = createAsyncThunk(
       Notiflix.Notify.success(res.data.ResponseBody.message);
       return res.data.ResponseBody.avatarURL;
     } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message);
+      Notiflix.Notify.failure(e.response.data.ResponseBody.message)
+      return thunkAPI.rejectWithValue(e.response.data.ResponseBody.message);
     }
   }
 );

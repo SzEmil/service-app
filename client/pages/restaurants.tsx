@@ -14,18 +14,19 @@ import { NewRestaurantForm } from '../Components/NewRestaurantForm/NewRestaurant
 import { FiRefreshCcw } from 'react-icons/fi';
 import { refreshRestaurantsData } from '../redux/restaurants/restaurantsOperations';
 import { LoadingPage } from '../Components/LoadingPage/LoadingPage';
+import { pageLoaded } from '../redux/user/userSlice';
 
 const Restaurants = ({ restaurantData }: any) => {
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  useEffect(() => {
-    setIsPageLoading(false);
-  }, [restaurantData]);
-
   const dispatch: AppDispatch = useDispatch();
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isNewRestaurantFormVisible, setIsNewRestaurantFormVisible] =
     useState(false);
-
   const restaurants = useSelector(selectRestaurantsData);
+
+  useEffect(() => {
+    setIsPageLoading(false);
+    dispatch(pageLoaded());
+  }, [restaurantData]);
 
   useEffect(() => {
     if (restaurants.length === 0) {

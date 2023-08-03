@@ -11,8 +11,8 @@ import { menuDataType } from '../../Components/MenuForm/MenuForm';
 import { editOrderType } from '../../Components/EditOrderForm/EditOrderForm';
 
 
-   export const apiLink = "https://service-api-x2zr.onrender.com/api";
-  //export const apiLink = 'http://localhost:3001/api';
+   //export const apiLink = "https://service-api-x2zr.onrender.com/api";
+  export const apiLink = 'http://localhost:3001/api';
 
 axios.defaults.baseURL = apiLink;
 
@@ -56,6 +56,7 @@ export const addRestaurant = createAsyncThunk(
       const response = await axios.post('/restaurants', credentials);
       return response.data.ResponseBody.restaurant;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -75,6 +76,7 @@ export const refreshRestaurantsData = createAsyncThunk(
       const response = await axios.get('/restaurants');
       return response.data.ResponseBody.restaurants;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -98,6 +100,7 @@ export const removeRestaurantColabolator = createAsyncThunk(
       );
       return leaveRestaurantData.restaurantId;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -129,6 +132,7 @@ export const addRestaurantTable = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return response.data.ResponseBody.table;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -156,6 +160,7 @@ export const completeOrder = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return completeOrderData.orderData;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -179,6 +184,7 @@ export const updateRestaurantTable = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return response.data.ResponseBody;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -202,6 +208,7 @@ export const removeRestaurantTable = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return tableRemoveData.table.tableId;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -225,6 +232,7 @@ export const updateRestaurantMenu = createAsyncThunk(
       Notiflix.Notify.success(response.data.ResponseBody.message);
       return response.data.ResponseBody.menu;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -246,6 +254,7 @@ export const getRestaurantColabolators = createAsyncThunk(
       );
       return response.data.ResponseBody.colabolators;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -267,6 +276,7 @@ export const removeRestaurant = createAsyncThunk(
 
       return response.data.ResponseBody.restaurantId;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -291,6 +301,7 @@ export const editOrder = createAsyncThunk(
 
       return response.data.ResponseBody.orderData;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -310,6 +321,7 @@ export const refreshTablesData = createAsyncThunk(
       const response = await axios.get(`/restaurants/${restaurantId}/tables`);
       return response.data.ResponseBody.tables;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -329,6 +341,7 @@ export const getRestaurantOverview = createAsyncThunk(
       const response = await axios.get(`/restaurants/${restaurantId}/overview`);
       return response.data.ResponseBody.overviewData;
     } catch (error: any) {
+      Notiflix.Notify.failure(error.response.data.ResponseBody.message)
       return thunkAPI.rejectWithValue(error.message);
     }
   }

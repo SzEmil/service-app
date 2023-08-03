@@ -21,12 +21,19 @@ import { LoadingPage } from '../../Components/LoadingPage/LoadingPage';
 import { getRestaurantOverview } from '../../redux/restaurants/restaurantsOperations';
 import { Overview } from '../../Components/Overview/Overview';
 
+
 type leaveRestaurantData = {
   restaurantId: string | string[] | undefined;
 };
 const RestaurantPage = ({ restaurant, restaurantData }: any) => {
+  const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
+  const user = useSelector(selectAuthUser);
+  const currentRestaurant = useSelector(selectCurrentRestaurant);
   const [isPageLoading, setIsPageLoading] = useState(true);
+
   useEffect(() => {
+    console.log('ładujemy');
     setIsPageLoading(false);
   }, [restaurantData, restaurant]);
 
@@ -36,11 +43,6 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
 
   const [restaurantMenuOpen, setRestaurantMenuOpen] = useState(false);
   const [isInviteFormOpen, setIsInviteFormOpen] = useState(false);
-
-  const dispatch: AppDispatch = useDispatch();
-  const router = useRouter();
-  const user = useSelector(selectAuthUser);
-  const currentRestaurant = useSelector(selectCurrentRestaurant);
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
@@ -72,13 +74,13 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
   const handleOpenTables = () => {
     setIsTablesOpen(true);
     setIsMenuOpen(false);
-    setIsOverviewOpen(false)
+    setIsOverviewOpen(false);
   };
 
   const handleOpenMenu = () => {
     setIsTablesOpen(false);
     setIsMenuOpen(true);
-    setIsOverviewOpen(false)
+    setIsOverviewOpen(false);
   };
 
   const handleOnClickLeaveRestaurant = () => {

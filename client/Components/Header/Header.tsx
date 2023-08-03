@@ -26,8 +26,8 @@ type User = {
     avatarURL: string | undefined;
   };
 };
-//export const imageSrc = 'http://localhost:3001';
-export const imageSrc="https://service-api-x2zr.onrender.com"
+export const imageSrc = 'http://localhost:3001';
+//export const imageSrc="https://service-api-x2zr.onrender.com"
 
 export const Header = ({ user }: User) => {
   const dispatch: AppDispatch = useDispatch();
@@ -64,8 +64,8 @@ export const Header = ({ user }: User) => {
 
   const handleOnClickLogOut = async () => {
     dispatch(setClearRestaurants());
-    await dispatch(logOut());
     router.push('/');
+    dispatch(logOut());
   };
 
   const handleOnClickOpenInvitation = async (invitation: invitationType) => {
