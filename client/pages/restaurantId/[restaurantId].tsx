@@ -217,7 +217,7 @@ const RestaurantPage = ({ restaurant, restaurantData }: any) => {
             <ul className={css.navBtn}>
               <li>
                 <button
-                  className={`${css.button} ${css.buttonMarginLeft} ${
+                  className={`${css.button} ${
                     !isTablesOpen && !isMenuOpen && isOverviewOpen
                       ? css.btnActive
                       : null

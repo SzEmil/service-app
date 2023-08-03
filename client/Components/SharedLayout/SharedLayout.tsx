@@ -28,13 +28,13 @@ export const SharedLayout: React.FC<LayoutProps> = ({ children }) => {
       const eventSource = new EventSource(`${apiLink}/stream`);
       eventSource.onopen = () => {
         dispatch(serverConnected());
+        eventSource.close();
       };
 
       eventSource.onerror = () => {
         console.error('SSE connection error');
       };
 
-      if (isServerConnected) eventSource.close();
       return () => {
         eventSource.close();
       };

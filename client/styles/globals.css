@@ -12,6 +12,7 @@ body {
   align-items: center;
   flex-direction: column;
   font-family: 'Roboto', sans-serif;
+  width: 100%;
 }
 
 a {
@@ -24,4 +25,10 @@ a {
   margin: 0;
   list-style: none;
   padding: 0;
+}
+#__next {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0px 5px;
 }

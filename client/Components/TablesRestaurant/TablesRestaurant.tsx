@@ -19,6 +19,9 @@ import { useSelector } from 'react-redux';
 import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
 import { FiRefreshCcw } from 'react-icons/fi';
 import { refreshTablesData } from '../../redux/restaurants/restaurantsOperations';
+import { MdDone } from 'react-icons/md';
+import { MdOutlineCancel } from 'react-icons/md';
+import { FiEdit2 } from 'react-icons/fi';
 
 type tableProps = {
   tables: tableType[] | [] | null | undefined;
@@ -121,8 +124,14 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
   return (
     <div className={css.tablesDashboard}>
       <div className={css.tablesNav}>
-        <button onClick={() => setIsNewTableOpen(true)} className={css.button}>
-          Add new table
+        <button
+          onClick={() => setIsNewTableOpen(true)}
+          className={`${css.button} ${css.btnMorePaddingTable}`}
+        >
+          <div className={css.btnTableIcon}>
+            Add new table
+            <FiEdit2 size={'18px'} />
+          </div>
         </button>
         <button
           className={css.refreshTablesBtn}
@@ -143,18 +152,32 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
               <div className={css.tableInfo}>
                 <div className={css.tableOptions}>
                   <h2 className={css.tableName}>{table.name}</h2>
-                  <button
-                    className={`${css.button}`}
-                    onClick={() => handleOnClickEditTable(table)}
-                  >
-                    Edit table
-                  </button>
-                  <button
-                    className={`${css.button} ${css.buttonFinishTable}`}
-                    onClick={() => handleOnClickRemoveTable(table)}
-                  >
-                    Finish table
-                  </button>
+                  <div className={css.tableBtnsWrapper}>
+                    <button
+                      className={`${css.button}`}
+                      onClick={() => handleOnClickEditTable(table)}
+                    >
+                      <span className={css.tableBtnsText}>
+                        Edit table
+                        <FiEdit2 size={'24px'} />
+                      </span>
+                      <div className={css.tableBtnsIconWrapper}>
+                        <FiEdit2 size={'24px'} />
+                      </div>
+                    </button>
+                    <button
+                      className={`${css.button} ${css.buttonFinishTable}`}
+                      onClick={() => handleOnClickRemoveTable(table)}
+                    >
+                      <span className={css.tableBtnsText}>
+                        Finish table
+                        <MdDone size={'24px'} />
+                      </span>
+                      <div className={css.tableBtnsIconWrapper}>
+                        <MdDone size={'24px'} />
+                      </div>
+                    </button>
+                  </div>
                 </div>
                 <p className={css.createdAt}>{cutDate(table.createdAt)}</p>
               </div>
@@ -189,20 +212,32 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                   >
                     <div className={css.orderHeaderBtnWrapper}>
                       <h2>{order.name}</h2>
-                      <div>
+                      <div className={css.orderBtns}>
                         <button
                           onClick={() => handleOnClickEditOrder(order)}
-                          className={css.button}
+                          className={`${css.button} ${css.btnPaddingTable}`}
                         >
-                          Edit order
+                          <span className={css.tableBtnsText}>
+                            Edit order
+                            <FiEdit2 size={'24px'} />
+                          </span>
+                          <div className={css.tableBtnsIconWrapper}>
+                            <FiEdit2 size={'24px'} />
+                          </div>
                         </button>
                         <button
                           onClick={() =>
                             handleOnClickCompleteOrder(order._id, table._id)
                           }
-                          className={css.buttonOrder}
+                          className={`${css.buttonOrder} ${css.btnPaddingTable}`}
                         >
-                          Complete order
+                          <span className={css.tableBtnsText}>
+                            Complete order
+                            <MdDone size={'24px'} />
+                          </span>
+                          <div className={css.tableBtnsIconWrapper}>
+                            <MdDone size={'24px'} />
+                          </div>
                         </button>
                       </div>
                     </div>

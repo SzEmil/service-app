@@ -45,6 +45,7 @@ export const Overview = () => {
   };
 
   const options = {
+    responsive: true,
     plugins: {
       legend: {
         labels: {
@@ -88,7 +89,12 @@ export const Overview = () => {
             </ul>
           </div>
           <div className={css.doghnutWrapper}>
-            <Doughnut data={data} redraw={true} options={options} />
+            <Doughnut
+              data={data}
+              redraw={true}
+              options={options}
+              width={'100%'}
+            />
           </div>
         </div>
       </div>

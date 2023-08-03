@@ -22,17 +22,19 @@ import { apiLink } from '../redux/restaurants/restaurantsOperations';
 const Home: NextPage = () => {
   const dispatch: AppDispatch = useDispatch();
   const isServerConnected = useSelector(selectIsServerConnected);
-  console.log(isServerConnected);
+
   useEffect(() => {
     if (!isServerConnected) {
       const eventSource = new EventSource(`${apiLink}/stream`);
       eventSource.onopen = () => {
         dispatch(serverConnected());
+        eventSource.close();
       };
 
       eventSource.onerror = () => {
         console.error('SSE connection error');
       };
+
       return () => {
         eventSource.close();
       };
