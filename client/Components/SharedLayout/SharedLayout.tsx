@@ -15,6 +15,7 @@ import { LoadingPage } from '../LoadingPage/LoadingPage';
 import { refreshUser } from '../../redux/user/userOperations';
 import { selectIsServerConnected } from '../../redux/user/userSelectors';
 import { serverConnected } from '../../redux/user/userSlice';
+import { apiLink } from '../../redux/restaurants/restaurantsOperations';
 type LayoutProps = {
   children: ReactNode;
 };
@@ -24,7 +25,7 @@ export const SharedLayout: React.FC<LayoutProps> = ({ children }) => {
 
   useEffect(() => {
     if (!isServerConnected) {
-      const eventSource = new EventSource('http://localhost:3001/api/stream');
+      const eventSource = new EventSource(`${apiLink}/stream`);
       eventSource.onopen = () => {
         dispatch(serverConnected());
       };

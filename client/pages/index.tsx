@@ -17,6 +17,7 @@ import { selectAuthUserIsLoading } from '../redux/user/userSelectors';
 import { LoadingPage } from '../Components/LoadingPage/LoadingPage';
 import { selectIsServerConnected } from '../redux/user/userSelectors';
 import { serverConnected } from '../redux/user/userSlice';
+import { apiLink } from '../redux/restaurants/restaurantsOperations';
 
 const Home: NextPage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
   console.log(isServerConnected);
   useEffect(() => {
     if (!isServerConnected) {
-      const eventSource = new EventSource('http://localhost:3001/api/stream');
+      const eventSource = new EventSource(`${apiLink}/stream`);
       eventSource.onopen = () => {
         dispatch(serverConnected());
       };
