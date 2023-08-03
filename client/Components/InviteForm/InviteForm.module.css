@@ -1,77 +1,93 @@
 .form {
-    display: flex;
-    flex-direction: column;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
-    max-height: 620px;
-  
-    overflow-y: scroll;
-  }
-  
-  .title {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-    margin-top: 10px;
-  }
-  
-  .formGroup {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .label {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 5px;
-  }
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  .input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  
-    min-width: 400px;
-  }
-  .input:focus {
-    border-color: #333;
-    outline: none;
-  }
+  max-height: 620px;
 
-  .button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  overflow-y: scroll;
+}
+
+.title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  width: 100%;
+}
+.input:focus {
+  border-color: #333;
+  outline: none;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button:hover,
+.button:focus {
+  background-color: #474747;
+}
+.buttonCancel {
+  background-color: rgb(248, 90, 90);
+  width: 100%;
+}
+
+.buttonCancel:hover,
+.buttonCancel:focus {
+  background-color: rgb(197, 75, 75);
+}
+.error {
+  padding-bottom: 10px;
+  font-size: 16px;
+  font-weight: 300;
+  color: #333;
+}
+@media screen and (min-width: 420px) and (max-width: 767px) {
+  .form {
+    width: 400px;
   }
-  .button:hover,
-  .button:focus {
-    background-color: #474747;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .form {
+    width: 500px;
   }
-  .buttonCancel {
-    background-color: rgb(248, 90, 90);
-    width: 100%;
+}
+
+@media screen and (min-width: 1200px) {
+  .form {
+    width: 500px;
   }
-  
-  .buttonCancel:hover,
-  .buttonCancel:focus {
-    background-color: rgb(197, 75, 75);
-  }
-  .error {
-    padding-bottom: 10px;
-    font-size: 16px;
-    font-weight: 300;
-    color: #333;
-  }
-  
+}

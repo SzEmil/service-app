@@ -32,7 +32,7 @@ app.get('/api/stream', (req, res) => {
   res.set({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
+    Connection: 'keep-alive',
   });
 
   connection
@@ -40,12 +40,12 @@ app.get('/api/stream', (req, res) => {
       res.write('data: connected\n\n');
     })
     .catch(error => {
-      res.write('data: error\n\n'); 
+      res.write('data: error\n\n');
     });
+
 
   res.end();
 });
-
 
 app.use((_, res, __) => {
   res.status(404).json({

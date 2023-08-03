@@ -1,7 +1,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  max-width: 600px;
+  width: 320px;
   margin: 0 auto;
   background-color: #f5f5f5;
   padding: 20px;
@@ -44,7 +44,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 
-  min-width: 400px;
+  width: 100%;
 }
 .input:focus {
   border-color: #333;
@@ -136,7 +136,6 @@
   font-weight: 300;
 }
 
-
 .pickedDishesBlock {
   border: 0.2px solid rgba(0, 0, 0, 0.2);
   border-radius: 5px;
@@ -178,4 +177,21 @@
 }
 .btnRemoveDish:hover {
   color: rgb(197, 75, 75);
+}
+@media screen and (min-width: 420px) and (max-width: 767px) {
+  .form {
+    width: 400px;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .form {
+    width: 500px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .form {
+    width: 500px;
+  }
 }

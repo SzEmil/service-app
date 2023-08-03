@@ -4,15 +4,16 @@
 
 .main {
   min-height: 100vh;
-  padding: 4rem 0;
+  padding: 0rem 0;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 .descriptionBox {
-  margin-right: 50px;
   max-width: 600px;
+  margin-bottom: 20px;
 }
 .title a {
   color: #0070f3;
@@ -43,34 +44,23 @@
 }
 .about {
   font-family: 'Roboto';
-  font-size: 16px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 15px;
   font-weight: 300;
 }
 .titleImg {
-  width: 500px;
+  max-width: 300px;
   height: auto;
-  margin-bottom: 50px;
+  margin-bottom: 15px;
 }
-/* .btnBox {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 50px;
-}
-.btn {
-  font-size: 24px;
-  line-height: 24px;
-  font-weight: 300;
-  cursor: pointer;
-  border: none;
-  padding: 10px;
 
-  border-radius: 5px;
-} */
 .formBox {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 300px;
+  width: 100%;
+  max-width: 400px;
 }
 .formText {
   font-family: 'Roboto';
@@ -121,4 +111,61 @@
 .loadingActive {
   opacity: 1;
   z-index: 99999;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .main {
+    min-height: 100vh;
+    padding: 4rem 0;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+  .descriptionBox {
+    margin-right: 50px;
+    max-width: 380px;
+    margin-bottom: 0px;
+  }
+  .titleImg {
+    width: 380px;
+    max-width: 400px;
+  }
+}
+
+/* Media query dla desktopu (o szerokości od 1025px i powyżej) */
+@media screen and (min-width: 1200px) {
+  .main {
+    min-height: 100vh;
+    padding: 4rem 0;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+  .descriptionBox {
+    margin-right: 50px;
+    max-width: 600px;
+    margin-bottom: 0px;
+  }
+
+  .about {
+    font-family: 'Roboto';
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 300;
+  }
+  .titleImg {
+    max-width: none;
+    width: 500px;
+    height: auto;
+    margin-bottom: 50px;
+  }
+  .formBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }

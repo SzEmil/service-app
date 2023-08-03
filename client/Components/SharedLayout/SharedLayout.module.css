@@ -1,5 +1,5 @@
 .container {
-  width: 1200px;
+  width: 100%;
   position: relative;
 }
 .cookieBox {
@@ -34,4 +34,14 @@
 .loadingActive {
   opacity: 1;
   z-index: 99999;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+}
+
+
+@media screen and (min-width: 1200px) {
+  .container {
+    width: 1200px;
+  }
 }

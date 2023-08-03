@@ -51,11 +51,7 @@
   align-items: center;
 }
 .userName {
-  font-family: 'Roboto';
-  font-size: 18px;
-  line-height: 20px;
-  font-weight: 300;
-  padding-right: 10px;
+  display: none;
 }
 
 .userMenu {
@@ -227,4 +223,26 @@
   line-height: 18px;
   font-weight: 300;
   padding-bottom: 25px;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .userName {
+    display: inline;
+    font-family: 'Roboto';
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 300;
+    padding-right: 10px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .userName {
+    display: inline;
+    font-family: 'Roboto';
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 300;
+    padding-right: 10px;
+  }
 }
