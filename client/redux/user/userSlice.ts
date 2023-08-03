@@ -29,6 +29,7 @@ export type authInitialStateType = {
   isLoggedIn: boolean;
   error: any;
   isLoading: boolean;
+  serverConnected: boolean;
 
   invitations: {
     invitations: invitationType[];
@@ -44,13 +45,13 @@ const authInitialState: authInitialStateType = {
   isRefreshing: false,
   isLoading: false,
   error: null,
+  serverConnected: false,
 
   invitations: {
     invitations: [],
     isLoading: false,
     error: null,
   },
-  
 };
 
 const authSlice = createSlice({
@@ -58,6 +59,9 @@ const authSlice = createSlice({
   initialState: authInitialState,
   reducers: {
     importInfoData: state => state,
+    pageLoaded: state => {
+      state.isLoading = false;
+    },
     logoutSuccess: state => {
       (state.token = null),
         (state.error = null),
@@ -65,6 +69,9 @@ const authSlice = createSlice({
         (state.user.avatarURL = ''),
         (state.user.email = null),
         (state.user.username = null);
+    },
+    serverConnected: state => {
+      state.serverConnected = true;
     },
   },
   extraReducers: builder => {
@@ -108,7 +115,7 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
-        state.isLoading = false;
+        // state.isLoading = false;
       }
     );
 
@@ -155,7 +162,7 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.error = null;
         state.isRefreshing = false;
-        state.isLoading = false;
+        // state.isLoading = false;
       }
     );
 
@@ -272,5 +279,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { importInfoData, logoutSuccess } = authSlice.actions;
+export const { importInfoData, logoutSuccess, pageLoaded,serverConnected } = authSlice.actions;
 export const authReducer = authSlice.reducer;

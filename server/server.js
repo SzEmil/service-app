@@ -27,11 +27,31 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.use('/api', router);
 
+
+app.get('/api/stream', (req, res) => {
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  });
+
+  connection
+    .then(() => {
+      res.write('data: connected\n\n');
+    })
+    .catch(error => {
+      res.write('data: error\n\n'); 
+    });
+
+  res.end();
+});
+
+
 app.use((_, res, __) => {
   res.status(404).json({
     status: 'error',
     code: 404,
-    message: 'Use api on routes: /api/contacts',
+    message: 'Use api on routes: /api/',
     data: 'Not found',
   });
 });
