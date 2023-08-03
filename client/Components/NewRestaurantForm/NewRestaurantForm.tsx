@@ -16,7 +16,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
     },
   ]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
 
@@ -38,7 +38,7 @@ export const NewRestaurantForm = ({ setIsNewRestaurantFormVisible }: any) => {
         price: 0,
       },
     ]);
-    dispatch(addRestaurant(credentials));
+    await dispatch(addRestaurant(credentials));
     form.reset();
     setIsNewRestaurantFormVisible(false);
   };

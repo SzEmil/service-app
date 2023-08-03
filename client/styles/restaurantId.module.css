@@ -93,7 +93,7 @@
 }
 .colabolatorImage {
   /* width: 40px; */
-  height: auto;
+  height: 40px;
   border-radius: 50%;
   border: 0.2px solid rgba(0, 0, 0, 0.1);
 }

@@ -106,7 +106,6 @@ const create = async (req, res, next) => {
       tables: [],
       colabolators: [],
       currency,
-      overview,
     });
 
     for (const dishData of menu) {
