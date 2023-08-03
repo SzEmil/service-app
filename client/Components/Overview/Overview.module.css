@@ -2,6 +2,7 @@
   margin-top: 20px;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 15px;
@@ -18,16 +19,20 @@
   width: 100%;
   gap: 20px;
   justify-content: space-between;
+  max-width: 800px;
 }
 .overviewDetailsBox {
   background-color: rgb(255, 255, 255);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px 10px;
+  text-align: center;
 }
 
 .doghnutWrapper {
-  width: 500px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   padding: 15px;
 }
 .topDishesWrapper {
@@ -35,8 +40,12 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
+  width: 100%;
+  max-width: 800px;
 
   /* align-items: center; */
 }
@@ -44,7 +53,7 @@
 .bestSellingDishes {
   padding: 15px;
   height: 100%;
-  min-width: 300px;
+  width: 100%;
 }
 .bestSellingDishesTitle {
   font-family: 'Roboto';
@@ -52,10 +61,13 @@
   font-weight: 400;
   line-height: 26px;
   margin-bottom: 10px;
+  text-align: center;
 }
 .bestSellingDishesList {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 .totalDishesSoldText {
@@ -79,4 +91,36 @@
 .loadingActive {
   opacity: 1;
   z-index: 99999;
+}
+.chart-labels {
+  font-size: 8px;
+}
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .chart-labels {
+    font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .overviewWrapper {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .overviewDetailsBox {
+    text-align: left;
+  }
+  .topDishesWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+
+  }
+  .chart-labels {
+    font-size: 16px;
+  }
 }
