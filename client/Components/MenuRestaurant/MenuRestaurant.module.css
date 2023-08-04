@@ -108,17 +108,41 @@
 .menuFormWrapper {
   z-index: 1000;
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 50%;
 
   transform: translateX(-50%);
 }
+.btnText {
+  display: none;
+}
+.btnIcon {
+}
 
 @media screen and (min-width: 768px) and (max-width: 1199px) {
+  .btnText {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btnIcon {
+    display: none;
+  }
 }
 
 @media screen and (min-width: 1200px) {
+  .btnIcon {
+    display: none;
+  }
+  .btnText {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   .dishPrice {
     margin-right: 16px;
+  }
+  .menuFormWrapper {
+    top: 20%;
   }
 }

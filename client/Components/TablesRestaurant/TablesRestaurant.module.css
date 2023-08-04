@@ -235,7 +235,7 @@
 .newFormTablesBlock {
   z-index: 1000;
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 50%;
 
   transform: translateX(-50%);
@@ -284,5 +284,8 @@
   }
   .btnPaddingTable {
     padding: 10px 20px;
+  }
+  .newFormTablesBlock {
+    top: 20%;
   }
 }

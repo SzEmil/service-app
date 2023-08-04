@@ -15,9 +15,19 @@ import { FiRefreshCcw } from 'react-icons/fi';
 import { refreshRestaurantsData } from '../redux/restaurants/restaurantsOperations';
 import { LoadingPage } from '../Components/LoadingPage/LoadingPage';
 import { pageLoaded } from '../redux/user/userSlice';
+import { logOut } from '../redux/user/userOperations';
+import { useRouter } from 'next/router';
 
-const Restaurants = ({ restaurantData }: any) => {
+const Restaurants = ({ restaurantData, validToken }: any) => {
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
+  useEffect(() => {
+    if (!validToken) {
+      dispatch(logOut());
+      router.push('/');
+    }
+  }, [restaurantData, validToken]);
+
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [isNewRestaurantFormVisible, setIsNewRestaurantFormVisible] =
     useState(false);
@@ -102,10 +112,11 @@ export async function getServerSideProps({ req }: any) {
     const response = await axios.get(`/restaurants`);
     const data = response.data;
     const restaurantData = data.ResponseBody.restaurants;
-
+    const validToken = true;
     return {
       props: {
         restaurantData,
+        validToken,
       },
     };
   } catch (error) {
@@ -114,6 +125,7 @@ export async function getServerSideProps({ req }: any) {
     return {
       props: {
         restaurantData: [],
+        validToken: false,
       },
     };
   }

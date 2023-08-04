@@ -78,7 +78,7 @@
 .newFormBlock {
   z-index: 1000;
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 50%;
 
   transform: translateX(-50%);
@@ -109,4 +109,13 @@
 .loadingActive {
   opacity: 1;
   z-index: 99999;
+}
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+}
+
+
+@media screen and (min-width: 1200px) {
+  .newFormBlock {
+    top: 20%;
+  }
 }
