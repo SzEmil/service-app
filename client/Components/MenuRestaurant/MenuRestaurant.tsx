@@ -7,6 +7,7 @@ import { selectFilterInput } from '../../redux/filter/filterSelectors';
 import { MenuForm } from '../MenuForm/MenuForm';
 import { useState } from 'react';
 import { selectCurrentRestaurantCurrency } from '../../redux/restaurants/restaurantsSelectors';
+import { MdEdit } from 'react-icons/md';
 
 type menuProps = {
   menu: dishType[] | [] | null | undefined;
@@ -28,7 +29,13 @@ export const MenuRestaurant = ({ menu }: menuProps) => {
             onClick={() => setIsEditMenuOpen(true)}
             className={css.button}
           >
-            Edit menu
+            <div className={css.btnText}>
+              {' '}
+              <span>Edit menu</span> <MdEdit size={24} />
+            </div>
+            <div className={css.btnIcon}>
+              <MdEdit size={24} />
+            </div>
           </button>
           <FilterMenu />
         </div>

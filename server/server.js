@@ -27,7 +27,6 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.use('/api', router);
 
-
 app.get('/api/stream', (req, res) => {
   res.set({
     'Content-Type': 'text/event-stream',
@@ -44,7 +43,6 @@ app.get('/api/stream', (req, res) => {
       res.write('data: error\n\n');
       res.end();
     });
-
 });
 
 app.use((_, res, __) => {
@@ -120,3 +118,5 @@ connection
     console.log(`Server not running. Error message: ${error}`);
     process.exit(1);
   });
+
+

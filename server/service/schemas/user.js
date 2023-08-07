@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 const { Schema } = mongoose;
 
-const users = new Schema(
+export const users = new Schema(
   {
     username: {
       type: String,

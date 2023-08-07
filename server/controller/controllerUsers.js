@@ -18,13 +18,13 @@ dotenv.config();
 
 const secret = process.env.SECRET;
 
-const userSchema = joi.object({
+export const userSchema = joi.object({
   username: joi.string().required(),
   email: joi.string().email().required(),
   password: joi.string().required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });
 
-const userSchemaLogin = joi.object({
+export const userSchemaLogin = joi.object({
   email: joi.string().email().required(),
   password: joi.string().required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });
@@ -105,7 +105,7 @@ const register = async (req, res, next) => {
       });
     }
     try {
-      const newUser = new User({ username, email });
+      const newUser = await userService.createUser(username, email);
       newUser.setPassword(password);
       const avatarURL = gravatar.url(newUser.email, {
         protocol: 'https',
@@ -167,7 +167,7 @@ const login = async (req, res, next) => {
     if (!user || !user.validatePassword(password)) {
       return res.status(401).json({
         status: 'error',
-        code: 400,
+        code: 401,
         ResponseBody: {
           message: 'Invalid login or password',
         },
@@ -186,7 +186,7 @@ const login = async (req, res, next) => {
       status: 'success',
       code: 200,
       ResponseBody: {
-        message: "User logged in successfully",
+        message: 'User logged in successfully',
         token,
         user: {
           _id: user._id,
@@ -211,15 +211,7 @@ const logout = async (req, res, next) => {
   const { _id } = req.user;
   try {
     const user = await userService.getUserById(_id);
-    if (!user) {
-      return res.status(401).json({
-        status: 'error',
-        code: 401,
-        ResponseBody: {
-          message: 'Unauthorized',
-        },
-      });
-    }
+
     user.token = null;
     await user.save();
     return res.status(204).json({
@@ -230,7 +222,13 @@ const logout = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error);
+    res.status(401).json({
+      status: 'error',
+      code: 401,
+      ResponseBody: {
+        message: 'Unauthorized',
+      },
+    });
   }
 };
 
