@@ -11,8 +11,8 @@ const getUserById = async _id => {
   return User.findOne({ _id });
 };
 
-const createUser = async ({ email, password }) => {
-  return User.create({ email, password });
+const createUser = async (username, email) => {
+  return User.create({ username, email });
 };
 
 const getInvitationByEmail = async email => {
@@ -41,6 +41,6 @@ const userService = {
   getInvitationByEmail,
   deleteInvitationById,
   getInvitationById,
-  getRestaurantColabolators
+  getRestaurantColabolators,
 };
 export default userService;

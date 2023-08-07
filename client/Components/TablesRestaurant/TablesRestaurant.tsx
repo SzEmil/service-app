@@ -22,6 +22,7 @@ import { refreshTablesData } from '../../redux/restaurants/restaurantsOperations
 import { MdDone } from 'react-icons/md';
 import { MdOutlineCancel } from 'react-icons/md';
 import { FiEdit2 } from 'react-icons/fi';
+import { MdEdit } from 'react-icons/md';
 
 type tableProps = {
   tables: tableType[] | [] | null | undefined;
@@ -130,7 +131,7 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
         >
           <div className={css.btnTableIcon}>
             Add new table
-            <FiEdit2 size={'18px'} />
+            <MdEdit size={'24px'} />
           </div>
         </button>
         <button
@@ -159,10 +160,10 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                     >
                       <span className={css.tableBtnsText}>
                         Edit table
-                        <FiEdit2 size={'24px'} />
+                        <MdEdit size={'24px'} />
                       </span>
                       <div className={css.tableBtnsIconWrapper}>
-                        <FiEdit2 size={'24px'} />
+                        <MdEdit size={'24px'} />
                       </div>
                     </button>
                     <button
@@ -219,10 +220,10 @@ export const TablesRestaurant = ({ tables }: tableProps) => {
                         >
                           <span className={css.tableBtnsText}>
                             Edit order
-                            <FiEdit2 size={'24px'} />
+                            <MdEdit size={'24px'} />
                           </span>
                           <div className={css.tableBtnsIconWrapper}>
-                            <FiEdit2 size={'24px'} />
+                            <MdEdit size={'24px'} />
                           </div>
                         </button>
                         <button
