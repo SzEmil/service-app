@@ -27,6 +27,22 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.use('/api', router);
 
+const allowedOrigins = [
+  'https://service-app-jet.vercel.app',
+  'http://localhost:3000',
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  })
+);
+
 app.get('/api/stream', (req, res) => {
   res.set({
     'Content-Type': 'text/event-stream',
@@ -118,5 +134,3 @@ connection
     console.log(`Server not running. Error message: ${error}`);
     process.exit(1);
   });
-
-
