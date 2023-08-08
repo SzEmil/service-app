@@ -20,7 +20,7 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
 import './config/config-passport.js';
 
 app.use(express.static(path.join(process.cwd(), 'public')));
