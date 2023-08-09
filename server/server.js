@@ -7,6 +7,7 @@ import router from './api/api.js';
 import path from 'node:path';
 import { uploadDir, storeImageDir } from './middlewares/fileUpload/upload.js';
 import createFolderIsNotExist from './utils.js';
+
 // import http from 'http';
 // import {io} from 'socket.io';
 
@@ -20,16 +21,17 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
 app.use(express.json());
- app.use(cors());
+app.use(cors());
 import './config/config-passport.js';
 
 app.use(express.static(path.join(process.cwd(), 'public')));
+
 
 app.use('/api', router);
 
 const allowedOrigins = [
   'https://service-app-jet.vercel.app',
-  'http://localhost:3000',
+  // 'http://localhost:3000',
 ];
 app.use(
   cors({

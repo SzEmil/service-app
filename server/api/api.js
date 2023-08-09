@@ -13,7 +13,6 @@ const router = express.Router();
 
 
 //users api router
-router.get('/users', userController.get);
 
 router.post('/users/signup', userController.register);
 
