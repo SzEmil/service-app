@@ -31,7 +31,7 @@ restaurant.
 
 Information about invitation will be visible in users profile
 
-![invite friend](./client/public/menageinvitations.jpg)
+![invite friend](./client/public/inivtationsMEnagment.jpg)
 
 ## Check menu in restaurant dashboard
 
