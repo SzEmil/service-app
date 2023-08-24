@@ -25,17 +25,17 @@ In the user's main dashboard, all the restaurants created by them are available.
 Each restaurant block provides summarized information about the respective
 restaurant.
 
-![menage restaurant](./client/public/restaurantsBlock.jpg)
+![menage restaurant](./client/public/menageRestaurants.jpg)
 
 ## Invite friend to your restaurant
 
 Information about invitation will be visible in users profile
 
-![invite friend](./client/public/inviteFriend.jpg)
+![invite friend](./client/public/menageinvitations.jpg)
 
 ## Check menu in restaurant dashboard
 
-![check menu in restaurant dashboard](./client/public/checkMenu.jpg)
+![check menu in restaurant dashboard](./client/public/menageMenu.jpg)
 
 ## Edit menu whenever you want
 
@@ -47,7 +47,7 @@ In the application, a waiter has the ability to create a new table, manage it
 (add new orders, complete orders, edit individual orders), and can also edit the
 entire table to make changes to orders or descriptions.
 
-![menage tables](./client/public/menageTables.jpg)
+![menage tables](./client/public/menageTABLESrestaurant.jpg)
 
 ## Check Restaurant Statistics
 
