@@ -1,5 +1,5 @@
 # Welcome to Service
-
+App is uploaded to free server. Server needs some time to start (about 30s or more). Lodaing screen is normal behavior.
 ## Programmed functionality:
 
 ## What is Service?
