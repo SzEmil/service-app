@@ -10,6 +10,10 @@ challenges. All data securely stored in a database.
 
 ## Register/login to get access to app
 
+Test credentials:
+email: test@wp.pl
+password: test
+
 ![register user](./client/public/Service.jpg)
 
 ## Add new restaurant
